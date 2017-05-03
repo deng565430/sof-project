@@ -13,4 +13,4 @@ sof-project初始化
   npm run dev
   
 # 入口
-  locahost:8080
+  http://localhost:8080/#/
