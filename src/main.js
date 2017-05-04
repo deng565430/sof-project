@@ -3,14 +3,15 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import axios from 'axios';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
-import './assets/css/bootstrap.css';
-import './assets/js/bootstrap.min';
 import store from './store/index';
 
 //element-ui使用
 Vue.use(ElementUI);
+
+Vue.prototype.$ajax = axios;
 
 Vue.config.productionTip = false;
 

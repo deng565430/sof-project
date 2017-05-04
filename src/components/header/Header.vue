@@ -8,7 +8,8 @@
         <el-menu-item index="2-2"><router-link to="/">原始页面</router-link></el-menu-item>
         <el-menu-item index="2-3">选项3</el-menu-item>
       </el-submenu>
-      <el-menu-item index="3"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
+      <el-menu-item index="3"><a href="javascript:;" target="_blank">订单管理</a></el-menu-item>
+      <el-menu-item index="4"><a href="javascript:;"  target="_blank" @click="submitForm">订单管理</a></el-menu-item>
     </el-menu>
     <div class="line"></div>
   </div>
@@ -25,6 +26,18 @@ export default {
   methods: {
     handleSelect (key, keyPath) {
       console.log(key, keyPath);
+    },
+    submitForm () {
+      this.$ajax({
+        method: 'post',
+        url: '/api/user',
+        data: {
+          name: 'wise',
+          info: 'wrong'
+        }
+      }).then(function (res) {
+        console.log(res);
+      }).bind(this);
     }
   }
 };
