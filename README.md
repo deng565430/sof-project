@@ -11,6 +11,9 @@ sof-project初始化
   
 # 启动项目
   npm run dev
+
+# 打包
+  npm run build
   
 # 入口
   http://localhost:8080/#/
