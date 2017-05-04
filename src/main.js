@@ -7,6 +7,7 @@ import axios from 'axios';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 import store from './store/index';
+import './assets/css/reset.css';
 
 //element-ui使用
 Vue.use(ElementUI);

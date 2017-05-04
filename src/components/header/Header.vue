@@ -29,8 +29,8 @@ export default {
     },
     submitForm () {
       this.$ajax({
-        method: 'post',
-        url: '/api/user',
+        method: 'get',
+        url: '/api/api/data',
         data: {
           name: 'wise',
           info: 'wrong'
