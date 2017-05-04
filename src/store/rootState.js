@@ -1,4 +1,14 @@
 const state = {
-  msg: '我是原始数据',
-}
+    msg: '我是原始数据',
+    count: 10,
+    numb: 10086,
+    data: [{
+        name: '餐厅'
+    }, {
+        name: '酒店'
+    }, {
+        name: '饭馆'
+    }]
+};
+
 export default state;

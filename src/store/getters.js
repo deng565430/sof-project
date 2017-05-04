@@ -1,1 +1,1 @@
-export const msg = state => state.msg;
+export const msg = state => state.data;
