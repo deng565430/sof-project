@@ -5,9 +5,9 @@ import App from './App';
 import router from './router';
 import axios from 'axios';
 import ElementUI from 'element-ui';
+import './assets/css/reset.css';
 import 'element-ui/lib/theme-default/index.css';
 import store from './store/index';
-import './assets/css/reset.css';
 
 //element-ui使用
 Vue.use(ElementUI);
