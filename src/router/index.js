@@ -5,6 +5,8 @@ import ClientOrder from '@/components/index/client-order/body';
 import PhoneManage from '@/components/index/phone-manage/body';
 import Analysis from '@/components/index/analysis/body';
 import ClientManagement from '@/components/index/client-management/body';
+import OrderIndex from '@/components/index/client-order/OrderIndex';
+
 /*const Index = r => require.ensure([], () => r(require('@/components/index/index')), 'index');
 const ClientOrder = r => require.ensure([], () => r(require('@/components/index/client-order/body')), 'body');*/
 
@@ -21,7 +23,14 @@ export default new Router({
     }, {
         path: '/client',
         name: 'body',
-        component: ClientOrder
+        component: ClientOrder,
+        children: [
+        {
+          // 当 /user/:id/profile 匹配成功，
+          // UserProfile 会被渲染在 User 的 <router-view> 中
+          path: '/client/orderIndex',
+          component: OrderIndex
+        }]
     }, {
         path: '/phone',
         name: 'phoneManage',
