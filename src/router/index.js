@@ -17,19 +17,16 @@ export default new Router({
         path: '',
         component: Index,
     }, {
-        path: '/',
+        path: '/index/:id',
         name: 'index',
-        component: Index
+        component: Index,
     }, {
         path: '/client',
         name: 'body',
         component: ClientOrder,
-        children: [
-        {
-          // 当 /user/:id/profile 匹配成功，
-          // UserProfile 会被渲染在 User 的 <router-view> 中
-          path: '/client/orderIndex',
-          component: OrderIndex
+        children: [{
+            path: 'orderIndex',
+            component: OrderIndex
         }]
     }, {
         path: '/phone',

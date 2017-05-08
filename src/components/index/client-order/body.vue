@@ -1,6 +1,7 @@
 <template>
 <div id="orderIndex">
   <com-LeftMenu></com-LeftMenu>
+  <router-view></router-view>
   <div id="contain">
   </div>
 </div>
