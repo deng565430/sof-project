@@ -1,6 +1,7 @@
 <template>
 <div id="orderOne">
   <com-LeftMenu></com-LeftMenu>
+  <router-view></router-view>
   <div id="contain">
     <router-view></router-view>
   </div>

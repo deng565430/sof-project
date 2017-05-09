@@ -2,7 +2,7 @@
   <div id="header">
      <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
       <el-menu-item index="1"><router-link to="/">SOF</router-link></el-menu-item>
-      <el-menu-item index="2"><router-link to="/">主页</router-link></el-menu-item>
+      <el-menu-item index="2"><router-link to="/index">主页</router-link></el-menu-item>
       <el-menu-item index="3"><router-link to="/client">客户下单系统</router-link></el-menu-item>
       <el-menu-item index="4"><router-link to="/phone">电话管理</router-link></el-menu-item>
       <el-menu-item index="5"><router-link to="/analysis">分析报告</router-link></el-menu-item>

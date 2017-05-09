@@ -1,5 +1,6 @@
 <template>
   <div id="">
+<<<<<<< HEAD
     <div class="selectarea" v-if='turn'>
       <div class="title"><span>选择行业</span></div>
       <ul class="select">
@@ -10,6 +11,20 @@
     <div>
          <router-view></router-view>
     </div>    
+=======
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+    <h1>下單系統</h1>
+>>>>>>> f2eb13ea61b5d265ea1a5580d7c2deb787a4c744
   </div>
 </template>
 

@@ -8,6 +8,8 @@
         <el-button slot="append" @click="clicks" ></el-button>
       </el-input>
     </div>
+    <router-view>11</router-view>
+    <router-link to="/index/login">登陆</router-link>
   </div>
 </template>
 
