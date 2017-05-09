@@ -18,14 +18,13 @@ export default new Router({
         path: '',
         component: Index,
     }, {
-        path: '/index/:id',
+        path: '/',
         name: 'index',
-        component: Index,
+        component: Index
     }, {
         path: '/client',
         name: 'body',
         component: ClientOrder,
-<<<<<<< HEAD
         children: [
         {
           // 当 /user/:id/profile 匹配成功，
@@ -38,11 +37,6 @@ export default new Router({
           component: EstateOrder, 
         }
           ]
-=======
-        children: [{
-            path: 'orderIndex',
-            component: OrderIndex
->>>>>>> f2eb13ea61b5d265ea1a5580d7c2deb787a4c744
         }]
     }, {
         path: '/phone',

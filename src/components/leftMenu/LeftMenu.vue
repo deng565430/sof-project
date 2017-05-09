@@ -4,7 +4,7 @@
       <el-submenu index="1">
         <template slot="title">需求单</template>
         <el-menu-item-group title="">
-          <el-menu-item index="1-1"><router-link to="/client/orderIndex">下订单</router-link></el-menu-item>
+          <el-menu-item index="1-1" @click="doThis"><router-link to="/client/orderIndex">下订单</router-link></el-menu-item>
           <el-menu-item index="1-2">正在处理的</el-menu-item>
           <el-menu-item index="1-3">过往订单</el-menu-item>
           <el-menu-item index="1-4">导出电话</el-menu-item>
