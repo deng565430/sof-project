@@ -28,11 +28,8 @@ export default {
     submitForm () {
       this.$ajax({
         method: 'get',
-        url: '/api/api/data',
-        data: {
-          name: 'wise',
-          info: 'wrong'
-        }
+        url: '/brief/getBriefListCount',
+        data: {msg: 1}
       }).then(function (res) {
         console.log(res);
       }).bind(this);
