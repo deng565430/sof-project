@@ -1,7 +1,8 @@
 <template>
-<div id="orderIndex">
+<div id="orderOne">
   <com-LeftMenu></com-LeftMenu>
   <div id="contain">
+    <router-view></router-view>
   </div>
 </div>
 </template>
@@ -17,12 +18,14 @@ export default {
 </script>
 
 <style lang="css" scoped>
-#orderIndex{
+#orderOne{
 	height: 100%;
 	display: flex;
 }
 #contain{
 	width: 90%;
 	height: 100%;
+  padding: 20px;
+  box-sizing:border-box;
 }
 </style>
