@@ -14,6 +14,8 @@ import OrderIndex from '@/components/index/client-order/OrderIndex';
 import EstateOrder from '@/components/index/client-order/orders/estateOrder';
 import Dingyue from '@/components/index/client-order/dingyue';
 import Historyding from '@/components/index/client-order/historyding';
+import Newzhi from '@/components/index/client-order/zhixing/new';
+import Addzhi from '@/components/index/client-order/zhixing/add';
 
 /*const Index = r => require.ensure([], () => r(require('@/components/index/index')), 'index');
 const ClientOrder = r => require.ensure([], () => r(require('@/components/index/client-order/body')), 'body');*/
@@ -54,6 +56,14 @@ export default new Router({
           {
           path: '/client/historyding',
           component: Historyding,
+          }, 
+          {
+          path: '/client/Newzhi',
+          component: Newzhi,
+          }, 
+          {
+          path: '/client/Addzhi',
+          component: Addzhi,
           }]
     }, {
         path: '/phone',

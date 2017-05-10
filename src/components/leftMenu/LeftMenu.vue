@@ -9,16 +9,14 @@
           <el-menu-item index="1-3"><router-link to="/client/historyding">历史订阅</router-link></el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-       <el-submenu index="1">
+       <el-submenu index="2">
         <template slot="title">执行单</template>
         <el-menu-item-group title="">
-          <el-menu-item index="1-1"><router-link to="/client/orderIndex">下订单</router-link></el-menu-item>
-          <el-menu-item index="1-2"><router-link to="/client/dingyue">正在订阅的</router-link></el-menu-item>
-          <el-menu-item index="1-3"><router-link to="/client/historyding">历史订阅</router-link></el-menu-item>
+          <el-menu-item index="2-1"><router-link to="/client/Newzhi">新执行单</router-link></el-menu-item>
+          <el-menu-item index="2-2"><router-link to="/client/dingyue">正在执行的</router-link></el-menu-item>
+          <el-menu-item index="2-3"><router-link to="/client/historyding">历史执行单</router-link></el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="2">导航二</el-menu-item>
-      <el-menu-item index="3">导航三</el-menu-item>
     </el-menu>
   </div>
 </template>
