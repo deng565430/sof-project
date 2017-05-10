@@ -8,6 +8,8 @@
       <el-menu-item index="5"><router-link to="/analysis">分析报告</router-link></el-menu-item>
       <el-menu-item index="6"><router-link to="/management">客户管理</router-link></el-menu-item>
       <el-menu-item index="7"><a href="javascript:;"  target="_blank" @click="submitForm">客户管理</a></el-menu-item>
+      <el-menu-item index="9" style="float:right"><a href="javascript:;"  target="_blank">注册</a></el-menu-item>
+      <el-menu-item index="8" style="float:right"><router-link to="/login">登录</router-link></el-menu-item>
     </el-menu>
     <div class="line"></div>
   </div>
@@ -32,7 +34,7 @@ export default {
         data: {msg: 1}
       }).then(function (res) {
         console.log(res);
-      })
+      });
     }
   }
 };

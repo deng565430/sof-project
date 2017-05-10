@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Index from '@/components/index/index';
+import Login from '@/components/login/login';
 
 
 import ClientOrder from '@/components/index/client-order/body';
@@ -25,6 +26,9 @@ export default new Router({
         path: '/',
         name: 'index',
         component: Index
+    }, {path: '/login',
+        name: 'login',
+        component: Login
     }, {
         path: '/client',
         name: 'body',
