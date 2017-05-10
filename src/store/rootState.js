@@ -1,6 +1,6 @@
 const state = {
     msg: '我是原始数据',
-    count: 10,
+    dialogVisible: false,
     numb: 10086,
     data: [{
         name: '餐厅'

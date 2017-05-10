@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <com-header></com-header>
+    <com-login v-if="this.$store.state.dialogVisible"></com-login>
     <router-view></router-view>
     <com-footer></com-footer>
   </div>
@@ -9,11 +10,17 @@
 <script>
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
+import Login from './components/login/login';
 
 export default {
   components: {
     comHeader: Header,
-    comFooter: Footer
+    comFooter: Footer,
+    comLogin: Login
+  },
+  data () {
+    return {
+    };
   }
 };
 

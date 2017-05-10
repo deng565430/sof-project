@@ -10,6 +10,14 @@
     </div>
     <router-view>11</router-view>
     <router-link to="/index/login">登陆</router-link>
+     <div class="block">
+    <span class="demonstration">默认</span>
+    <el-date-picker
+      v-model="value6"
+      type="daterange"
+      placeholder="选择日期范围">
+    </el-date-picker>
+  </div>
   </div>
 </template>
 
@@ -17,7 +25,10 @@
   import { mapGetters } from 'vuex';
 export default {
     data () {
-      return {};
+      return {
+        value6: '',
+        value7: ''
+      };
     },
     computed: {...mapGetters(['msg'])},
     methods: {
