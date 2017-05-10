@@ -1,7 +1,7 @@
 <template>
 <div class="formcontain">
 	<div class="formtitle">执行单</div>
-  <el-form ref="form" :model="form" label-width="80px" class="formcontains">
+  <el-form ref="form" :model="form" label-width="100px" class="formcontains" v-show="show">
 	  <el-form-item label="项目名称">
 	    <el-input v-model="form.name" placeholder=""></el-input>
 	  </el-form-item>
@@ -31,8 +31,18 @@
 		      :value="item.value">
 		    </el-option>
 	  </el-select>
-  </el-form-item>
-</el-form>
+	  </el-form-item>
+	  	<el-form-item label="所需数据类型">
+		    <el-checkbox-group v-model="form.type">
+		      <el-checkbox label="浏览数据" name="type"></el-checkbox>
+		      <el-checkbox label="搜索数据" name="type"></el-checkbox>
+		    </el-checkbox-group>
+		  </el-form-item>
+		  <el-button type="primary" @click="isshow">下一步</el-button>
+	</el-form>
+	<div v-show="sshow">
+		zixingdan
+	</div>	
 </div>
 </template>
 
@@ -71,8 +81,16 @@ export default {
           label: '北京烤鸭'
         }],
         value8: ''
-      }
+      },
+      show: true,
+      sshow: false
     };
+  },
+  methods: {
+    isshow () {
+      this.show = false;
+      this.sshow = true;
+    }
   }
 };
 </script>

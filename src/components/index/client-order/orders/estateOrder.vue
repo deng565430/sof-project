@@ -16,7 +16,7 @@
 	  </el-form-item>
 	  <el-form-item label="订阅周期">
 	    <el-date-picker 
-	      v-model="value6"
+	      v-model="form.value6"
 	      type="daterange"
 	      placeholder="选择日期范围" calss="dataselect">
 	    </el-date-picker>
@@ -45,7 +45,8 @@ export default {
         delivery: false,
         type: [],
         resource: '',
-        desc: ''
+        desc: '',
+        value6: ''
       }
     };
   },
