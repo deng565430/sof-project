@@ -18,8 +18,8 @@ sof-project初始化
 # 入口
   http://localhost:8080/#/
 
-# 数据结构
-
+### 项目目录
+```bash
 └─build：构建用到的相关文件
 ├─config：构建的配置文件
 ├─src：前端开发源码
