@@ -4,10 +4,9 @@
       <el-submenu index="1">
         <template slot="title">需求单</template>
         <el-menu-item-group title="">
-          <el-menu-item index="1-1" @click="doThis"><router-link to="/client/orderIndex">下订单</router-link></el-menu-item>
-          <el-menu-item index="1-2">正在处理的</el-menu-item>
-          <el-menu-item index="1-3">过往订单</el-menu-item>
-          <el-menu-item index="1-4">导出电话</el-menu-item>
+          <el-menu-item index="1-1"><router-link to="/client/orderIndex">下订单</router-link></el-menu-item>
+          <el-menu-item index="1-2"><router-link to="/client/dingyue">正在订阅的</router-link></el-menu-item>
+          <el-menu-item index="1-3"><router-link to="/client/historyding">历史订阅</router-link></el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-menu-item index="2">导航二</el-menu-item>
@@ -36,5 +35,12 @@ export default {
 }
 .el-menu--dark{
   height: 100%;
+}
+#leftMenu a{
+  display: inline-block;
+  color:#bfcbd9;
+}
+#leftMenu a:active{
+  color:#20a0ff;
 }
 </style>
