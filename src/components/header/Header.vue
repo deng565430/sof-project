@@ -32,7 +32,7 @@ export default {
         data: {msg: 1}
       }).then(function (res) {
         console.log(res);
-      }).bind(this);
+      })
     }
   }
 };
