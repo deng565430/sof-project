@@ -1,14 +1,13 @@
 <template>
   <div id="">
-    <div class="selectarea" v-if='turn'>
+    <div class="selectarea" >
       <div class="title"><span>选择行业</span></div>
       <ul class="select">
-          <li @click="doThis"><router-link to="/client/orderIndex/estateOrder">房地产</router-link></li>
+          <li ><router-link to="/client/orderIndex/estateOrder">房地产</router-link></li>
           <li>医美</li>
       </ul>
     </div>
-    <div>
-         <router-view></router-view>
+    <div >
     </div>    
   </div>
 </template>
@@ -17,12 +16,11 @@
 export default {
   data () {
     return {
-      turn: true
+      dialogform: false
     };
   },
   methods: {
     doThis () {
-      this.turn = false;
     }
   }
 };

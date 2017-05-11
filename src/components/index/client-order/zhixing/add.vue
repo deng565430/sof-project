@@ -23,14 +23,15 @@
 	      <el-checkbox label="按区域扩展" name="type"></el-checkbox>
 	    </el-checkbox-group>
 	  </el-form-item>
-	   <el-form-item label="竞品选择">
-		  <el-select v-model="form.value8" filterable placeholder="请选择">
+	   <el-form-item label="竞品选择" class="jingps">
+		  <el-select v-model="form.value8" filterable placeholder="请选择" class="jvalue">
 		    <el-option
 		      v-for="item in form.options"
 		      :label="item.label"
 		      :value="item.value">
 		    </el-option>
-	  </el-select>
+  		  </el-select>
+  		  <div class="jingp" multiple ></div>
 	  </el-form-item>
 	  	<el-form-item label="所需数据类型">
 		    <el-checkbox-group v-model="form.type">
@@ -104,5 +105,19 @@ export default {
 	font-size: 20px;
 	font-weight: bold;
 	margin-bottom: 20px
+}
+.jingps{
+	position: relative;
+}
+.jingp{
+	position: absolute;
+	right: -180px;
+	top:0;
+	min-height: 37px;
+	width: 200px;
+	border: 1px dashed #ccc;
+	padding: 5px;
+	box-sizing:border-box;
+	border-radius: 5px;
 }
 </style>
