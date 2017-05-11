@@ -24,66 +24,61 @@ const ClientOrder = r => require.ensure([], () => r(require('@/components/index/
 Vue.use(Router);
 
 const router = new Router({
-    routes: [{
-        path: '/',
-        component: Index,
+  routes: [{
+    path: '/',
+    component: Index,
+  }, {
+    path: '/index',
+    name: 'index',
+    component: Index
+  }, {
+    path: '/login',
+    name: 'login',
+    component: Login
+  }, {
+    path: '/client',
+    name: 'body',
+    component: ClientOrder,
+    children: [{
+      path: '/client/orderIndex',
+      component: OrderIndex,
     }, {
-        path: '/index',
-        name: 'index',
-        component: Index
-    }, {path: '/login',
-        name: 'login',
-        component: Login
+      path: '/client/orderIndex/estateOrder',
+      component: EstateOrder,
     }, {
-        path: '/client',
-        name: 'body',
-        component: ClientOrder,
-        children: [
-        {
-          path: '/client/orderIndex',
-          component: OrderIndex,
-          },
-        {
-          path: '/client/orderIndex/estateOrder',
-          component: EstateOrder, 
-          },
-        {
-          path: '/client/dingyue',
-          component: Dingyue,
-          }, 
-          {
-          path: '/client/historyding',
-          component: Historyding,
-          }, 
-          {
-          path: '/client/Newzhi',
-          component: Newzhi,
-          }, 
-          {
-          path: '/client/Addzhi',
-          component: Addzhi,
-          }]
+      path: '/client/dingyue',
+      component: Dingyue,
     }, {
-        path: '/phone',
-        name: 'phoneManage',
-        component: PhoneManage,
-        children: [{
-          path: 'orderIndex',
-          component: OrderIndex,
-        }]
+      path: '/client/historyding',
+      component: Historyding,
     }, {
-        path: '/management',
-        name: 'management',
-        component: ClientManagement
+      path: '/client/Newzhi',
+      component: Newzhi,
     }, {
-        path: '/analysis',
-        name: 'analysis',
-        component: Analysis
+      path: '/client/Addzhi',
+      component: Addzhi,
     }]
+  }, {
+    path: '/phone',
+    name: 'phoneManage',
+    component: PhoneManage,
+    children: [{
+      path: 'orderIndex',
+      component: OrderIndex,
+    }]
+  }, {
+    path: '/management',
+    name: 'management',
+    component: ClientManagement
+  }, {
+    path: '/analysis',
+    name: 'analysis',
+    component: Analysis
+  }]
 });
 
 router.beforeEach((to, from, next) => {
-  if(to.path == '/'){
+  if (to.path == '/') {
     next('/index')
   }
   next()
