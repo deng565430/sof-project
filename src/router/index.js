@@ -22,12 +22,12 @@ const ClientOrder = r => require.ensure([], () => r(require('@/components/index/
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
     routes: [{
-        path: '',
+        path: '/',
         component: Index,
     }, {
-        path: '/',
+        path: '/index',
         name: 'index',
         component: Index
     }, {path: '/login',
@@ -79,3 +79,12 @@ export default new Router({
         component: Analysis
     }]
 });
+
+router.beforeEach((to, from, next) => {
+  if(to.path == '/'){
+    next('/index')
+  }
+  next()
+})
+
+export default router;
