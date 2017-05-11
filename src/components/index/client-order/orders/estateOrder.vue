@@ -1,26 +1,32 @@
 <template>
 <div class="formcontain">
 		<div class="formtitle">需求单</div>
-		<el-form ref="form" :model="form" label-width="80px">
-			    <el-form-item label="项目名称" :label-width="formLabelWidth">
-			      <el-input v-model="form.name" auto-complete="off"></el-input>
-		      </el-form-item>
-			   <el-form-item label="项目描述">
-			    <el-input type="textarea" v-model="form.desc" placeholder="描述项目特点,范围及竞品"></el-input>
+		<el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px">
+			    <el-form-item label="项目名称" prop="name">
+				    <el-input v-model="ruleForm.name"></el-input>
+			    </el-form-item>
+			   <el-form-item label="项目描述" prop="desc">
+			    <el-input type="textarea" v-model="ruleForm.desc" placeholder="描述项目特点,范围及竞品"></el-input>
 			  </el-form-item>
-			   <el-form-item label="需求数量">
-			    <el-input v-model="form.num" placeholder="每日电话需求量"></el-input>
+			   <el-form-item label="需求数量" prop="num">
+			    <el-input v-model="ruleForm.num" placeholder="每日电话需求量"></el-input>
 			  </el-form-item>
-			  <el-form-item label="订阅周期">
-			    <el-date-picker 
-			      v-model="form.value6"
-			      type="daterange"
-			      placeholder="选择日期范围" calss="dataselect">
-			    </el-date-picker>
+			  <el-form-item label="订阅周期" required>
+			    <el-col :span="11">
+			      <el-form-item prop="date1">
+			        <el-date-picker format type="date" placeholder="起始日期" v-model="ruleForm.value" style="width: 100%;"></el-date-picker>
+			      </el-form-item>
+			    </el-col>
+			    <el-col class="line" :span="2">-</el-col>
+			    <el-col :span="11">
+			       <el-form-item prop="date2">
+			        <el-date-picker format type="date" placeholder="起始日期" v-model="ruleForm.value1" style="width: 100%;"></el-date-picker>
+			      </el-form-item>
+			    </el-col>
 			  </el-form-item>
 			   <el-form-item>
-			    <el-button @click="dialogForm = false"><router-link to="/client/orderIndex">取 消</router-link></el-button>
-			    <el-button type="primary" @click="dialogForm = false"><router-link to="/client/orderIndex">确 定</router-link></el-button>
+			    <el-button ><router-link to="/client/orderIndex">取 消</router-link></el-button>
+			    <el-button type="primary" :loading="false" @click="submitForm('ruleForm')">确 定</el-button>
 			  </el-form-item>
 		</el-form>
 </div>
@@ -30,23 +36,53 @@
 export default {
   data () {
     return {
-      dialogForm: true,
-      form: {
+      loading: false,
+      ruleForm: {
         name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
+        num: '',
         desc: '',
-        value6: ''
+        value: '',
+        value1: ''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入项目名称', trigger: 'blur' }
+        ],
+        desc: [
+          { required: true, message: '请输入项目描述', trigger: 'blur' }
+        ],
+        num: [
+          { required: true, message: '请输入需求数量', trigger: 'change' }
+        ]
       },
       formLabelWidth: '120px'
     };
   },
   methods: {
-    doThis () {
+    submitForm (formName) {
+      var b = {
+        'project_name': this.ruleForm.name,
+        'phone_demand': this.ruleForm.num,
+        'project_description': this.ruleForm.desc,
+        'start_date': new Date(this.ruleForm.value).toLocaleString().substr(0, 9),
+        'end_date': new Date(this.ruleForm.value1).toLocaleDateString()
+      };
+      var brief = JSON.stringify(b);
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!');
+          this.$ajax({
+            method: 'post',
+            url: '/api/brief/addbrief',
+            data: {'brief': brief}
+          }).then(function (res) {
+            console.log(res);
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     }
   }
 };
