@@ -70,21 +70,29 @@ export default {
         .catch(_ => {});
     },
     submitForm (formName) {
+      var that = this;
+      console.log(that.$store.state.isLogin);
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.$store.state.isLogin = true;
           this.$ajax({
-            method: 'get',
+            method: 'post',
             url: '/api/user/login',
             data: {
               name: this.ruleForm2.user,
-              pws: this.ruleForm2.pass
+              pwd: this.ruleForm2.pass
             }
           }).then(function (res) {
-            console.log(res);
+            if (res.status === 200) {
+              console.log(res.data.data[0]);
+              that.$store.state.isLogin = true;
+              that.$store.state.userName = res.data.data[0].nickName;
+              window.sessionStorage.username = res.data.data[0].nickName;
+            }
           });
           this.dialogVisible = this.$store.state.dialogVisible = !this.$store.state.dialogVisible;
         } else {
-          console.log('error submit!!');
+          console.log('登录错误!!');
           return false;
         }
       });

@@ -1,1 +1,6 @@
-export const msg = state => state.data;
+export const isLogin = (state) => {
+    let data = {}
+    data.msg = state.isLogin;
+    data.name = state.userName;
+    return data;
+}

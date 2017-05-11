@@ -8,8 +8,8 @@
       <el-menu-item index="5"><router-link class="itemWdith" to="/analysis">分析报告</router-link></el-menu-item>
       <el-menu-item index="6"><router-link class="itemWdith" to="/management">客户管理</router-link></el-menu-item>
       <el-menu-item index="7"><a href="javascript:;"  target="_blank" @click="submitForm">客户管理</a></el-menu-item>
-      <el-menu-item index="9" style="float:right"><a href="javascript:;"  target="_blank">注册</a></el-menu-item>
-      <el-menu-item index="8" style="float:right" @click="login"><router-link to="">登录</router-link></el-menu-item>
+      <el-menu-item index="8" v-if="isLogin.msg" style="float:right"><router-link to="">欢迎你：{{isLogin.name}}</router-link></el-menu-item>
+      <el-menu-item index="8"  v-else style="float:right" @click="login"><router-link to="">登录</router-link></el-menu-item>
     </el-menu>
     <com-login></com-login>
     <div class="line"></div>
@@ -17,13 +17,14 @@
 </template>
 
 <script>
-
+import { mapGetters } from 'vuex';
 export default {
   data () {
     return {
       activeIndex: '1'
     };
   },
+  computed: {...mapGetters(['isLogin'])},
   methods: {
     handleSelect (key, keyPath) {
       console.log(key, keyPath);
@@ -38,9 +39,8 @@ export default {
       });
     },
     login () {
-      console.log(this.$store.state.dialogVisible);
       this.$store.state.dialogVisible = true;
-      console.log(this.$store.state.dialogVisible);
+      console.log(mapGetters(['isLogin']));
     }
   }
 };
