@@ -67,7 +67,11 @@ const router = new Router({
     }, {
         path: '/phone',
         name: 'phoneManage',
-        component: PhoneManage
+        component: PhoneManage,
+        children: [{
+          path: 'orderIndex',
+          component: OrderIndex,
+        }]
     }, {
         path: '/management',
         name: 'management',

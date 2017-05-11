@@ -83,6 +83,10 @@ export default {
               pwd: this.ruleForm2.pass
             }
           }).then(function (res) {
+            if (!res.data.data) {
+              alert('返回错误');
+              return false;
+            }
             if (res.status === 200) {
               console.log(res.data.data[0]);
               that.$store.state.isLogin = true;
