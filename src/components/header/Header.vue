@@ -31,7 +31,7 @@ export default {
     submitForm () {
       this.$ajax({
         method: 'get',
-        url: '/brief/getBriefListCount',
+        url: '/api/brief/getBriefListCount',
         data: {msg: 1}
       }).then(function (res) {
         console.log(res);
