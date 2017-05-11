@@ -8,8 +8,18 @@
       :data="tableData"
       style="width: 100%;" align='center' @click="" >
       <el-table-column
-        prop="date"
+        prop="compant"
+        label="公司名称"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="projiect"
         label="项目名称"
+        width="180">
+      </el-table-column>
+       <el-table-column
+        prop="phonenum"
+        label="需求量(日)"
         width="180">
       </el-table-column>
       <el-table-column
@@ -20,16 +30,6 @@
       <el-table-column
         prop="endtime"
         label="订阅结束时间">
-      </el-table-column>
-      <el-table-column
-        label="今日电话">
-       <template scope="scope">
-        <el-button type="text" size="small">下载电话</el-button>
-      </template>
-      </el-table-column>
-       <el-table-column
-        prop="zhuang"
-        label="今日状态">
       </el-table-column>
       <el-table-column
         label="操作">
@@ -53,32 +53,30 @@ export default {
   data () {
     return {
       tableData: [{
-        date: '国贸天悦',
-        starttime: '2017-4-1',
-        endtime: '2017-4-30',
-        zhuang: '可下载',
-        changetime: '2017-4-5'
-      }, {
-        date: '佘山天地',
-        starttime: '2017-4-1',
-        endtime: '2017-4-30',
-        zhuang: '未更新',
+        compant: '',
+        projiect: '',
+        phonenum: '',
+        starttime: '',
+        endtime: '',
         changetime: ''
-      }, {
-        date: '金地积木',
-        starttime: '2017-4-1',
-        endtime: '2017-4-30',
-        zhuang: '未更新',
-        changetime: '2017-4-5'
-      }, {
-        date: '海伦堡ME',
-        starttime: '2017-4-1',
-        endtime: '2017-4-30',
-        zhuang: '未更新',
-        changetime: '2017-4-5'
       }],
-      input: ''
+      input: '',
+      loading: false,
+      post: null,
+      error: null
     };
+  },
+  created () {
+    // 组件创建完后获取数据，
+    // 此时 data 已经被 observed 了
+    this.fetchData();
+  },
+  methods: {
+    fetchData () {
+      this.error = this.post = null;
+      this.loading = true;
+      // replace getPost with your data fetching util / API wrapper
+    }
   }
 };
 </script>

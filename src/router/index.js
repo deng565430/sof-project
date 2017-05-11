@@ -42,12 +42,11 @@ const router = new Router({
         {
           path: '/client/orderIndex',
           component: OrderIndex,
-          children: [
+          },
         {
           path: '/client/orderIndex/estateOrder',
           component: EstateOrder, 
-        },
-        ]},
+          },
         {
           path: '/client/dingyue',
           component: Dingyue,
