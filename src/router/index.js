@@ -3,6 +3,7 @@ import Router from 'vue-router';
 
 import Index from '@/components/index/index';
 import Login from '@/components/login/login';
+import AllIndustry from '@/components/allIndustry/allIndustry';
 
 
 import ClientOrder from '@/components/index/client-order/body';
@@ -10,7 +11,7 @@ import PhoneManage from '@/components/index/phone-manage/body';
 import Analysis from '@/components/index/analysis/body';
 import ClientManagement from '@/components/index/client-management/body';
 
-
+import PhoneList from '@/components/index/phone-manage/phoneList';
 import OrderIndex from '@/components/index/client-order/OrderIndex';
 import EstateOrder from '@/components/index/client-order/orders/estateOrder';
 import Dingyue from '@/components/index/client-order/dingyue';
@@ -63,8 +64,8 @@ const router = new Router({
     name: 'phoneManage',
     component: PhoneManage,
     children: [{
-      path: 'orderIndex',
-      component: OrderIndex,
+      path: 'phoneList',
+      component: PhoneList,
     }]
   }, {
     path: '/management',
