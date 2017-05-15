@@ -4,7 +4,7 @@
       <div class="title"><span>电话清单</span></div>
       <div id="selectData">
         <div>
-          <span>选择项目名称:</span>
+          <span>名称:</span>
           <el-select v-model="projectValue" placeholder="请选择名称">
             <el-option
               v-for="item in projectOptions"
@@ -16,19 +16,18 @@
         </div>
         <div>
           <div class="block">
-            <span class="demonstration">选择项目批次:</span>
+            <span class="demonstration">批次:</span>
             <el-date-picker
               v-model="starTimeValue"
               type="daterange"
-              align="right"
               placeholder="选择日期范围"
               :picker-options="pickerOptions2">
             </el-date-picker>
           </div>
         </div>
         <div>
-          <span>请选择项目类型:</span>
-          <el-select v-model="typeValue" placeholder="请选择项目类型">
+          <span>类型:</span>
+          <el-select v-model="typeValue" multiple placeholder="请选择项目类型">
           <el-option
             v-for="item in typeOptions"
             :key="item.value"
@@ -41,51 +40,65 @@
       <div id="btn">
         <div class="block">
           <span class="wrapper">
-            <el-button type="warning" id="btnWidth" @click="search(0,200)">搜索</el-button>
+            <el-button type="warning" id="btnWidth" @click="search">搜索</el-button>
           </span>
         </div>
       </div>
       <div id="table" v-if="listShow">
         <el-table
-          :data="tableData" stripe
-          height="450"
-          style="width: 100%"
+          ref="multipleTable"
+          :data="tableData"
+          border
           stripe
-          highlight-current-row>
+          empty-text="正在获取。。。"
+          max-height=300
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange">
+          <el-table-column
+            type="selection"
+            width="55">
+          </el-table-column>
           <el-table-column
             prop="project"
             label="名称"
-            width="180">
+            width="120">
+            <template scope="scope">{{ scope.row.project }}</template>
           </el-table-column>
           <el-table-column
             prop="date"
             label="批次"
-            width="180">
+            width="120">
           </el-table-column>
           <el-table-column
             prop="type"
             label="类型"
-            width="180">
+            show-overflow-tooltip>
           </el-table-column>
-           <el-table-column
+          <el-table-column
             prop="phone"
-            label="电话">
+            label="总量"
+            show-overflow-tooltip>
           </el-table-column>
         </el-table>
-        <div class="block" v-if="pageShow">
-          <el-pagination
+        <div class="block" id="tablePage" v-if="pageShow">
+          <span class="wrapper">
+            <el-button @click="toggleSelection(tableData)" type="danger">取消选择</el-button>
+          </span>
+          <span v-if="recordsFiltered!=0">电话总量有：{{recordsFiltered}} 条 </span>
+          <el-pagination style="display: inline-block; vertical-align: top"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[100, 200, 300, 400]"
             :page-size="200"
-            :total="recordsTotal">
+            :total="tableData.length">
           </el-pagination>
+          <span class="wrapper">
+              <el-button type="success" @click="toggleSelection(tableData)">点击下载</el-button>
+            </span>
         </div>
         <div  style="text-align: right">
           <div class="block">
-            <span class="wrapper">
-              <el-button type="success" @click="clickupdata">点击下载</el-button>
-            </span>
+            
           </div>
         </div>
         
@@ -135,11 +148,11 @@ export default {
       },
       starTimeValue: '',
       searchValue: {},
-      listShow: false,
+      listShow: true,
       tableData: [],
       recordsFiltered: 0,
       currentPage: 1,
-      pageShow: true
+      pageShow: false
     };
   },
   created () {
@@ -165,46 +178,53 @@ export default {
       });
     },
     search (val, num) {
-      var datas = {};
       this.tableData = [];
-      datas.project = this.projectValue;
-      datas.type = this.typeValue;
-      datas.minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
-      datas.maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
-      datas.start = val;
-      datas.length = num;
+      this.recordsFiltered = 0;
+      let project = this.projectValue;
+      let minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
+      let maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
+      let that = this;
       this.listShow = true;
-      var that = this;
-      this.$ajax({
-        method: 'post',
-        url: '/api/tel/getTelByCondition',
-        data: datas
-      }).then(function (res) {
-        console.log(res.data);
-        if (res.data && res.data.data && res.data.data.length > 0) {
-          that.recordsFiltered = res.data.recordsFiltered;
-          that.recordsTotal = res.data.recordsTotal;
-          that.pageShow = true;
-          let list = res.data.data;
-          for (var i = 0; i < list.length; i++) {
-            let data = {};
-            data.project = list[i].project;
-            data.date = list[i].batch;
-            data.type = list[i].type;
-            data.phone = list[i].phone;
-            that.tableData.push(data);
+      for (var i = 0; i < this.typeValue.length; i++) {
+        let ajax = this.$ajax({
+          method: 'post',
+          url: '/api/tel/getTelByCont',
+          data: {
+            project: project,
+            minbatch: minbatch,
+            maxbatch: maxbatch,
+            type: this.typeValue[i]
           }
-        }
-      });
+        });
+        (function (i) {
+          ajax.then(function (res) {
+            that.recordsFiltered += res.data.data;
+            let data = {};
+            data.project = project;
+            data.date = minbatch;
+            data.type = that.typeValue[i];
+            data.phone = res.data.data;
+            that.tableData.push(data);
+          });
+        })(i);
+      }
+      this.pageShow = true;
     },
     handleSizeChange (num) {
     },
     handleCurrentChange (val, num) {
       this.search(val - 1, 200);
     },
-    clickupdata () {
-      var url = `http://192.168.1.106/api/tel/exportTel?project=${this.projectValue}&maxbatch=${new Date(this.starTimeValue[1]).toLocaleDateString()}&minbatch=${new Date(this.starTimeValue[0]).toLocaleDateString()}&type=${this.typeValue}`;
-      location.href = url;
+    toggleSelection (rows) {
+      console.log(this.multipleSelection);
+      var v = '';
+      for (v of this.multipleSelection) {
+        var url = `http://192.168.1.106/api/tel/exportTel?project=${v.project}&maxbatch=${v.date}&minbatch=${v.date}&type=${v.type}`;
+        console.log(url);
+      }
+    },
+    handleSelectionChange (val) {
+      this.multipleSelection = val;
     }
   }
 };
@@ -226,17 +246,20 @@ export default {
   display: flex
   >div
     display: inline-block
-    width: 350px
+    width: 270px
     span
+      padding-top: 10px
+      vertical-align: top
       display: inline-block
-      width:120px
+      width:40px
 #btn
   padding-bottom: 30px
   text-align: left
   #btnWidth
     width: 120px
 #table
-  width: 70%   
-  .block
-    padding: 10px 0   
+  width: 70%
+#tablePage
+  padding-top: 10px
+  margin-top: 20px
 </style>

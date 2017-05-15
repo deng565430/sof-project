@@ -14,9 +14,7 @@ import ClientManagement from '@/components/index/client-management/body';
 import PhoneList from '@/components/index/phone-manage/phoneList';
 import OrderIndex from '@/components/index/client-order/OrderIndex';
 import EstateOrder from '@/components/index/client-order/orders/estateOrder';
-import Changeorder from '@/components/index/client-order/orders/changeorder';
 import Dingyue from '@/components/index/client-order/dingyue';
-import Dinging from '@/components/index/client-order/dinging';
 import Historyding from '@/components/index/client-order/historyding';
 import Newzhi from '@/components/index/client-order/zhixing/new';
 import Addzhi from '@/components/index/client-order/zhixing/add';
@@ -43,37 +41,31 @@ const router = new Router({
     name: 'body',
     component: ClientOrder,
     children: [{
-      path: 'orderIndex',
+      path: '/client/orderIndex',
       component: OrderIndex,
     }, {
-      path: 'estateOrder',
+      path: '/client/orderIndex/estateOrder',
       component: EstateOrder,
     }, {
-      path: 'dingyue',
+      path: '/client/dingyue',
       component: Dingyue,
     }, {
-      path: 'dinging',
-      component: Dinging,
-    }, {
-      path: 'historyding',
+      path: '/client/historyding',
       component: Historyding,
     }, {
-      path: 'Newzhi',
+      path: '/client/Newzhi',
       component: Newzhi,
     }, {
-      path: 'Addzhi',
+      path: '/client/Addzhi',
       component: Addzhi,
-    },{
-      path: 'Changeorder',
-      component: Changeorder, 
     }]
   }, {
-      path: '/phone',
-      name: 'phoneManage',
-      component: PhoneManage,
-      children: [{
-        path: 'phoneList',
-        component: PhoneList,
+    path: '/phone',
+    name: 'phoneManage',
+    component: PhoneManage,
+    children: [{
+      path: 'phoneList',
+      component: PhoneList,
     }]
   }, {
     path: '/management',
