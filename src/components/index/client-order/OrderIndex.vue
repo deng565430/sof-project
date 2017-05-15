@@ -4,7 +4,7 @@
       <div class="title"><span>选择行业</span></div>
       <ul class="select">
           <li ><router-link to="/client/estateOrder">房地产</router-link></li>
-          <li>医美</li>
+          <li><router-link :to="{path:value.url}">{{value.val}}</router-link></li>
       </ul>
     </div>
     <div >
@@ -16,11 +16,31 @@
 export default {
   data () {
     return {
-      dialogform: false
+      dialogform: false,
+      value: [{
+        url: '',
+        val: ''
+      }]
     };
   },
+  created () {
+    // 组件创建完后获取数据，
+    // 此时 data 已经被 observed 了
+    this.loading();
+  },
   methods: {
-    doThis () {
+    loading () {
+      var _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/industry/getindustryList'
+      }).then(function (res) {
+        if (res.status === 200) {
+          console.log(res.data.data);
+          _this.value.val = res.data.data[1].name;
+          console.log(_this.value.val);
+        }
+      });
     }
   }
 };
