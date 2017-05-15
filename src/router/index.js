@@ -42,13 +42,14 @@ const router = new Router({
     path: '/client',
     name: 'body',
     component: ClientOrder,
-  }, {
-      path: '/client/orderIndex',
+    children: [{
+      path: 'orderIndex',
       component: OrderIndex,
-    }, {
+    } ,{
       path: '/client/orderIndex/estateOrder',
       component: EstateOrder,
-    }, {
+    }]
+  }, {
       path: '/client/orderIndex/Changeorder',
       component: Changeorder, 
     }, {
