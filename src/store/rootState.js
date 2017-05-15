@@ -4,7 +4,12 @@ const state = {
     dialogForm: false,
     isLogin: false,
     userName: '',
-    numb: 10086,
+    searchValue: {
+        project: '',
+        type: '',
+        minbatch: '',
+        maxbatch: ''
+    },
     data: [{
         name: '餐厅'
     }, {

@@ -1,15 +1,14 @@
 <template>
   <div id="header">
-     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-      <el-menu-item index="1"><router-link class="itemWdith" to="/">SOF</router-link></el-menu-item>
-      <el-menu-item index="2"><router-link class="itemWdith" to="/index">主页</router-link></el-menu-item>
-      <el-menu-item index="3"><router-link class="itemWdith" to="/client">客户下单系统</router-link></el-menu-item>
-      <el-menu-item index="4"><router-link class="itemWdith" to="/phone">电话管理</router-link></el-menu-item>
-      <el-menu-item index="5"><router-link class="itemWdith" to="/analysis">分析报告</router-link></el-menu-item>
-      <el-menu-item index="6"><router-link class="itemWdith" to="/management">客户管理</router-link></el-menu-item>
+     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect" router="true">
+      <el-menu-item index="/index"><router-link class="itemWdith" to="">上富科技</router-link></el-menu-item>
+      <el-menu-item index="/client"><router-link class="itemWdith" to="">客户下单系统</router-link></el-menu-item>
+      <el-menu-item index="/phone"><router-link class="itemWdith" to="">电话管理</router-link></el-menu-item>
+      <el-menu-item index="/analysis"><router-link class="itemWdith" to="">分析报告</router-link></el-menu-item>
+      <el-menu-item index="/management"><router-link class="itemWdith" to="">客户管理</router-link></el-menu-item>
       <el-menu-item index="7"><a href="javascript:;"  target="_blank" @click="submitForm">客户管理</a></el-menu-item>
-      <el-menu-item index="8" v-if="isLogin.msg" @click="admin" style="float:right">欢迎你：{{isLogin.name}}</el-menu-item>
-      <el-menu-item index="9"  v-else style="float:right" @click="login"><router-link to="">登录</router-link></el-menu-item>
+      <el-menu-item v-if="isLogin.msg" @click="admin" style="float:right">欢迎你：{{isLogin.name}}</el-menu-item>
+      <el-menu-item v-else style="float:right" @click="login"><router-link to="">登录</router-link></el-menu-item>
     </el-menu>
     <com-login></com-login>
     <div class="line"></div>
