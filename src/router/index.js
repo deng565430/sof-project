@@ -42,54 +42,21 @@ const router = new Router({
     path: '/client',
     name: 'body',
     component: ClientOrder,
-    children: [{
+  }, {
       path: '/client/orderIndex',
       component: OrderIndex,
     }, {
       path: '/client/orderIndex/estateOrder',
       component: EstateOrder,
     }, {
-<<<<<<< HEAD
-        path: '/client',
-        name: 'body',
-        component: ClientOrder,
-        children: [
-        {
-          path: '/client/orderIndex',
-          component: OrderIndex,
-          },
-        {
-          path: '/client/orderIndex/estateOrder',
-          component: EstateOrder, 
-          },
-        {
-          path: '/client/orderIndex/Changeorder',
-          component: Changeorder, 
-          },
-        {
-          path: '/client/dingyue',
-          component: Dingyue,
-          },
-          {
-          path: '/client/dinging',
-          component: Dinging,
-          }, 
-          {
-          path: '/client/historyding',
-          component: Historyding,
-          }, 
-          {
-          path: '/client/Newzhi',
-          component: Newzhi,
-          }, 
-          {
-          path: '/client/Addzhi',
-          component: Addzhi,
-          }]
-=======
+      path: '/client/orderIndex/Changeorder',
+      component: Changeorder, 
+    }, {
       path: '/client/dingyue',
       component: Dingyue,
->>>>>>> 0ed398960bee64d5be4860030765c0ab8b324f15
+    }, {
+      path: '/client/dinging',
+      component: Dinging,
     }, {
       path: '/client/historyding',
       component: Historyding,
@@ -99,14 +66,13 @@ const router = new Router({
     }, {
       path: '/client/Addzhi',
       component: Addzhi,
-    }]
-  }, {
-    path: '/phone',
-    name: 'phoneManage',
-    component: PhoneManage,
-    children: [{
-      path: 'phoneList',
-      component: PhoneList,
+    }, {
+      path: '/phone',
+      name: 'phoneManage',
+      component: PhoneManage,
+      children: [{
+        path: 'phoneList',
+        component: PhoneList,
     }]
   }, {
     path: '/management',
