@@ -3,7 +3,7 @@
     <div class="selectarea" >
       <div class="title"><span>选择行业</span></div>
       <ul class="select">
-          <li ><router-link to="/client/orderIndex/estateOrder">房地产</router-link></li>
+          <li ><router-link to="/client/estateOrder">房地产</router-link></li>
           <li>医美</li>
       </ul>
     </div>

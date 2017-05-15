@@ -34,7 +34,7 @@
       <el-table-column
         label="操作">
        <template scope="scope">
-        <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" >修改</el-button>
+        <el-button type="text" size="small" ><router-link to="/client/Changeorder">修改</router-link></el-button>
       </template>
       </el-table-column>
        <el-table-column
@@ -117,9 +117,6 @@ export default {
       console.log(`当前页: ${val}`);
       this.currentPage = val;
       this.loadData(this.currentPage, this.pageSize);
-    },
-    handleEdit (index, row) {
-      console.log(row);
     }
   }
 };

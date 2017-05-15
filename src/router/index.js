@@ -45,29 +45,29 @@ const router = new Router({
     children: [{
       path: 'orderIndex',
       component: OrderIndex,
-    } ,{
-      path: '/client/orderIndex/estateOrder',
-      component: EstateOrder,
-    }]
-  }, {
-      path: '/client/orderIndex/Changeorder',
-      component: Changeorder, 
     }, {
-      path: '/client/dingyue',
+      path: 'estateOrder',
+      component: EstateOrder,
+    }, {
+      path: 'dingyue',
       component: Dingyue,
     }, {
-      path: '/client/dinging',
+      path: 'dinging',
       component: Dinging,
     }, {
-      path: '/client/historyding',
+      path: 'historyding',
       component: Historyding,
     }, {
-      path: '/client/Newzhi',
+      path: 'Newzhi',
       component: Newzhi,
     }, {
-      path: '/client/Addzhi',
+      path: 'Addzhi',
       component: Addzhi,
-    }, {
+    },{
+      path: 'Changeorder',
+      component: Changeorder, 
+    }]
+  }, {
       path: '/phone',
       name: 'phoneManage',
       component: PhoneManage,
