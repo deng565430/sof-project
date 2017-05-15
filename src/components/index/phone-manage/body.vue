@@ -20,11 +20,13 @@ export default {
   data () {
     return {
       data: [
-        {'value': '电消系统', 'name': {'url': '/phone/phoneList', 'val': '电话清单'}, 'now': {'url': '/client/dingyue ', 'val': '正在订阅的'}, 'hoistory': {'url': '/client/historyding', 'val': '历史订阅'}},
-        {'value': '执行单', 'name': {'url': '/client/orderIndex', 'val': '下订单'}, 'now': {'url': '/client/orderIndex', 'val': '正在订阅的'}, 'hoistory': {'url': '/client/orderIndex', 'val': '历史订阅'}}
+        {'value': '电销系统', 'name': {'url': '/phone/phoneList', 'val': '电话清单'}, 'ing': {'url': '/phone/dinging ', 'val': '电话清单'}, 'now': {'url': '/phone/dingyue ', 'val': '进行中'}, 'hoistory': {'url': '/phone/historyding', 'val': '已完成'}},
+        {'value': '执行单', 'name': {'url': '/phone/orderIndex', 'val': '下订单'}, 'ing': {'url': '/client/dinging ', 'val': '未开始'}, 'now': {'url': '/phone/orderIndex', 'val': '正在订阅的'}, 'hoistory': {'url': '/phone/orderIndex', 'val': '历史订阅'}}
       ],
       flag: false
     };
+  },
+  created () {
   }
 };
 </script>

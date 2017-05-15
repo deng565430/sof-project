@@ -41,7 +41,7 @@
       <div id="btn">
         <div class="block">
           <span class="wrapper">
-            <el-button type="warning" id="btnWidth" @click="search(0)">搜索</el-button>
+            <el-button type="warning" id="btnWidth" @click="search(0,200)">搜索</el-button>
           </span>
         </div>
       </div>
@@ -72,20 +72,25 @@
             label="电话">
           </el-table-column>
         </el-table>
-        
-      </div>
-      <div>
         <div class="block" v-if="pageShow">
           <el-pagination
-            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page="currentPage4"
-            :page-sizes="[50, 100, 150, 200]"
-            :page-size="50"
-            layout="total, sizes, prev, pager, next, jumper"
+            :current-page="currentPage"
+            :page-sizes="[100, 200, 300, 400]"
+            :page-size="200"
             :total="recordsTotal">
           </el-pagination>
         </div>
+        <div  style="text-align: right">
+          <div class="block">
+            <span class="wrapper">
+              <el-button type="success" @click="clickupdata">点击下载</el-button>
+            </span>
+          </div>
+        </div>
+        
+      </div>
+      <div>
       </div>
     </div>
     <div >
@@ -133,11 +138,7 @@ export default {
       listShow: false,
       tableData: [],
       recordsFiltered: 0,
-      recordsTotal: 0,
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4,
+      currentPage: 1,
       pageShow: true
     };
   },
@@ -163,7 +164,7 @@ export default {
         }
       });
     },
-    search (val) {
+    search (val, num) {
       var datas = {};
       this.tableData = [];
       datas.project = this.projectValue;
@@ -171,7 +172,7 @@ export default {
       datas.minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
       datas.maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
       datas.start = val;
-      datas.length = 50;
+      datas.length = num;
       this.listShow = true;
       var that = this;
       this.$ajax({
@@ -181,8 +182,8 @@ export default {
       }).then(function (res) {
         console.log(res.data);
         if (res.data && res.data.data && res.data.data.length > 0) {
-          this.recordsFiltered = res.data.recordsFiltered;
-          this.recordsTotal = res.data.recordsTotal;
+          that.recordsFiltered = res.data.recordsFiltered;
+          that.recordsTotal = res.data.recordsTotal;
           that.pageShow = true;
           let list = res.data.data;
           for (var i = 0; i < list.length; i++) {
@@ -196,11 +197,14 @@ export default {
         }
       });
     },
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`);
+    handleSizeChange (num) {
     },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`);
+    handleCurrentChange (val, num) {
+      this.search(val - 1, 200);
+    },
+    clickupdata () {
+      var url = `http://192.168.1.106/api/tel/exportTel?project=${this.projectValue}&maxbatch=${new Date(this.starTimeValue[1]).toLocaleDateString()}&minbatch=${new Date(this.starTimeValue[0]).toLocaleDateString()}&type=${this.typeValue}`;
+      location.href = url;
     }
   }
 };
@@ -232,5 +236,7 @@ export default {
   #btnWidth
     width: 120px
 #table
-  width: 70%    
+  width: 70%   
+  .block
+    padding: 10px 0   
 </style>
