@@ -1,6 +1,6 @@
 <template>
 <div class="formcontain">
-		<div class="formtitle">订单</div>
+		<div class="formtitle">修改订单</div>
 		<el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px">
           <el-form-item label="公司名称" prop="cname">
             <el-input v-model="ruleForm.cname"></el-input>
@@ -28,7 +28,7 @@
 			    </el-col>
 			  </el-form-item>
 			   <el-form-item>
-			    <el-button ><router-link to="/client/orderIndex">取 消</router-link></el-button>
+			    <el-button ><router-link to="/client/dingyue">取 消</router-link></el-button>
 			    <el-button type="primary" :loading="false" @click="submitForm('ruleForm')">确 定</el-button>
 			  </el-form-item>
 		</el-form>
@@ -65,7 +65,32 @@ export default {
       formLabelWidth: '120px'
     };
   },
+  created () {
+    // 组件创建完后获取数据，
+    // 此时 data 已经被 observed 了
+    this.console();
+  },
   methods: {
+    console () {
+      let _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/brief/getBriefById?id=64'
+      }).then(function (res) {
+        if (res.status === 200) {
+          var obj = {};
+          console.log(res.data.data);
+          obj.cname = res.data.data.customName;
+          obj.name = res.data.data.proName;
+          obj.num = res.data.data.telneedNum;
+          obj.desc = res.data.data.project_description;
+          obj.value = res.data.data.startTime;
+          obj.value1 = res.data.data.endTime;
+          console.log(res.data.data.endTime);
+          _this.ruleForm = obj;
+        }
+      });
+    },
     submitForm (formName) {
       var b = {
         'demand_side': this.ruleForm.cname,
@@ -73,18 +98,19 @@ export default {
         'phone_demand': this.ruleForm.num,
         'project_description': this.ruleForm.desc,
         'start_date': new Date(this.ruleForm.value).toLocaleString().substr(0, 9),
-        'end_date': new Date(this.ruleForm.value1).toLocaleDateString()
+        'end_date': new Date(this.ruleForm.value1).toLocaleDateString(),
+        'id': 64
       };
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$ajax({
             method: 'post',
-            url: '/api/brief/addbrief',
+            url: '/api/brief/updateBrief',
             data: b
           }).then(function (res) {
             if (res.status === 200) {
               console.log(res);
-              window.location.href = 'http://localhost:8080/#/client/orderIndex ';
+              window.location.href = 'http://localhost:8080/#/client/dingyue ';
             }
           });
         } else {

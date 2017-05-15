@@ -3,7 +3,7 @@
 
   <el-dialog title="登录" :visible.sync="dialogVisible" size="tiny" :before-close="handleClose">
   <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-    <el-form-item label="用户名" prop="user">
+    <el-form-item label="用户名" prop="user" >
       <el-input v-model.number="ruleForm2.user"></el-input>
     </el-form-item>
     <el-form-item label="密码" prop="pass">
@@ -44,8 +44,8 @@ export default {
     return {
       dialogVisible: this.$store.state.dialogVisible,
       ruleForm2: {
-        user: '',
-        pass: ''
+        user: 'admin.sof',
+        pass: '123456'
       },
       rules2: {
         user: [

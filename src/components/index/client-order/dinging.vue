@@ -1,9 +1,9 @@
 <template>
 <div>
-  <div class="seleinput">
-    <el-input v-model="input" placeholder="项目名称"></el-input>
-    <el-button type="primary">搜索</el-button>
-  </div>
+	<div class="seleinput">
+		<el-input v-model="input" placeholder="项目名称"></el-input>
+		<el-button type="primary">搜索</el-button>
+	</div>
   <el-table
       :data="tableData"
       style="width: 100%;" align='center' @click="" >
@@ -32,14 +32,13 @@
         label="订阅结束时间">
       </el-table-column>
       <el-table-column
-        label="操作">
-       <template scope="scope">
-        <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" >修改</el-button>
-      </template>
+        prop="dec"
+        label="项目描述"
+        width="180">
       </el-table-column>
        <el-table-column
         prop="changetime"
-        label="修改时间">
+        label="下单日期">
       </el-table-column>
     </el-table>
     <el-pagination
@@ -57,7 +56,7 @@
 <script>
 export default {
 
-  name: 'dingyue',
+  name: 'pnoneManage',
 
   data () {
     return {
@@ -67,7 +66,9 @@ export default {
         phonenum: '',
         starttime: '',
         endtime: '',
-        changetime: ''
+        changetime: '',
+        dec: '',
+        id: ''
       }],
       input: '',
       loading: false,
@@ -84,15 +85,26 @@ export default {
     this.console();
   },
   methods: {
+    loadData (pageNum, pageSize) {
+      let _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/brief/getBriefListByStatus?status=0&start=0&length=' + _this.pageSize
+      }).then(function (res) {
+        if (res.status === 200) {
+          console.log(res.data.data.length);
+          _this.totalCount = res.data.data.length;
+        }
+      });
+    },
     console () {
       var data = [];
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=1&start=0&length=' + _this.pageSize
+        url: '/api/brief/getBriefListByStatus?status=0&start=0&length=' + _this.pageSize
       }).then(function (res) {
         if (res.status === 200) {
-          console.log(res.data.data);
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
             obj.compant = res.data.data[i].demand_side;
@@ -101,6 +113,7 @@ export default {
             obj.starttime = res.data.data[i].start_date;
             obj.endtime = res.data.data[i].end_date;
             obj.changetime = res.data.data[i].create_time;
+            obj.dec = res.data.data[i].project_description;
             data[i] = obj;
           };
           _this.tableData = data;
@@ -117,9 +130,6 @@ export default {
       console.log(`当前页: ${val}`);
       this.currentPage = val;
       this.loadData(this.currentPage, this.pageSize);
-    },
-    handleEdit (index, row) {
-      console.log(row);
     }
   }
 };
@@ -127,16 +137,12 @@ export default {
 
 <style lang="css" scoped>
 .seleinput{
-  margin-bottom: 30px
+	margin-bottom: 30px
 }
 .seleinput .el-input{
-  width: 200px !important;
+	width: 200px !important;
 }
 .el-table{
   margin-bottom: 20px;
-}
-.el-table a{
-  display: inline-block;
-  color: #2495d4
 }
 </style>

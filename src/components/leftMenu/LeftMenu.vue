@@ -5,8 +5,9 @@
         <template slot="title">{{value.value}}</template>
         <el-menu-item-group title="">
           <el-menu-item index="1-1"><router-link :to="{path:value.name.url}">{{value.name.val}}</router-link></el-menu-item>
-          <el-menu-item index="1-2"><router-link :to="{path:value.now.url}">{{value.now.val}}</router-link></el-menu-item>
-          <el-menu-item index="1-3"><router-link :to="{path:value.hoistory.url}">{{value.hoistory.val}}</router-link></el-menu-item>
+          <el-menu-item index="1-2"><router-link :to="{path:value.ing.url}">{{value.ing.val}}</router-link></el-menu-item>
+          <el-menu-item index="1-3"><router-link :to="{path:value.now.url}">{{value.now.val}}</router-link></el-menu-item>
+          <el-menu-item index="1-4"><router-link :to="{path:value.hoistory.url}">{{value.hoistory.val}}</router-link></el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>

@@ -13,7 +13,9 @@ import ClientManagement from '@/components/index/client-management/body';
 
 import OrderIndex from '@/components/index/client-order/OrderIndex';
 import EstateOrder from '@/components/index/client-order/orders/estateOrder';
+import Changeorder from '@/components/index/client-order/orders/changeorder';
 import Dingyue from '@/components/index/client-order/dingyue';
+import Dinging from '@/components/index/client-order/dinging';
 import Historyding from '@/components/index/client-order/historyding';
 import Newzhi from '@/components/index/client-order/zhixing/new';
 import Addzhi from '@/components/index/client-order/zhixing/add';
@@ -48,8 +50,16 @@ const router = new Router({
           component: EstateOrder, 
           },
         {
+          path: '/client/orderIndex/Changeorder',
+          component: Changeorder, 
+          },
+        {
           path: '/client/dingyue',
           component: Dingyue,
+          },
+          {
+          path: '/client/dinging',
+          component: Dinging,
           }, 
           {
           path: '/client/historyding',
