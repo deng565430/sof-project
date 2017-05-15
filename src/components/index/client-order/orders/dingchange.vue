@@ -28,7 +28,7 @@
 			    </el-col>
 			  </el-form-item>
 			   <el-form-item>
-			    <el-button ><router-link to="/client/dingyue">取 消</router-link></el-button>
+			    <el-button ><router-link to="/client/dinging">取 消</router-link></el-button>
 			    <el-button type="primary" :loading="false" @click="submitForm('ruleForm')">确 定</el-button>
 			  </el-form-item>
 		</el-form>
@@ -112,7 +112,7 @@ export default {
           }).then(function (res) {
             if (res.status === 200) {
               console.log(res);
-              window.location.href = 'http://localhost:8080/#/client/dingyue ';
+              window.location.href = 'http://localhost:8080/#/client/dinging ';
             }
           });
         } else {

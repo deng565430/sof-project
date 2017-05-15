@@ -17,10 +17,10 @@ export default {
   data () {
     return {
       dialogform: false,
-      value: [{
+      value: {
         url: '',
         val: ''
-      }]
+      }
     };
   },
   created () {

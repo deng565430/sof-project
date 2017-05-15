@@ -1,18 +1,18 @@
 <template>
 <div class="formcontain">
-		<div class="formtitle">修改订单</div>
-		<el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px">
+		<div class="formtitle">历史详情</div>
+		<el-form ref="ruleForm" :model="ruleForm"  label-width="80px">
           <el-form-item label="公司名称" prop="cname">
-            <el-input v-model="ruleForm.cname"></el-input>
+            <el-input :disabled="true" v-model="ruleForm.cname"></el-input>
           </el-form-item>
 			    <el-form-item label="项目名称" prop="name">
-				    <el-input v-model="ruleForm.name"></el-input>
+				    <el-input :disabled="true" v-model="ruleForm.name"></el-input>
 			    </el-form-item>
 			   <el-form-item label="项目描述" prop="desc">
-			    <el-input type="textarea" v-model="ruleForm.desc" placeholder="描述项目特点,范围及竞品"></el-input>
+			    <el-input :disabled="true" type="textarea" v-model="ruleForm.desc" placeholder="描述项目特点,范围及竞品"></el-input>
 			  </el-form-item>
 			   <el-form-item label="需求数量" prop="num">
-			    <el-input v-model="ruleForm.num" placeholder="每日电话需求量"></el-input>
+			    <el-input :disabled="true" v-model="ruleForm.num" placeholder="每日电话需求量"></el-input>
 			  </el-form-item>
 			  <el-form-item label="订阅周期" required>
 			    <el-col :span="11">
@@ -47,20 +47,6 @@ export default {
         desc: '',
         value: '',
         value1: ''
-      },
-      rules: {
-        cname: [
-          { required: true, message: '请输入公司名称', trigger: 'blur' }
-        ],
-        name: [
-          { required: true, message: '请输入项目名称', trigger: 'blur' }
-        ],
-        desc: [
-          { required: true, message: '请输入项目描述', trigger: 'blur' }
-        ],
-        num: [
-          { required: true, message: '请输入需求数量', trigger: 'change' }
-        ]
       },
       formLabelWidth: '120px'
     };
@@ -112,7 +98,7 @@ export default {
           }).then(function (res) {
             if (res.status === 200) {
               console.log(res);
-              window.location.href = 'http://localhost:8080/#/client/dingyue ';
+              window.location.href = 'http://localhost:8080/#/client/historyding ';
             }
           });
         } else {
