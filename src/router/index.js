@@ -14,13 +14,17 @@ import ClientManagement from '@/components/index/client-management/body';
 import PhoneList from '@/components/index/phone-manage/phoneList';
 import OrderIndex from '@/components/index/client-order/OrderIndex';
 import EstateOrder from '@/components/index/client-order/orders/estateOrder';
+import Clinic from '@/components/index/client-order/orders/yimeiorder';
 import Changeorder from '@/components/index/client-order/orders/Changeorder';
 import Chakanhistory from '@/components/index/client-order/orders/chakanhistory';
 import Dingchange from '@/components/index/client-order/orders/dingchange';
 import Dingyue from '@/components/index/client-order/dingyue';
 import Historyding from '@/components/index/client-order/historyding';
+import Dinging from '@/components/index/client-order/dinging';
 import Newzhi from '@/components/index/client-order/zhixing/new';
 import Addzhi from '@/components/index/client-order/zhixing/add';
+import Zhichange from '@/components/index/client-order/zhixing/zhichange';
+import Campaigning from '@/components/index/client-order/zhixing/campaigning';
 
 /*const Index = r => require.ensure([], () => r(require('@/components/index/index')), 'index');
 const ClientOrder = r => require.ensure([], () => r(require('@/components/index/client-order/body')), 'body');*/
@@ -66,12 +70,24 @@ const router = new Router({
       path: '/client/historyding',
       component: Historyding,
     }, {
+      path: '/client/dinging',
+      component: Dinging,
+    }, {
       path: '/client/Newzhi',
       component: Newzhi,
     }, {
       path: '/client/Addzhi',
       component: Addzhi,
-    }]
+    }, {
+      path: '/client/Campaigning',
+      component: Campaigning,
+    }, {
+      path: '/client/Campaignchange',
+      component: Zhichange,
+    }, {
+      path: '/client/Clinic',
+      component: Clinic,
+    },]
   }, {
     path: '/phone',
     name: 'phoneManage',

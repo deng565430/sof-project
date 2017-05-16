@@ -4,7 +4,7 @@
       <div class="title"><span>选择行业</span></div>
       <ul class="select">
           <li ><router-link to="/client/estateOrder">房地产</router-link></li>
-          <li><router-link :to="{path:value.url}">{{value.val}}</router-link></li>
+          <li><router-link to="/client/Clinic">{{value.val}}</router-link></li>
       </ul>
     </div>
     <div >

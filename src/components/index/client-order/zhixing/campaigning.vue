@@ -30,10 +30,8 @@
       </template>
       </el-table-column>
        <el-table-column
-        label="上传">
-       <template scope="scope">
-        <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
-      </template>
+        prop="changetime"
+        label="修改时间">
       </el-table-column>
     </el-table>
     <el-pagination
@@ -98,7 +96,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getNewCampaign?start=0&length=' + _this.pageSize
+        url: '/api/CampaignUpload/getCampaign?start=0&length=' + _this.pageSize
       }).then(function (res) {
         if (res.status === 200) {
           _this.totalCount = res.data.data.length;
@@ -111,7 +109,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getNewCampaign?start=0&length=' + _this.pageSize
+        url: '/api/CampaignUpload/getCampaign?start=0&length=' + _this.pageSize
       }).then(function (res) {
         console.log(res);
         if (res.status === 200) {
@@ -145,9 +143,6 @@ export default {
       this.loadData(this.currentPage, this.pageSize);
     },
     handleEdit (index, row) {
-      window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
-    },
-    handleUp (index, row) {
       window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
     },
     search () {
