@@ -1,0 +1,148 @@
+<template>
+<div class="formcontain">
+		<div class="formtitle">医美订单</div>
+		<el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px">
+          <el-form-item label="公司名称" prop="cname">
+            <el-input v-model="ruleForm.cname"></el-input>
+          </el-form-item>
+			    <el-form-item label="项目名称" prop="name">
+				    <el-input v-model="ruleForm.name"></el-input>
+			    </el-form-item>
+			    <el-form-item label="人群选择">
+            <el-radio-group v-model="ruleForm.resource">
+              <el-radio label="线上人群"></el-radio>
+              <el-radio label="线下人群"></el-radio>
+            </el-radio-group>
+          </el-form-item>
+			   <el-form-item label="需求数量" prop="num">
+			    <el-input v-model="ruleForm.num" placeholder="每日电话需求量"></el-input>
+			  </el-form-item>
+			  <el-form-item label="订阅周期" required>
+			    <el-col :span="11">
+			      <el-form-item prop="date1">
+			        <el-date-picker format type="date" placeholder="起始日期" v-model="ruleForm.value" style="width: 100%;"></el-date-picker>
+			      </el-form-item>
+			    </el-col>
+			    <el-col class="line" :span="2">-</el-col>
+			    <el-col :span="11">
+			       <el-form-item prop="date2">
+			        <el-date-picker format type="date" placeholder="起始日期" v-model="ruleForm.value1" style="width: 100%;"></el-date-picker>
+			      </el-form-item>
+			    </el-col>
+			  </el-form-item>
+			   <el-form-item>
+			    <el-button ><router-link to="/client/orderIndex">取 消</router-link></el-button>
+			    <el-button type="primary" :loading="false" @click="submitForm('ruleForm')">确 定</el-button>
+			  </el-form-item>
+		</el-form>
+</div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      loading: false,
+      ruleForm: {
+        cname: '',
+        name: '',
+        num: '',
+        resource: '',
+        value: '',
+        value1: ''
+      },
+      rules: {
+        cname: [
+          { required: true, message: '请输入公司名称', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请输入项目名称', trigger: 'blur' }
+        ],
+        desc: [
+          { required: true, message: '请输入项目描述', trigger: 'blur' }
+        ],
+        num: [
+          { required: true, message: '请输入需求数量', trigger: 'change' }
+        ]
+      },
+      formLabelWidth: '120px'
+    };
+  },
+  methods: {
+    submitForm (formName) {
+      var b = {
+        'demand_side': this.ruleForm.cname,
+        'project_name': this.ruleForm.name,
+        'phone_demand': this.ruleForm.num,
+        'project_description': this.ruleForm.desc,
+        'start_date': new Date(this.ruleForm.value).toLocaleString().substr(0, 9),
+        'end_date': new Date(this.ruleForm.value1).toLocaleDateString()
+      };
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$ajax({
+            method: 'post',
+            url: '/api/brief/addbrief',
+            data: b
+          }).then(function (res) {
+            if (res.status === 200) {
+              console.log(res);
+              window.location.href = 'http://localhost:8080/#/client/orderIndex ';
+            }
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    }
+  }
+};
+</script>
+
+<style lang="css" scoped>
+.formcontain{
+	width:400px;
+	margin: 0 auto
+}
+.formcontain a{
+    display: inline-block;
+    color: #fff
+}
+.addmore{
+	position: absolute;
+	top: 0;
+	right: -100px
+}
+.dataselect{
+	width:80%;
+}
+.tip{
+	height: 100px;
+	width: 400px;
+	border: 1px dashed #ccc;
+	font-size: 14px;
+	padding: 10px;
+	box-sizing:border-box;
+}
+.formtitle{
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 20px;
+	font-family:"PingFang SC";
+}
+.caozuo button:nth-child(2){
+	background: #ccc;
+	border: 1px solid #ccc
+}
+.caozuo button a{
+	color: #fff;
+	display: inline-block;
+}
+.el-button--default a{
+	color: #ccc
+}
+.el-button--default a:hover{
+	color: #20a0ff
+}
+</style>
