@@ -14,12 +14,9 @@ import ClientManagement from '@/components/index/client-management/body';
 import PhoneList from '@/components/index/phone-manage/phoneList';
 import OrderIndex from '@/components/index/client-order/OrderIndex';
 import EstateOrder from '@/components/index/client-order/orders/estateOrder';
-<<<<<<< HEAD
 import Changeorder from '@/components/index/client-order/orders/Changeorder';
 import Chakanhistory from '@/components/index/client-order/orders/chakanhistory';
 import Dingchange from '@/components/index/client-order/orders/dingchange';
-=======
->>>>>>> 57eb07f38d2dfb719b9ac7f1ef073bde7dd43206
 import Dingyue from '@/components/index/client-order/dingyue';
 import Historyding from '@/components/index/client-order/historyding';
 import Newzhi from '@/components/index/client-order/zhixing/new';
@@ -50,7 +47,6 @@ const router = new Router({
       path: '/client/orderIndex',
       component: OrderIndex,
     }, {
-<<<<<<< HEAD
       path: 'dingchange',
       component: Dingchange,
     }, {
@@ -61,12 +57,10 @@ const router = new Router({
       component: Chakanhistory,
     },{
       path: 'dingyue',
-=======
       path: '/client/orderIndex/estateOrder',
       component: EstateOrder,
     }, {
       path: '/client/dingyue',
->>>>>>> 57eb07f38d2dfb719b9ac7f1ef073bde7dd43206
       component: Dingyue,
     }, {
       path: '/client/historyding',
