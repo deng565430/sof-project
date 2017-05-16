@@ -25,17 +25,6 @@
             </el-date-picker>
           </div>
         </div>
-        <div>
-          <span>类型:</span>
-          <el-select v-model="typeValue" multiple placeholder="请选择项目类型">
-          <el-option
-            v-for="item in typeOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        </div>
       </div>
       <div id="btn">
         <div class="block">
@@ -48,44 +37,55 @@
         <el-table
           ref="multipleTable"
           :data="tableData"
-          border
-          stripe
+          :row-key="getRowKeys"
+          :expand-row-keys="expands"
           empty-text="正在获取。。。"
-          max-height=300
+          max-height=450
           tooltip-effect="dark"
-          style="width: 100%"
-          @selection-change="handleSelectionChange">
+          style="width: 100%;"
+          @expand="toggleRowSelection" >
+          <el-table-column type="expand">
+            <template scope="props">
+              <el-form label-position="left" inline class="">
+              <el-form-item v-for="item in props.row.types" label="类型">
+                <span>{{item.type}} 总数：{{item.count}}</span>
+              </el-form-item>
+            </el-form>
+            </template>
+          </el-table-column>
           <el-table-column
             type="selection"
             width="55">
           </el-table-column>
-          <el-table-column
+          <el-table-column 
             prop="project"
             label="名称"
-            width="120">
-            <template scope="scope">{{ scope.row.project }}</template>
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
-            prop="date"
+            prop="batch"
             label="批次"
-            width="120">
+            show-overflow-tooltip>
+            <template scope="scope">{{ scope.row.batch }}</template>
           </el-table-column>
           <el-table-column
             prop="type"
             label="类型"
             show-overflow-tooltip>
+          <template scope="scope">所有类型</template>
           </el-table-column>
           <el-table-column
             prop="phone"
             label="总量"
             show-overflow-tooltip>
+            <template scope="scope">{{ scope.row.phone }}</template>
           </el-table-column>
         </el-table>
         <div class="block" id="tablePage" v-if="pageShow">
           <span class="wrapper">
-            <el-button @click="toggleSelection(tableData)" type="danger">取消选择</el-button>
+            <el-button @click="toggleSelection()" type="danger">取消选择</el-button>
           </span>
-          <span v-if="recordsFiltered!=0">电话总量有：{{recordsFiltered}} 条 </span>
+          <span v-if="recordsFiltered!=0">电话总量：{{recordsFiltered}} 条 </span>
           <el-pagination style="display: inline-block; vertical-align: top"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
@@ -93,7 +93,7 @@
             :total="tableData.length">
           </el-pagination>
           <span class="wrapper">
-              <el-button type="success" @click="toggleSelection(tableData)">点击下载</el-button>
+              <el-button type="success" @click="update(tableData)">导出电话</el-button>
             </span>
         </div>
         <div  style="text-align: right">
@@ -150,22 +150,33 @@ export default {
       searchValue: {},
       listShow: true,
       tableData: [],
+      inTableData: [],
       recordsFiltered: 0,
       currentPage: 1,
-      pageShow: false
+      pageShow: true,
+      pullDownDate: [],
+      getRowKeys (row) {
+        return row;
+      },
+      expands: []
     };
   },
+  mounted () {
+    this.expands.push(this.tableData[1].project);
+    console.log(this.expands);
+  },
   created () {
-    this.getData('/api/tel/getALLproject', '', this.projectOptions);
-    this.getData('/api/tel/getALLtype', '', this.typeOptions);
+    this.getProject('/api/tel/getALLproject', '', this.projectOptions);
+    this.getData('/api/tel/getTelCountByCondition', {project: null, minbatch: null, maxbatch: null}, this.tableData);
   },
   methods: {
-    getData (url, data, val) {
+    getProject (url, list, val) {
       this.$ajax({
         method: 'post',
         url: url,
-        data: data
+        data: list
       }).then((res) => {
+        console.log(res);
         if (res.data && res.data.data && res.data.data.length > 0) {
           let list = res.data.data;
           for (var i = 0; i < list.length; i++) {
@@ -177,54 +188,110 @@ export default {
         }
       });
     },
+    getData (url, list, val) {
+      let that = this;
+      this.$ajax({
+        method: 'post',
+        url: url,
+        data: list
+      }).then((res) => {
+        console.log(res);
+        if (res.data && res.data.data && res.data.data.length > 0) {
+          let list = res.data.data;
+          let v = '';
+          for (v of list) {
+            that.recordsFiltered += v.count;
+            let d = {};
+            d.project = v.project;
+            d.batch = v.batch;
+            d.phone = v.count;
+            d.type = v.type;
+            val.push(d);
+          }
+        }
+      });
+    },
     search (val, num) {
-      this.tableData = [];
+      this.tableData.length = [];
       this.recordsFiltered = 0;
       let project = this.projectValue;
       let minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
       let maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
       let that = this;
       this.listShow = true;
-      for (var i = 0; i < this.typeValue.length; i++) {
-        let ajax = this.$ajax({
-          method: 'post',
-          url: '/api/tel/getTelByCont',
-          data: {
-            project: project,
-            minbatch: minbatch,
-            maxbatch: maxbatch,
-            type: this.typeValue[i]
-          }
-        });
-        (function (i) {
-          ajax.then(function (res) {
-            that.recordsFiltered += res.data.data;
+      this.$ajax({
+        method: 'post',
+        url: '/api/tel/getTelCountByCondition',
+        data: {
+          project: project,
+          minbatch: minbatch,
+          maxbatch: maxbatch
+        }
+      }).then(function (res) {
+        console.log(res.data);
+        if (res.data.data) {
+          var v = '';
+          for (v of res.data.data) {
+            that.getData('/api/tel/getTypeCountByCondition', {project: project, maxbatch: v.batch}, that.pullDownDate);
+            that.recordsFiltered += v.count;
+            console.log(v);
             let data = {};
             data.project = project;
-            data.date = minbatch;
-            data.type = that.typeValue[i];
-            data.phone = res.data.data;
+            data.batch = v.batch;
+            data.type = that.typeOptions;
+            data.phone = v.count;
+            data.types = [];
             that.tableData.push(data);
-          });
-        })(i);
-      }
+          }
+        }
+      });
       this.pageShow = true;
+      console.log(this.tableData);
+      console.log(this.pullDownDate);
     },
-    handleSizeChange (num) {
-    },
+    pullDown (num) {},
     handleCurrentChange (val, num) {
       this.search(val - 1, 200);
     },
     toggleSelection (rows) {
-      console.log(this.multipleSelection);
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange (val) {
+      this.multipleSelection = val;
+    },
+    toggleRowSelection (rows) {
+      console.log(this.tableData);
+      this.$ajax({
+        method: 'post',
+        url: '/api/tel/getTypeCountByCondition',
+        data: {
+          project: rows.project,
+          maxbatch: rows.batch
+        }
+      }).then((res) => {
+        console.log(res.data.data);
+        let v = '';
+        for (v of res.data.data) {
+          let count = {};
+          count.type = v.type;
+          count.count = v.count;
+          rows.types.push(count);
+        }
+      });
+      console.log(rows);
+    },
+    update (rows) {
       var v = '';
       for (v of this.multipleSelection) {
         var url = `http://192.168.1.106/api/tel/exportTel?project=${v.project}&maxbatch=${v.date}&minbatch=${v.date}&type=${v.type}`;
         console.log(url);
       }
-    },
-    handleSelectionChange (val) {
-      this.multipleSelection = val;
     }
   }
 };
