@@ -12,12 +12,22 @@ import Analysis from '@/components/index/analysis/body';
 import ClientManagement from '@/components/index/client-management/body';
 
 import PhoneList from '@/components/index/phone-manage/phoneList';
+
 import OrderIndex from '@/components/index/client-order/OrderIndex';
-import EstateOrder from '@/components/index/client-order/orders/estateOrder';
 import Dingyue from '@/components/index/client-order/dingyue';
+import Dinging from '@/components/index/client-order/dinging';
 import Historyding from '@/components/index/client-order/historyding';
+
+import EstateOrder from '@/components/index/client-order/orders/estateOrder';
+import Chakanhistory from '@/components/index/client-order/orders/chakanhistory';
+import Changeorder from '@/components/index/client-order/orders/changeorder';
+import Yimeiorder from '@/components/index/client-order/orders/yimeiorder';
+import Dingchange from '@/components/index/client-order/orders/dingchange';
+
 import Newzhi from '@/components/index/client-order/zhixing/new';
 import Addzhi from '@/components/index/client-order/zhixing/add';
+import Campaigning from '@/components/index/client-order/zhixing/campaigning';
+import Zhichange from '@/components/index/client-order/zhixing/zhichange';
 
 /*const Index = r => require.ensure([], () => r(require('@/components/index/index')), 'index');
 const ClientOrder = r => require.ensure([], () => r(require('@/components/index/client-order/body')), 'body');*/
@@ -44,12 +54,15 @@ const router = new Router({
       path: '/client/orderIndex',
       component: OrderIndex,
     }, {
-      path: '/client/orderIndex/estateOrder',
+      path: '/client/estateOrder',
       component: EstateOrder,
     }, {
       path: '/client/dingyue',
       component: Dingyue,
     }, {
+      path: '/client/dinging',
+      component: Dinging,
+    },{
       path: '/client/historyding',
       component: Historyding,
     }, {
@@ -58,7 +71,25 @@ const router = new Router({
     }, {
       path: '/client/Addzhi',
       component: Addzhi,
-    }]
+    }, {
+      path: '/client/chakanhistory',
+      component: Chakanhistory,
+    }, {
+      path: '/client/changeorder',
+      component: Changeorder,
+    }, {
+      path: '/client/Clinic',
+      component: Yimeiorder,
+    }, {
+      path: '/client/dingchange',
+      component: Dingchange,
+    }, {
+      path: '/client/campaigning',
+      component: Campaigning,
+    }, {
+      path: '/client/Campaignchange',
+      component: Zhichange,
+    },]
   }, {
     path: '/phone',
     name: 'phoneManage',
