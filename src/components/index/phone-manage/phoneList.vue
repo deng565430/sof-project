@@ -37,20 +37,27 @@
         <el-table
           ref="multipleTable"
           :data="tableData"
-          :row-key="getRowKeys"
           :expand-row-keys="expands"
-          empty-text="正在获取。。。"
           max-height=450
           tooltip-effect="dark"
           style="width: 100%;"
+          @selection-change="handleSelectionChange"
           @expand="toggleRowSelection" >
           <el-table-column type="expand">
+
             <template scope="props">
-              <el-form label-position="left" inline class="">
-              <el-form-item v-for="item in props.row.types" label="类型">
-                <span>{{item.type}} 总数：{{item.count}}</span>
-              </el-form-item>
-            </el-form>
+            <el-table
+             :data="props.row.types"
+             style="width: 60%; margin-left:18%">
+             <el-table-column
+               prop="type"
+               label="类型">
+             </el-table-column>
+             <el-table-column
+               prop="count"
+               label="总数">
+             </el-table-column>
+            </el-table>
             </template>
           </el-table-column>
           <el-table-column
@@ -72,19 +79,30 @@
             prop="type"
             label="类型"
             show-overflow-tooltip>
-          <template scope="scope">所有类型</template>
+          <template scope="scope">
+            <el-select
+            v-model="scope.row.numAllType"
+            multiple
+            filterable
+            remote
+            placeholder="所有类型">
+            <el-option
+              v-for="item in scope.row.types"
+              :key="item.count"
+              :label="item.type"
+              :value="item.type">
+            </el-option>
+          </el-select>
+          </template>
           </el-table-column>
           <el-table-column
             prop="phone"
             label="总量"
             show-overflow-tooltip>
-            <template scope="scope">{{ scope.row.phone }}</template>
+            <template scope="scope" >{{ scope.row.phone }}</template>
           </el-table-column>
         </el-table>
         <div class="block" id="tablePage" v-if="pageShow">
-          <span class="wrapper">
-            <el-button @click="toggleSelection()" type="danger">取消选择</el-button>
-          </span>
           <span v-if="recordsFiltered!=0">电话总量：{{recordsFiltered}} 条 </span>
           <el-pagination style="display: inline-block; vertical-align: top"
             @current-change="handleCurrentChange"
@@ -93,8 +111,9 @@
             :total="tableData.length">
           </el-pagination>
           <span class="wrapper">
-              <el-button type="success" @click="update(tableData)">导出电话</el-button>
-            </span>
+            <el-button @click="toggleSelection()" type="danger">取消选择</el-button>
+            <el-button @click="update()" type="success">导出电话</el-button>
+          </span>
         </div>
         <div  style="text-align: right">
           <div class="block">
@@ -146,6 +165,7 @@ export default {
           }
         }]
       },
+      childMultipleSelection: '',
       starTimeValue: '',
       searchValue: {},
       listShow: true,
@@ -156,15 +176,12 @@ export default {
       pageShow: true,
       pullDownDate: [],
       getRowKeys (row) {
-        return row;
+        return row.porject;
       },
       expands: []
     };
   },
-  mounted () {
-    this.expands.push(this.tableData[1].project);
-    console.log(this.expands);
-  },
+  mounted () {},
   created () {
     this.getProject('/api/tel/getALLproject', '', this.projectOptions);
     this.getData('/api/tel/getTelCountByCondition', {project: null, minbatch: null, maxbatch: null}, this.tableData);
@@ -176,7 +193,6 @@ export default {
         url: url,
         data: list
       }).then((res) => {
-        console.log(res);
         if (res.data && res.data.data && res.data.data.length > 0) {
           let list = res.data.data;
           for (var i = 0; i < list.length; i++) {
@@ -195,7 +211,6 @@ export default {
         url: url,
         data: list
       }).then((res) => {
-        console.log(res);
         if (res.data && res.data.data && res.data.data.length > 0) {
           let list = res.data.data;
           let v = '';
@@ -206,17 +221,28 @@ export default {
             d.batch = v.batch;
             d.phone = v.count;
             d.type = v.type;
+            d.num = 0;
+            d.numAllType = '';
+            d.types = [];
             val.push(d);
           }
         }
       });
     },
     search (val, num) {
-      this.tableData.length = [];
       this.recordsFiltered = 0;
       let project = this.projectValue;
       let minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
       let maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
+      if (project == null || project === '') {
+        alert('请先选择项目');
+        return;
+      }
+      if (this.starTimeValue == null || this.starTimeValue === '') {
+        alert('请选择时间范围');
+        return;
+      }
+      this.tableData.length = [];
       let that = this;
       this.listShow = true;
       this.$ajax({
@@ -228,17 +254,17 @@ export default {
           maxbatch: maxbatch
         }
       }).then(function (res) {
-        console.log(res.data);
         if (res.data.data) {
           var v = '';
           for (v of res.data.data) {
             that.getData('/api/tel/getTypeCountByCondition', {project: project, maxbatch: v.batch}, that.pullDownDate);
             that.recordsFiltered += v.count;
-            console.log(v);
             let data = {};
             data.project = project;
             data.batch = v.batch;
-            data.type = that.typeOptions;
+            data.type = '';
+            data.num = 0;
+            data.numAllType = '';
             data.phone = v.count;
             data.types = [];
             that.tableData.push(data);
@@ -246,10 +272,7 @@ export default {
         }
       });
       this.pageShow = true;
-      console.log(this.tableData);
-      console.log(this.pullDownDate);
     },
-    pullDown (num) {},
     handleCurrentChange (val, num) {
       this.search(val - 1, 200);
     },
@@ -262,11 +285,44 @@ export default {
         this.$refs.multipleTable.clearSelection();
       }
     },
+    update (rows) {
+      if (!this.multipleSelection) {
+        alert('请先勾选');
+        return;
+      }
+      if (this.multipleSelection.length > 3) {
+        alert('选择项目不能超过三条');
+        return;
+      }
+      let v = '';
+      let project = [];
+      for (v of this.multipleSelection) {
+        let type = '';
+        if (v.numAllType.length) {
+          for (var i = 0; i < v.numAllType.length; i++) {
+            type += `${v.numAllType[i]},`;
+          }
+        } else {
+          type = 'all';
+        }
+        let data = {};
+        data.project = v.project;
+        data.maxbatch = v.batch;
+        data.type = type;
+        project.push(data);
+      }
+      project = encodeURIComponent(JSON.stringify(project));
+      let url = `http://192.168.1.106/api/tel/exportTel?project=${project}`;
+      window.location.href = url;
+    },
     handleSelectionChange (val) {
       this.multipleSelection = val;
     },
     toggleRowSelection (rows) {
-      console.log(this.tableData);
+      if (rows.types.length > 0) {
+        return;
+      }
+      rows.type = '';
       this.$ajax({
         method: 'post',
         url: '/api/tel/getTypeCountByCondition',
@@ -275,23 +331,16 @@ export default {
           maxbatch: rows.batch
         }
       }).then((res) => {
-        console.log(res.data.data);
         let v = '';
         for (v of res.data.data) {
+          rows.type += `${v.type} , `;
+          rows.num += Number(v.count);
           let count = {};
           count.type = v.type;
           count.count = v.count;
           rows.types.push(count);
         }
       });
-      console.log(rows);
-    },
-    update (rows) {
-      var v = '';
-      for (v of this.multipleSelection) {
-        var url = `http://192.168.1.106/api/tel/exportTel?project=${v.project}&maxbatch=${v.date}&minbatch=${v.date}&type=${v.type}`;
-        console.log(url);
-      }
     }
   }
 };
