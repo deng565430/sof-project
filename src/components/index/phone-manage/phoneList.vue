@@ -38,7 +38,6 @@
           ref="multipleTable"
           :data="tableData"
           :expand-row-keys="expands"
-          empty-text="正在获取。。。"
           max-height=450
           tooltip-effect="dark"
           style="width: 100%;"
@@ -58,7 +57,7 @@
                prop="count"
                label="总数">
              </el-table-column>
-                        </el-table>
+            </el-table>
             </template>
           </el-table-column>
           <el-table-column
@@ -231,11 +230,19 @@ export default {
       });
     },
     search (val, num) {
-      this.tableData.length = [];
       this.recordsFiltered = 0;
       let project = this.projectValue;
       let minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
       let maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
+      if (project == null || project === '') {
+        alert('请先选择项目');
+        return;
+      }
+      if (this.starTimeValue == null || this.starTimeValue === '') {
+        alert('请选择时间范围');
+        return;
+      }
+      this.tableData.length = [];
       let that = this;
       this.listShow = true;
       this.$ajax({
@@ -283,10 +290,14 @@ export default {
         alert('请先勾选');
         return;
       }
+      if (this.multipleSelection.length > 3) {
+        alert('选择项目不能超过三条');
+        return;
+      }
       let v = '';
-      let type = '';
       let project = [];
       for (v of this.multipleSelection) {
+        let type = '';
         if (v.numAllType.length) {
           for (var i = 0; i < v.numAllType.length; i++) {
             type += `${v.numAllType[i]},`;
@@ -296,29 +307,18 @@ export default {
         }
         let data = {};
         data.project = v.project;
-        data.batch = v.batch;
+        data.maxbatch = v.batch;
         data.type = type;
         project.push(data);
       }
       project = encodeURIComponent(JSON.stringify(project));
-      console.log(project);
       let url = `http://192.168.1.106/api/tel/exportTel?project=${project}`;
       window.location.href = url;
-      console.log(url);
     },
     handleSelectionChange (val) {
-      console.log(val);
-      let v = '';
-      for (v of val) {
-        console.log(v.type);
-      }
       this.multipleSelection = val;
-      if (this.multipleSelection.length) {
-      }
     },
     toggleRowSelection (rows) {
-      console.log(rows);
-
       if (rows.types.length > 0) {
         return;
       }
@@ -334,7 +334,6 @@ export default {
         let v = '';
         for (v of res.data.data) {
           rows.type += `${v.type} , `;
-          console.log(v.count);
           rows.num += Number(v.count);
           let count = {};
           count.type = v.type;
