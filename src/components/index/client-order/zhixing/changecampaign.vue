@@ -26,7 +26,7 @@
 			    <el-col class="line" :span="2">-</el-col>
 			    <el-col :span="11">
 			       <el-form-item prop="date2">
-			        <el-date-picker format type="date" placeholder="起始日期" v-model="ruleForm.value1" style="width: 100%;"></el-date-picker>
+			        <el-date-picker format type="date" placeholder="结束日期" v-model="ruleForm.value1" style="width: 100%;"></el-date-picker>
 			      </el-form-item>
 			    </el-col>
 			  </el-form-item>
@@ -40,15 +40,7 @@
               <el-checkbox v-for="type in wtypes"  :label="type" :key="type">{{type}}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <div>
-            <el-tag
-              v-for="tag in tags"
-              :closable="true"
-            >
-            {{tag}}
-            </el-tag>
-          </div>
-          <el-form-item label="项目竞品">
+          <el-form-item label="搜索竞品">
             <el-select v-model="campaign" filterable placeholder="请选择" width=100%>
               <el-option
                 v-for="item in options"
@@ -58,16 +50,24 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="项目竞品" >
+            <el-tag
+              v-for="tag in tags"
+              :closable="true"
+            >
+            {{tag}}
+            </el-tag>
+          </el-form-item>
           <el-form-item label="扩展方式">
               <el-checkbox-group v-model="region">
-                <el-checkbox label="按项目扩展" name="region"></el-checkbox>
-                <el-checkbox label="按区域扩展" name="region"></el-checkbox>
+                <el-checkbox label="按项目扩展" ></el-checkbox>
+                <el-checkbox label="按区域扩展"></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
           <el-form-item label="所需数据类型" label-width="100px">
               <el-checkbox-group v-model="numtype">
-                <el-checkbox label="浏览数据" name="numtype"></el-checkbox>
-                <el-checkbox label="搜索数据" name="numtype"></el-checkbox>
+                <el-checkbox label="浏览数据" ></el-checkbox>
+                <el-checkbox label="搜索数据" ></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
 			   <el-form-item>
@@ -119,7 +119,8 @@ export default {
         value: '',
         label: ''
       }],
-      tags: '',
+      briefid: '',
+      tags: [],
       areas: [],
       areatype: [],
       wtypes: [],
@@ -190,21 +191,48 @@ export default {
       });
     },
     console () {
-      let _this = this;
       var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
+      var datas = [];
+      var datas2 = [];
+      var datas3 = [];
+      var _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/brief/getBriefById?id=' + id
+        url: '/api/campaign/getCampaignInfo?id=' + id
       }).then(function (res) {
         if (res.status === 200) {
-          var obj = {};
-          obj.cname = res.data.data.customName;
-          obj.name = res.data.data.proName;
-          obj.num = res.data.data.telneedNum;
-          obj.desc = res.data.data.project_description;
-          obj.value = res.data.data.startTime;
-          obj.value1 = res.data.data.endTime;
-          _this.ruleForm = obj;
+          for (var i = 0; i < res.data.data.districts.length; i++) {
+            datas[i] = res.data.data.districts[i];
+          };
+          for (var s = 0; s < res.data.data.types.length; s++) {
+            datas2[s] = res.data.data.types[s];
+          };
+          for (var m = 0; m < res.data.data.projects.length; m++) {
+            datas3[m] = res.data.data.projects[m].data;
+          };
+          if (res.data.data.address_expand === true && res.data.data.floorname_expand === true) {
+            _this.region = ['按项目扩展', '按区域扩展'];
+          } else if (res.data.data.address_expand === true && res.data.data.floorname_expand === false) {
+            _this.region = ['按项目扩展'];
+          } else if (res.data.data.address_expand === false && res.data.data.floorname_expand === true) {
+            _this.region = ['按区域扩展'];
+          };
+          if (res.data.data.ad === true && res.data.data.kw === true) {
+            _this.numtype = ['浏览数据', '搜索数据'];
+          } else if (res.data.data.ad === true && res.data.data.kw === false) {
+            _this.numtype = ['浏览数据'];
+          } else if (res.data.data.ad === false && res.data.data.kw === true) {
+            _this.numtype = ['搜索数据'];
+          };
+          _this.areatype = datas;
+          _this.wtype = datas2;
+          _this.tags = datas3;
+          _this.ruleForm.cname = res.data.data.demand_side;
+          _this.ruleForm.name = res.data.data.project_name;
+          _this.ruleForm.num = res.data.data.phone_demand;
+          _this.ruleForm.value = res.data.data.start_date;
+          _this.ruleForm.value1 = res.data.data.end_date;
+          _this.briefid = res.data.data.briefid;
         }
       });
     },
@@ -216,16 +244,12 @@ export default {
       var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
       var floorname = this.region;
       var address = this.region;
-      var ad = this.numtype;
-      var kw = this.numtype;
       var code = this.ruleForm.kw;
       var keyword = this.ruleForm.ad;
       var zTitle = this.ruleForm.zTitle;
       var name = [];
       floorname = false;
       address = false;
-      ad = false;
-      kw = false;
       for (var i = 0; i < this.region.length; i++) {
         if (this.region[i] === '按项目扩展') {
           floorname = true;
@@ -237,13 +261,6 @@ export default {
         name[i] = this.campaign[i].id;
         return name;
       };
-      for (var s = 0; s < this.numtype.length; s++) {
-        if (this.numtype[s] === '浏览数据') {
-          ad = true;
-        } else if (this.numtype[s] === '搜索数据') {
-          kw = true;
-        }
-      };
       var data = {
         'address_expand': address,
         'floorname_expand': floorname,
@@ -251,17 +268,16 @@ export default {
         'competing': [this.campaign.id],
         'project_name': this.ruleForm.name,
         'types': this.wtype,
-        'briefid': id,
+        'briefid': this.briefid,
+        'id': id,
         'code': code,
-        'ad': ad,
-        'kw': kw,
         'keyword': keyword,
         'zTitle': zTitle
       };
       var _this = this;
       this.$ajax({
         method: 'post',
-        url: '/api/campaign/addCampaignRegularly',
+        url: '/api/campaign/updateCampaign',
         data: data
       }).then(function (res) {
         if (res.status === 200) {

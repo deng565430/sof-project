@@ -27,6 +27,9 @@ import Dingchange from '@/components/index/client-order/orders/dingchange';
 import Newzhi from '@/components/index/client-order/zhixing/new';
 import Addzhi from '@/components/index/client-order/zhixing/add';
 import Campaigning from '@/components/index/client-order/zhixing/campaigning';
+import Historycampaign from '@/components/index/client-order/zhixing/historycampaign';
+import Weizhi from '@/components/index/client-order/zhixing/weizhi';
+import Changecampaign from '@/components/index/client-order/zhixing/changecampaign';
 import Zhichange from '@/components/index/client-order/zhixing/zhichange';
 
 /*const Index = r => require.ensure([], () => r(require('@/components/index/index')), 'index');
@@ -87,9 +90,18 @@ const router = new Router({
       path: '/client/campaigning',
       component: Campaigning,
     }, {
+      path: '/client/historycampaign',
+      component: Historycampaign,
+    }, {
+      path: '/client/nocampaign',
+      component: Weizhi,
+    }, {
       path: '/client/Campaignchange',
       component: Zhichange,
-    },]
+    }, {
+      path: '/client/changecampaign',
+      component: Changecampaign,
+    }]
   }, {
     path: '/phone',
     name: 'phoneManage',

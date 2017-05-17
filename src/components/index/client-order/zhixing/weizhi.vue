@@ -98,7 +98,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getAllCampaign?Status=0&start=0&length=' + _this.pageSize
+        url: '/api/campaign/getAllCampaign?status=0&start=0&length=' + _this.pageSize
       }).then(function (res) {
         if (res.status === 200) {
           _this.totalCount = res.data.data.length;
@@ -111,7 +111,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getAllCampaign?Status=0&start=0&length=' + _this.pageSize
+        url: '/api/campaign/getAllCampaign?status=0&start=0&length=' + _this.pageSize
       }).then(function (res) {
         console.log(res);
         if (res.status === 200) {
@@ -145,7 +145,7 @@ export default {
       this.loadData(this.currentPage, this.pageSize);
     },
     handleEdit (index, row) {
-      window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
+      window.location.href = 'http://localhost:8080/#/client/changecampaign?id= ' + row.id;
     },
     handleUp (index, row) {
       window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
