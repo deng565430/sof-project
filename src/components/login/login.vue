@@ -93,7 +93,7 @@ export default {
               that.$store.state.userName = res.data.data[0].nickName;
               window.sessionStorage.username = res.data.data[0].nickName;
               this.$store.state.dialogVisible = false;
-            }
+            };
           });
           this.dialogVisible = this.$store.state.dialogVisible = !this.$store.state.dialogVisible;
         } else {

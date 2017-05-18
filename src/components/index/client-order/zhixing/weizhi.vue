@@ -33,6 +33,9 @@
         label="上传">
        <template scope="scope">
         <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
+        <span slot="tip" class="el-upload__tip">(只能上传txt文件)</span>
+</el-upload>
+       <input type="file" />
       </template>
       </el-table-column>
     </el-table>
@@ -148,7 +151,7 @@ export default {
       window.location.href = 'http://localhost:8080/#/client/changecampaign?id= ' + row.id;
     },
     handleUp (index, row) {
-      window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
+      console.log(row);
     },
     search () {
       var _this = this;

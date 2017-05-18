@@ -1,14 +1,19 @@
 <template>
 <div class="formcontain">
-		<div class="formtitle">执行订单</div>
+		<!-- <div class="formtitle">执行订单</div> -->
     <!-- <ul :model="ruleForm">
       <li ><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
       <li ><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
       <li ><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
       <li ><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
     </ul> -->
-		<el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2'>
-          <el-form-item label="公司名称" prop="cname">
+    <el-steps :space="200" :active="active" class='lines'>
+      <el-step title="基础信息" description=""></el-step>
+      <el-step title="数据规则" description=""></el-step>
+      <el-step title="生成执行单" description=""></el-step>
+    </el-steps>
+		<el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2' class="forms">
+          <!-- <el-form-item label="公司名称" prop="cname">
             <el-input v-model="ruleForm.cname"></el-input>
           </el-form-item>
           <el-form-item label="项目名称" prop="name">
@@ -29,8 +34,58 @@
 			        <el-date-picker format type="date" placeholder="起始日期" v-model="ruleForm.value1" style="width: 100%;"></el-date-picker>
 			      </el-form-item>
 			    </el-col>
-			  </el-form-item>
+			  </el-form-item> -->
+      <el-form class="demo-form-inline forms2">
         <el-form-item label="所属区域">
+            <el-select v-model="areatypes" filterable placeholder="请选择" class="area" @change="changes()" >
+              <el-option
+                v-for="item in areatypess"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select v-model="areatype2" filterable placeholder="请选择" class="area"   @change="change2()">
+              <el-option
+                v-for="item in shs"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <div class="tags">
+            <el-tag
+              v-for="tag in areatags"
+              :closable="true"
+              @close="handleClose(tag)"
+            >
+            {{tag}}
+            </el-tag>
+          </div>
+          </el-form-item>
+        </el-form>
+        <el-form class="demo-form-inline forms3"> 
+          <el-form-item label="物业类型">
+            <el-select v-model="wuyetypes" filterable placeholder="请选择" class="area" @change="change3()">
+              <el-option
+                v-for="item in wuye"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <div class="tags">
+            <el-tag
+              v-for="tag in wuyetages"
+              :closable="true"
+              @close="handleClose2(tag)"
+            >
+            {{tag}}
+            </el-tag>
+          </div>
+          </el-form-item>
+          </el-form>
+        <!-- <el-form-item label="所属区域">
             <el-checkbox-group v-model="areatype">
               <el-checkbox v-for="area in areas"  :label="area" :key="area">{{area}}</el-checkbox>
             </el-checkbox-group>
@@ -39,17 +94,19 @@
             <el-checkbox-group v-model="wtype">
               <el-checkbox v-for="type in wtypes"  :label="type" :key="type">{{type}}</el-checkbox>
             </el-checkbox-group>
-          </el-form-item>
-          <div>
+          </el-form-item> -->
+          <!-- <div>
             <el-tag
               v-for="tag in tags"
               :closable="true"
+              
             >
             {{tag}}
             </el-tag>
-          </div>
+          </div> -->
+        <!-- <el-form class="demo-form-inline forms2">
           <el-form-item label="项目竞品">
-            <el-select v-model="campaign" filterable placeholder="请选择" width=100%>
+            <el-select v-model="campaign" filterable placeholder="请选择" class="jing">
               <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -58,24 +115,52 @@
               </el-option>
             </el-select>
           </el-form-item>
+        </el-form> -->
+        <el-form class="demo-form-inline forms2">
+          <el-form-item label="项目竞品">
+            <el-autocomplete
+              id='state1.id'
+              class="inline-input"
+              v-model="state1"
+              :fetch-suggestions="querySearch"
+              placeholder="请输入内容"
+              @select="handleSelect"
+            ></el-autocomplete>
+            <div class="tags">
+            <el-tag
+              v-for="tag in competag"
+              :closable="true"
+              :key="tag.value"
+              :id="tag.id"
+              @close="handleClose3(tag)"
+            >
+            {{tag.value}}
+            </el-tag>
+          </div>
+          </el-form-item>
+        </el-form>
+        <el-form class="demo-form-inline forms2">
           <el-form-item label="扩展方式">
               <el-checkbox-group v-model="region">
                 <el-checkbox label="按项目扩展" name="region"></el-checkbox>
                 <el-checkbox label="按区域扩展" name="region"></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
+        </el-form>
+        <el-form class="demo-form-inline forms2">
           <el-form-item label="所需数据类型" label-width="100px">
               <el-checkbox-group v-model="numtype">
                 <el-checkbox label="浏览数据" name="numtype"></el-checkbox>
                 <el-checkbox label="搜索数据" name="numtype"></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
+          </el-form>
 			   <el-form-item>
 			    <el-button ><router-link to="/client/dinging">取 消</router-link></el-button>
-			    <el-button type="primary" :loading="false" @click="submitForm()">下一步</el-button>
+			    <el-button type="primary" :loading="false" @click="submitForm()" >下一步</el-button>
 			  </el-form-item>
     </el-form>
-		<el-form label-width="80px" v-show='show'>
+		<el-form label-width="80px" v-show='show' class="forms">
       <el-form-item label="文件名称" prop="zTitle">
             <el-input v-model="ruleForm.zTitle"></el-input>
           </el-form-item>
@@ -112,6 +197,7 @@ export default {
         ad: '',
         zTitle: ''
       },
+      active: 1,
       region: [],
       numtype: [],
       campaign: '',
@@ -119,11 +205,34 @@ export default {
         value: '',
         label: ''
       }],
+      areatypes: '',
+      areatypess: [{
+        value: '上海市',
+        label: ''
+      }],
+      areatype2: [],
+      shs: [{
+        value: '',
+        label: ''
+      }],
+      wuyetypes: [],
+      wuye: [{
+        value: '',
+        label: ''
+      }],
+      areatags: [],
+      wuyetages: [],
+      competag: [{
+        'value': '',
+        'id': ''
+      }],
       tags: '',
       areas: [],
       areatype: [],
       wtypes: [],
       wtype: [],
+      restaurants: [],
+      state1: '',
       rules: {
         cname: [
           { required: true, message: '请输入公司名称', trigger: 'blur' }
@@ -149,7 +258,11 @@ export default {
     this.onloda2();
   },
   methods: {
+    next () {
+      if (this.active++ > 2) this.active = 0;
+    },
     onloda2 () {
+      console.log(this.state1);
       var datas = [];
       var _this = this;
       this.$ajax({
@@ -211,6 +324,7 @@ export default {
     before () {
       this.show2 = true;
       this.show = false;
+      if (this.active-- < 0) this.active = 2;
     },
     submitForm2 () {
       var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
@@ -221,7 +335,7 @@ export default {
       var code = this.ruleForm.kw;
       var keyword = this.ruleForm.ad;
       var zTitle = this.ruleForm.zTitle;
-      var name = [];
+      var nameid = [];
       floorname = false;
       address = false;
       ad = false;
@@ -233,10 +347,9 @@ export default {
           address = true;
         }
       };
-      for (var m = 0; m < this.campaign.length; i++) {
-        name[i] = this.campaign[i].id;
-        return name;
-      };
+      for (var m = 0; m < this.competag.length; m++) {
+        nameid[m] = this.competag[m].id;
+      }
       for (var s = 0; s < this.numtype.length; s++) {
         if (this.numtype[s] === '浏览数据') {
           ad = true;
@@ -247,10 +360,10 @@ export default {
       var data = {
         'address_expand': address,
         'floorname_expand': floorname,
-        'districts': this.areatype,
-        'competing': [this.campaign.id],
+        'districts': this.areatags,
+        'competing': nameid,
         'project_name': this.ruleForm.name,
-        'types': this.wtype,
+        'types': this.wuyetages,
         'briefid': id,
         'code': code,
         'ad': ad,
@@ -267,6 +380,8 @@ export default {
         if (res.status === 200) {
           _this.show = true;
           _this.show2 = false;
+          if (_this.active++ > 2) this.active = 0;
+          window.location.href = 'http://localhost:8080/#/client/Newzhi';
           if (res.data.data.codes === null) {
             console.log('空');
           } else if (res.data.data.urls === null) {
@@ -276,14 +391,19 @@ export default {
       });
     },
     submitForm () {
+      var _this = this;
       var floorname = this.region;
       var address = this.region;
       var ad = this.numtype;
       var kw = this.numtype;
+      var nameid = [];
       floorname = false;
       address = false;
       ad = false;
       kw = false;
+      for (var m = 0; m < this.competag.length; m++) {
+        nameid[m] = this.competag[m].id;
+      }
       for (var i = 0; i < this.region.length; i++) {
         if (this.region[i] === '按项目扩展') {
           floorname = true;
@@ -303,12 +423,11 @@ export default {
         'address_expand': address,
         'floorname_expand': floorname,
         'kw': kw,
-        'district': this.areatype,
-        'name': [this.campaign.id],
+        'district': this.areatags,
+        'name': nameid,
         'project_name': this.ruleForm.name,
-        'type': this.wtype
+        'type': this.wuyetages
       };
-      var _this = this;
       this.$ajax({
         method: 'post',
         url: '/api/campaign/ToView2',
@@ -319,7 +438,7 @@ export default {
           _this.show2 = false;
           _this.ruleForm.kw = res.data.data.codes;
           _this.ruleForm.ad = res.data.data.urls;
-          console.log(_this.campaign.id);
+          if (_this.active++ > 2) this.active = 0;
           if (res.data.data.codes === null) {
             console.log('空');
           } else if (res.data.data.urls === null) {
@@ -327,15 +446,133 @@ export default {
           }
         }
       });
+    },
+    changes () {
+      var _this = this;
+      var data = [];
+      var datas = [];
+      this.$ajax({
+        method: 'get',
+        url: '/api/campaign/getTypeDistrict'
+      }).then(function (res) {
+        for (var i = 0; i < res.data.data.district.length; i++) {
+          var obj = {};
+          obj.value = res.data.data.district[i];
+          data[i] = obj;
+        };
+        for (var s = 0; s < res.data.data.types.length; s++) {
+          var objs = {};
+          objs.value = res.data.data.types[s];
+          datas[s] = objs;
+        };
+        _this.shs = data;
+        _this.wuye = datas;
+      });
+    },
+    change2 () {
+      var data = this.areatype2;
+      if (data !== '') {
+        this.areatags.push(data);
+      }
+    },
+    change3 () {
+      var data = this.wuyetypes;
+      if (data !== '') {
+        this.wuyetages.push(data);
+      }
+    },
+    handleClose (tag) {
+      this.areatags.splice(this.areatags.indexOf(tag), 1);
+    },
+    handleClose2 (tag) {
+      this.wuyetages.splice(this.wuyetages.indexOf(tag), 1);
+    },
+    querySearch (queryString, cb) {
+      var _this = this;
+      var restaurants = _this.restaurants;
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter (queryString) {
+      return (restaurant) => {
+        return (restaurant.value.indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    loadAll () {
+      var datas = [];
+      var _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/campaign/getProjectName'
+      }).then(function (res) {
+        if (res.status === 200) {
+          for (var i = 0; i < res.data.length; i++) {
+            var obj = {};
+            obj.value = res.data[i].data;
+            obj.id = res.data[i].id;
+            datas[i] = obj;
+          }
+          _this.restaurants = datas;
+          return _this.restaurants;
+        }
+      });
+    },
+    handleSelect (item) {
+      var data = item;
+      console.log(data);
+      if (data !== '') {
+        this.competag.push(data);
+      }
+    },
+    handleClose3 (tag) {
+      this.competag.splice(this.competag.indexOf(tag), 1);
     }
+  },
+  mounted () {
+    this.restaurants = this.loadAll();
   }
 };
 </script>
 
 <style lang="css" scoped>
 .formcontain{
-	width:400px;
+	width:100%;
 	margin: 0 auto
+}
+.forms{
+  width: 400px;
+  margin-left: 290px;
+}
+.forms2{
+  width: 280px;
+}
+.lines{
+  margin-bottom: 30px;
+}
+.forms3{
+  width: 178px;
+}
+.jing{width: 204px}
+.area{width: 99px}
+.el-tag{margin-right: 5px}
+.tags{
+  border: 1px solid #ccc;
+  min-width: 200px;
+  height: 34px;
+  margin-left: 77px;
+  border-radius: 5px;
+  position: absolute;
+  top: 0;
+  left: 220px;
+}
+.formcontain li{
+  margin-bottom: 10px;
+}
+.formcontain ul {
+  border: 1px dashed #ccc;
+  margin-bottom: 20px;
+  padding: 20px 0;
 }
 .formcontain a{
     display: inline-block;
@@ -376,8 +613,5 @@ export default {
 }
 .el-button--default a:hover{
 	color: #20a0ff
-}
-ul {
-  display: flex
 }
 </style>

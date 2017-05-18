@@ -248,8 +248,12 @@ export default {
       var keyword = this.ruleForm.ad;
       var zTitle = this.ruleForm.zTitle;
       var name = [];
+      var ad = this.numtype;
+      var kw = this.numtype;
       floorname = false;
       address = false;
+      ad = false;
+      kw = false;
       for (var i = 0; i < this.region.length; i++) {
         if (this.region[i] === '按项目扩展') {
           floorname = true;
@@ -261,6 +265,13 @@ export default {
         name[i] = this.campaign[i].id;
         return name;
       };
+      for (var s = 0; s < this.numtype.length; s++) {
+        if (this.numtype[s] === '浏览数据') {
+          ad = true;
+        } else if (this.numtype[s] === '搜索数据') {
+          kw = true;
+        }
+      };
       var data = {
         'address_expand': address,
         'floorname_expand': floorname,
@@ -270,6 +281,8 @@ export default {
         'types': this.wtype,
         'briefid': this.briefid,
         'id': id,
+        'ad': ad,
+        'kw': kw,
         'code': code,
         'keyword': keyword,
         'zTitle': zTitle
