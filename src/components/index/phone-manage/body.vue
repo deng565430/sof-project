@@ -20,7 +20,7 @@ export default {
   data () {
     return {
       data: [
-        {'value': '电销系统', 'name': {'url': '/phone/phoneList', 'val': '电话清单'}, 'ing': {'url': '/phone/dinging ', 'val': '电话清单'}, 'now': {'url': '/phone/dingyue ', 'val': '进行中'}, 'hoistory': {'url': '/phone/historyding', 'val': '已完成'}}
+        {'value': '电销系统', 'name': {'url': '/phone/phoneList', 'val': '电话清单'}, 'ing': {'url': '/phone/result ', 'val': '电话效果分析'}, 'now': {'url': '/phone/dingyue ', 'val': '进行中'}, 'hoistory': {'url': '/phone/historyding', 'val': '已完成'}}
       ],
       flag: false
     };
