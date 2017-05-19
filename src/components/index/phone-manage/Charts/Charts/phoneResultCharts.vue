@@ -1,9 +1,6 @@
 <template>
 <div>
-  <div id="phoneCharts" :style="{width: '800px', height: '500px'}"></div>
-  <div>
-    {{this.data.data.title.text}}
-  </div>
+  <div :id="id.id" :style="{width: '1000px', height: '500px'}"></div>
 </div>
 </template>
 
@@ -16,7 +13,8 @@ export default {
   data () {
     return {
       chart: null,
-      datas: this.data
+      datas: this.data,
+      projectTypes: this.projectType
     };
   },
   mounted () {
@@ -24,81 +22,135 @@ export default {
     require('echarts/lib/component/tooltip');
     require('echarts/lib/component/title');
     this.$nextTick(() => {
-      this.charts('phoneCharts', this.datas);
+      this.charts(this.id.id, this.projectType);
     });
   },
   watch: {
-    'datas': {
+    'projectType': {
       handler: function (val, oldValue) {
-        this.charts('phoneCharts', val);
+        console.log(val.projectType);
+        this.charts(this.id.id, val);
       },
       deep: true
     }
   },
-  created () {},
+  created () {
+    console.log(this.projectType);
+  },
   methods: {
     charts (id, data) {
       this.chart = echarts.init(document.getElementById(id));
-      var option = {
-        title: {
-          text: ''
-        },
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {}
-          }
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: [{
-          name: '邮件营销',
-          type: 'line',
-          stack: '总量',
-          data: [120, 132, 101, 134, 90, 230, 210]
-        }, {
-          name: '联盟广告',
-          type: 'line',
-          stack: '总量',
-          data: [220, 182, 191, 234, 290, 330, 310]
-        }, {
-          name: '视频广告',
-          type: 'line',
-          stack: '总量',
-          data: [150, 232, 201, 154, 190, 330, 410]
-        }, {
-          name: '直接访问',
-          type: 'line',
-          stack: '总量',
-          data: [320, 332, 301, 334, 390, 330, 320]
-        }, {
-          name: '搜索引擎',
-          type: 'line',
-          stack: '总量',
-          data: [820, 932, 901, 934, 1290, 1330, 1320]
-        }]
-      };
-      this.chart.setOption(option);
+      if (id === 'projectIntention') {
+        let v = '';
+        let xAxisData = [];
+        let totalData = [];
+        let seriesData = [];
+        for (v of data.projectType) {
+          xAxisData.push(v.batch);
+          totalData.push(v.total);
+          seriesData.push(v.intentionrate);
+        }
+        let titleText = data.projectType[0].project;
+        var option = {
+          title: {
+            text: titleText
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            data: ['总量', '意向率']
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            }
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: xAxisData
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [{
+            name: '总量',
+            type: 'bar',
+            data: totalData
+          }, {
+            name: '意向率',
+            type: 'line',
+            data: seriesData
+          }]
+        };
+        this.chart.setOption(option);
+      } else if (id === 'projectType') {
+        let v = '';
+        let xAxisData = [];
+        let totalData = [];
+        let seriesData = [];
+        let legendData = [];
+        let tooltipData = [];
+        for (v of data.projectType) {
+          xAxisData.push(v.batch);
+          totalData.push(v.total);
+          legendData.push(v.source);
+          seriesData.push(v.intentionrate);
+        }
+        tooltipData = new Set(legendData);
+        console.log(tooltipData);
+        let titleText = data.projectType[0].project;
+        var projectTypeOption = {
+          title: {
+            text: titleText
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            data: ['ad', 'uid']
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            }
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: xAxisData
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [{
+            name: 'ad',
+            type: 'bar',
+            data: totalData
+          }, {
+            name: 'uid',
+            type: 'line',
+            data: seriesData
+          }]
+        };
+        this.chart.setOption(projectTypeOption);
+      }
     }
   },
-  props: ['data'],
+  props: ['id', 'projectType'],
   ready () {}
 };
 </script>
