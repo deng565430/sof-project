@@ -12,6 +12,7 @@ import Analysis from '@/components/index/analysis/body';
 import ClientManagement from '@/components/index/client-management/body';
 
 import PhoneList from '@/components/index/phone-manage/phoneList';
+import PhoneResult from '@/components/index/phone-manage/phoneResult';
 
 import OrderIndex from '@/components/index/client-order/OrderIndex';
 import Dingyue from '@/components/index/client-order/dingyue';
@@ -109,6 +110,9 @@ const router = new Router({
     children: [{
       path: 'phoneList',
       component: PhoneList,
+    }, {
+      path: 'result',
+      component: PhoneResult,
     }]
   }, {
     path: '/management',
