@@ -22,7 +22,6 @@ import Historyding from '@/components/index/client-order/historyding';
 import EstateOrder from '@/components/index/client-order/orders/estateOrder';
 import Chakanhistory from '@/components/index/client-order/orders/chakanhistory';
 import Changeorder from '@/components/index/client-order/orders/changeorder';
-import Yimeiorder from '@/components/index/client-order/orders/yimeiorder';
 import Dingchange from '@/components/index/client-order/orders/dingchange';
 
 import Newzhi from '@/components/index/client-order/zhixing/new';
@@ -32,6 +31,8 @@ import Historycampaign from '@/components/index/client-order/zhixing/historycamp
 import Weizhi from '@/components/index/client-order/zhixing/weizhi';
 import Changecampaign from '@/components/index/client-order/zhixing/changecampaign';
 import Zhichange from '@/components/index/client-order/zhixing/zhichange';
+import Yimeicampaign from '@/components/index/client-order/zhixing/yimeicampaign';
+
 
 /*const Index = r => require.ensure([], () => r(require('@/components/index/index')), 'index');
 const ClientOrder = r => require.ensure([], () => r(require('@/components/index/client-order/body')), 'body');*/
@@ -82,9 +83,6 @@ const router = new Router({
       path: '/client/changeorder',
       component: Changeorder,
     }, {
-      path: '/client/Clinic',
-      component: Yimeiorder,
-    }, {
       path: '/client/dingchange',
       component: Dingchange,
     }, {
@@ -99,6 +97,9 @@ const router = new Router({
     }, {
       path: '/client/Campaignchange',
       component: Zhichange,
+    }, {
+      path: '/client/yimeicampaign',
+      component: Yimeicampaign,
     }, {
       path: '/client/changecampaign',
       component: Changecampaign,

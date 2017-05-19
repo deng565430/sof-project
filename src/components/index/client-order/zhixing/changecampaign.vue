@@ -32,8 +32,10 @@
 			  </el-form-item>
         <el-form-item label="所属区域">
             <el-checkbox-group v-model="areatype">
-              <el-checkbox v-for="area in areas"  :label="area" :key="area">{{area}}</el-checkbox>
+              <el-checkbox-button id="areas" indeterminate='true' @change='changefang'>房产</el-checkbox-button>
             </el-checkbox-group>
+            <!-- <label><input type='checkbox'/>房产</label> -->
+            
           </el-form-item>
           <el-form-item label="物业类型" >
             <el-checkbox-group v-model="wtype">
@@ -150,6 +152,9 @@ export default {
     this.onloda2();
   },
   methods: {
+    changefang () {
+      console.log(this.$el.id);
+    },
     onloda2 () {
       var datas = [];
       var _this = this;
@@ -409,4 +414,10 @@ export default {
 ul {
   display: flex
 }
+
+
+.el-checkbox-button__inner{
+  border:0px;
+}
+
 </style>

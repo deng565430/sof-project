@@ -1,50 +1,103 @@
 <template>
 <div>
-  <div class="title"><span>房地产</span></div>
-  <el-table
-      :data="tableData"
-      style="width: 100%;" align='center' @click="" >
-      <el-table-column
-        prop="projiect"
-        label="项目名称"
-        width="180">
-      </el-table-column>
-       <el-table-column
-        prop="phonenum"
-        label="需求量(日)"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="starttime"
-        label="订阅起始时间"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="endtime"
-        label="订阅结束时间">
-      </el-table-column>
-      <el-table-column
-        label="操作">
-       <template scope="scope">
-        <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" >执行</el-button>
-      </template>
-      </el-table-column>
-       <el-table-column
-        label="上传">
-       <template scope="scope">
-        <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
-      </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :page-sizes="[10, 20, 30, 40]"
-      :page-size="10"
-      :current-page="currentPage"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="totalCount">
-    </el-pagination>
+  <div>
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+       <el-tab-pane label="房地产" name="first" id='1'>
+             <el-table
+            :data="tableData"
+            style="width: 100%;" align='center' @click="" >
+            <el-table-column
+              prop="projiect"
+              label="项目名称"
+              width="180">
+            </el-table-column>
+             <el-table-column
+              prop="phonenum"
+              label="需求量(日)"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="starttime"
+              label="订阅起始时间"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="endtime"
+              label="订阅结束时间">
+            </el-table-column>
+            <el-table-column
+              label="操作">
+             <template scope="scope">
+              <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" >执行</el-button>
+            </template>
+            </el-table-column>
+             <el-table-column
+              label="上传">
+             <template scope="scope">
+              <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
+            </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :page-sizes="[10, 20, 30, 40]"
+            :page-size="10"
+            :current-page="currentPage"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalCount">
+          </el-pagination>
+       </el-tab-pane>
+       <el-tab-pane label="医美" name="second" id='2'>
+           <el-table
+            :data="tableData"
+            style="width: 100%;" align='center' @click="" >
+            <el-table-column
+              prop="projiect"
+              label="项目名称"
+              width="180">
+            </el-table-column>
+             <el-table-column
+              prop="phonenum"
+              label="需求量(日)"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="starttime"
+              label="订阅起始时间"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="endtime"
+              label="订阅结束时间">
+            </el-table-column>
+            <el-table-column
+              label="操作">
+             <template scope="scope">
+              <el-button type="text" size="small" @click="handleEdit2(scope.$index, scope.row)" >执行</el-button>
+            </template>
+            </el-table-column>
+             <el-table-column
+              label="上传">
+             <template scope="scope">
+              <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
+            </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :page-sizes="[10, 20, 30, 40]"
+            :page-size="10"
+            :current-page="currentPage"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalCount">
+          </el-pagination>
+        </el-tab-pane>
+    </el-tabs>
+  </div><!-- 
+  <div class="title"><span>房地产</span></div> -->
+  
 </div>
 </template>
 
@@ -55,6 +108,8 @@ export default {
 
   data () {
     return {
+      activeName: 'first',
+      industryId: '',
       tableData: [{
         projiect: '',
         phonenum: '',
@@ -94,6 +149,38 @@ export default {
     this.console();
   },
   methods: {
+    handleClick (tab, event) {
+      console.log(tab.$el.id);
+      this.industryId = tab.$el.id;
+      var data = [];
+      var datas = [];
+      let _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/campaign/getNewCampaign?industryId=' + this.industryId + '&start=0&length=' + _this.pageSize
+      }).then(function (res) {
+        console.log(res);
+        if (res.status === 200) {
+          for (let i = 0; i < res.data.data.length; i++) {
+            var obj = {};
+            var objs = {};
+            obj.projiect = res.data.data[i].project_name;
+            obj.phonenum = res.data.data[i].phone_demand;
+            obj.starttime = res.data.data[i].start_date;
+            obj.endtime = res.data.data[i].end_date;
+            obj.changetime = res.data.data[i].create_time;
+            obj.id = res.data.data[i].id;
+            data[i] = obj;
+            objs.label = res.data.data[i].project_name;
+            objs.value = res.data.data[i];
+            datas[i] = objs;
+          };
+          _this.tableData = data;
+          _this.options = datas;
+          _this.totalCount = res.data.recordsFiltered;
+        }
+      });
+    },
     loadData (pageNum, pageSize) {
       let _this = this;
       this.$ajax({
@@ -111,7 +198,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getNewCampaign?start=0&length=' + _this.pageSize
+        url: '/api/campaign/getNewCampaign?industryId=1&start=0&length=' + _this.pageSize
       }).then(function (res) {
         console.log(res);
         if (res.status === 200) {
@@ -146,6 +233,9 @@ export default {
     },
     handleEdit (index, row) {
       window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
+    },
+    handleEdit2 (index, row) {
+      window.location.href = 'http://localhost:8080/#/client/yimeicampaign?id= ' + row.id;
     },
     handleUp (index, row) {
       window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;

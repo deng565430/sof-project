@@ -40,6 +40,7 @@ export default {
   data () {
     return {
       loading: false,
+      id: '',
       ruleForm: {
         cname: '',
         name: '',
@@ -65,7 +66,16 @@ export default {
       formLabelWidth: '120px'
     };
   },
+  created () {
+    // 组件创建完后获取数据，
+    // 此时 data 已经被 observed 了
+    this.console();
+  },
   methods: {
+    console () {
+      var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
+      this.id = id;
+    },
     submitForm (formName) {
       var b = {
         'demand_side': this.ruleForm.cname,
@@ -73,7 +83,8 @@ export default {
         'phone_demand': this.ruleForm.num,
         'project_description': this.ruleForm.desc,
         'start_date': new Date(this.ruleForm.value).toLocaleString().substr(0, 9),
-        'end_date': new Date(this.ruleForm.value1).toLocaleDateString()
+        'end_date': new Date(this.ruleForm.value1).toLocaleDateString(),
+        'industryId': this.id
       };
       this.$refs[formName].validate((valid) => {
         if (valid) {

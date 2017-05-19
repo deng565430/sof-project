@@ -4,7 +4,7 @@
       <div class="title"><span>选择行业</span></div>
       <ul class="select">
           <li ><router-link to="/client/estateOrder">房地产</router-link></li>
-          <li><router-link to="/client/Clinic">{{value.val}}</router-link></li>
+          <li @click="hangye($event)" v-for='itme in value' :id='itme.id'>{{itme.val}}</li>
       </ul>
     </div>
     <div >
@@ -17,10 +17,10 @@ export default {
   data () {
     return {
       dialogform: false,
-      value: {
-        url: '',
+      value: [{
+        id: '',
         val: ''
-      }
+      }]
     };
   },
   created () {
@@ -29,16 +29,27 @@ export default {
     this.loading();
   },
   methods: {
+    hangye ($event) {
+      console.log(event.currentTarget.id);
+      window.location.href = 'http://localhost:8080/#/client/estateOrder?id= ' + event.currentTarget.id;
+    },
     loading () {
       var _this = this;
+      var data = [];
       this.$ajax({
         method: 'get',
         url: '/api/industry/getindustryList'
       }).then(function (res) {
         if (res.status === 200) {
           console.log(res.data.data);
-          _this.value.val = res.data.data[1].name;
-          console.log(_this.value.val);
+          for (var i = 0; i < res.data.data.length; i++) {
+            var obj = {};
+            obj.val = res.data.data[i].name;
+            obj.id = res.data.data[i].id;
+            data[i] = obj;
+          }
+          _this.value = data;
+          console.log(data);
         }
       });
     }
