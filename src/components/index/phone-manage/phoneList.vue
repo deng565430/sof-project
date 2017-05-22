@@ -250,11 +250,11 @@ export default {
     },
     update (rows) {
       if (!this.multipleSelection) {
-        alert('请先勾选');
+        this.$alert('请先勾选项目', '提示信息');
         return;
       }
       if (this.multipleSelection.length > 3) {
-        alert('选择项目不能超过三条');
+        this.$alert('选择的项目最多三条', '提示信息');
         return;
       }
       let v = '';

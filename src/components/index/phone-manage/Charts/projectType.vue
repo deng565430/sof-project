@@ -23,7 +23,8 @@ export default {
     return {
       id: 'projectType',
       projectOptions: [],
-      SearchData: ''
+      SearchData: '',
+      projectType: []
     };
   },
   watch: {

@@ -1,7 +1,7 @@
 <template>
 <div>
   <div>
-     <Search :projectOptions="{projectOptions}" @listenToChildEvent="listenToChildEvent"></Search>
+    <Search :projectOptions="{projectOptions}" @listenToChildEvent="listenToChildEvent"></Search>
   </div>
   <div id="echarts">
     <Charts :id="{id}" :projectType="{projectType}"></Charts>
