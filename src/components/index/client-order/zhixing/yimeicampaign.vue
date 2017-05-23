@@ -1,11 +1,11 @@
 <template>
 <div class="formcontain">
-    <!-- <ul :model="ruleForm">
+    <ul :model="ruleForm">
       <li ><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
       <li ><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
       <li ><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
       <li ><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
-    </ul> -->
+    </ul>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2'>
           <el-form-item label="所属数据类型">
               <el-checkbox-group v-model="numtype">
@@ -17,11 +17,11 @@
               <el-checkbox-group v-model="numtype1">
                 <el-checkbox label="论坛社区" ></el-checkbox>
                 <el-checkbox label="医美网站" ></el-checkbox>
-                <el-checkbox label="搜索词" ></el-checkbox>
+                <el-checkbox label="搜索词" @change='onselect'></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
          <el-form-item label="" label-width="100px">
-              <el-checkbox-group v-model="numtype2">
+              <el-checkbox-group v-model="numtype1">
                 <el-checkbox label="娱乐场所" ></el-checkbox>
                 <el-checkbox label="生活场所" ></el-checkbox>
               </el-checkbox-group>
@@ -40,14 +40,28 @@
         </el-form-item>
     </el-form>
     <el-form label-width="80px" v-show='show'>
-      <el-form-item label="文件名称" prop="zTitle">
+      <!-- <el-form-item label="文件名称" prop="zTitle">
             <el-input v-model="ruleForm.zTitle"></el-input>
-          </el-form-item>
-      <el-form-item label="搜索数据" :model="ruleForm" ref="ruleForm">
-        <el-input type="textarea" v-model="ruleForm.ad"></el-input>
+      </el-form-item> -->
+      <el-form-item label="社区论坛" :model="ruleForm" ref="ruleForm">
+        <el-input v-model="ruleForm.zTitle1" placeholder="请输入社区论坛名"></el-input>
+        <el-input type="textarea" v-model="ruleForm.note"></el-input>
       </el-form-item>
-      <el-form-item label="浏览数据" :model="ruleForm" ref="ruleForm">
+      <el-form-item label="医美网站" :model="ruleForm" ref="ruleForm">
+        <el-input v-model="ruleForm.zTitle2" placeholder="请输入医美网站文件名"></el-input>
+        <el-input type="textarea" v-model="ruleForm.ind" ></el-input>
+      </el-form-item>
+      <el-form-item label="搜索词" :model="ruleForm" ref="ruleForm">
+        <el-input v-model="ruleForm.zTitle3" placeholder="请输入搜索词文件名"></el-input>
         <el-input type="textarea" v-model="ruleForm.kw"></el-input>
+      </el-form-item>
+      <el-form-item label="娱乐场所" :model="ruleForm" ref="ruleForm">
+        <el-input v-model="ruleForm.zTitle4" placeholder="请输入娱乐场所文件名"></el-input>
+        <el-input type="textarea" v-model="ruleForm.fun"></el-input>
+      </el-form-item>
+      <el-form-item label="生活场所" :model="ruleForm" ref="ruleForm">
+        <el-input v-model="ruleForm.zTitle5" placeholder="请输入生活场所文件名"></el-input>
+        <el-input type="textarea" v-model="ruleForm.life"></el-input>
       </el-form-item>
       <el-form-item>
           <el-button  @click="before()">上一步</el-button>
@@ -72,9 +86,16 @@ export default {
         desc: '',
         value: '',
         value1: '',
+        note: '',
+        ind: '',
+        fun: '',
         kw: '',
-        ad: '',
-        zTitle: ''
+        life: '',
+        zTitle1: '',
+        zTitle2: '',
+        zTitle3: '',
+        zTitle4: '',
+        zTitle5: ''
       },
       region: [],
       numtype: [],
@@ -114,111 +135,57 @@ export default {
     // 此时 data 已经被 observed 了
   },
   methods: {
-    onloda2 () {
-      var datas = [];
-      var _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getProjectName'
-      }).then(function (res) {
-        if (res.status === 200) {
-          for (let i = 0; i < res.data.length; i++) {
-            var objs = {};
-            objs.label = res.data[i].data;
-            objs.value = res.data[i];
-            datas[i] = objs;
-          };
-          _this.options = datas;
-        }
-      });
-    },
-    onloda () {
-      var _this = this;
-      var data = [];
-      var datas = [];
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getTypeDistrict'
-      }).then(function (res) {
-        for (var i = 0; i < res.data.data.district.length; i++) {
-          var obj = {};
-          obj = res.data.data.district[i];
-          data[i] = obj;
-        };
-        for (var s = 0; s < res.data.data.types.length; s++) {
-          var objs = {};
-          objs = res.data.data.types[s];
-          datas[s] = objs;
-        };
-        _this.areas = data;
-        _this.wtypes = datas;
-      });
-    },
     before () {
       this.show2 = true;
       this.show = false;
     },
+    onselect () {
+      console.log(111);
+    },
     submitForm2 () {
       var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
-      var floorname = this.region;
-      var address = this.region;
-      var code = this.ruleForm.kw;
-      var keyword = this.ruleForm.ad;
-      var zTitle = this.ruleForm.zTitle;
-      var name = [];
-      var ad = this.numtype;
-      var kw = this.numtype;
-      floorname = false;
-      address = false;
-      ad = false;
-      kw = false;
-      for (var i = 0; i < this.region.length; i++) {
-        if (this.region[i] === '按项目扩展') {
-          floorname = true;
-        } else if (this.region[i] === '按区域扩展') {
-          address = true;
-        }
+      var beauty = {
+        'briefid': id,
+        'project_name': this.ruleForm.name,
+        'select_kw': this.numtype3.join(','),
+        'select_type': this.numtype1.join(',')
       };
-      for (var m = 0; m < this.campaign.length; i++) {
-        name[i] = this.campaign[i].id;
-        return name;
+      var fun = {
+        'data': this.ruleForm.fun,
+        'file_name': this.ruleForm.zTitle4
       };
-      for (var s = 0; s < this.numtype.length; s++) {
-        if (this.numtype[s] === '浏览数据') {
-          ad = true;
-        } else if (this.numtype[s] === '搜索数据') {
-          kw = true;
-        }
+      var ind = {
+        'data': this.ruleForm.ind,
+        'file_name': this.ruleForm.zTitle2
+      };
+      var kw = {
+        'data': this.ruleForm.kw,
+        'file_name': this.ruleForm.zTitle3
+      };
+      var life = {
+        'data': this.ruleForm.life,
+        'file_name': this.ruleForm.zTitle4
+      };
+      var note = {
+        'data': this.ruleForm.note,
+        'file_name': this.ruleForm.zTitle1
       };
       var data = {
-        'address_expand': address,
-        'floorname_expand': floorname,
-        'districts': this.areatype,
-        'competing': [this.campaign.id],
-        'project_name': this.ruleForm.name,
-        'types': this.wtype,
-        'briefid': this.briefid,
-        'id': id,
-        'ad': ad,
+        'beauty': beauty,
+        'fun': fun,
+        'ind': ind,
         'kw': kw,
-        'code': code,
-        'keyword': keyword,
-        'zTitle': zTitle
+        'life': life,
+        'note': note
       };
-      var _this = this;
       this.$ajax({
         method: 'post',
-        url: '/api/campaign/updateCampaign',
+        url: '/api/beauty/addBeautyCampaign',
         data: data
       }).then(function (res) {
         if (res.status === 200) {
-          _this.show = true;
-          _this.show2 = false;
-          if (res.data.data.codes === null) {
-            console.log('空');
-          } else if (res.data.data.urls === null) {
-            console.log('空2');
-          }
+          console.log(res.data);
+          window.location.href = 'http://localhost:8080/#/client/Newzhi';
         }
       });
     },
@@ -241,10 +208,19 @@ export default {
       };
       this.$ajax({
         method: 'post',
-        url: '/api/beauty/getAllCampaign',
+        url: '/api/beauty/getBeautyData',
         data: data
       }).then(function (res) {
-        if (res.status === 200) {}
+        if (res.status === 200) {
+          console.log(res.data.data);
+          _this.ruleForm.note = res.data.data.note.data;
+          _this.ruleForm.ind = res.data.data.ind.data;
+          _this.ruleForm.kw = res.data.data.kw.data;
+          _this.ruleForm.life = res.data.data.life.data;
+          _this.ruleForm.fun = res.data.data.fun.data;
+          _this.show2 = false;
+          _this.show = true;
+        }
       });
     }
   }

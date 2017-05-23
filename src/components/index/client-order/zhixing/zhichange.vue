@@ -142,8 +142,8 @@
         <el-form class="demo-form-inline forms2">
           <el-form-item label="扩展方式">
               <el-checkbox-group v-model="region">
-                <el-checkbox label="按项目扩展" name="region"></el-checkbox>
-                <el-checkbox label="按区域扩展" name="region"></el-checkbox>
+                <el-checkbox label="按楼盘名称扩展" name="region"></el-checkbox>
+                <el-checkbox label="按地址扩展" name="region"></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
         </el-form>

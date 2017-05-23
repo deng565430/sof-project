@@ -62,8 +62,8 @@
           </el-form-item>
           <el-form-item label="扩展方式">
               <el-checkbox-group v-model="region">
-                <el-checkbox label="按项目扩展" ></el-checkbox>
-                <el-checkbox label="按区域扩展"></el-checkbox>
+                <el-checkbox label="按楼盘名称扩展" ></el-checkbox>
+                <el-checkbox label="按地区扩展"></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
           <el-form-item label="所需数据类型" label-width="100px">

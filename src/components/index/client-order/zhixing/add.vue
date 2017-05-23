@@ -19,8 +19,8 @@
 	  </el-form-item>
 	  <el-form-item label="扩展方式">
 	    <el-checkbox-group v-model="ruleForm.type">
-	      <el-checkbox label="按项目扩展" name="type"></el-checkbox>
-	      <el-checkbox label="按区域扩展" name="type"></el-checkbox>
+	      <el-checkbox label="按楼盘名称扩展" name="type"></el-checkbox>
+	      <el-checkbox label="按地址扩展" name="type"></el-checkbox>
 	    </el-checkbox-group>
 	  </el-form-item>
 	   <el-form-item label="竞品选择" class="jingps">

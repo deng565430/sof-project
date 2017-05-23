@@ -99,7 +99,7 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
   border:0px;
   background: #fff
 }
-.is-checked > .el-checkbox-button__inner{
-    color: #20a0ff;
-    background: #ccc
+.is-checked .el-checkbox-button__inner{
+  color: #20a0ff;
+  background: #ccc
 }

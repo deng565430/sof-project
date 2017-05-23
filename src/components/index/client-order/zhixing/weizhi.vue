@@ -101,7 +101,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getAllCampaign?status=0&start=0&length=' + _this.pageSize
+        url: '/api/campaign/getAllCampaign?industryId=2&status=0&start=0&length=' + _this.pageSize
       }).then(function (res) {
         if (res.status === 200) {
           _this.totalCount = res.data.data.length;
@@ -114,7 +114,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getAllCampaign?status=0&start=0&length=' + _this.pageSize
+        url: '/api/campaign/getAllCampaign?industryId=2&status=0&start=0&length=' + _this.pageSize
       }).then(function (res) {
         console.log(res);
         if (res.status === 200) {
