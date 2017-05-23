@@ -1,10 +1,10 @@
 <template>
 <div>
   <div>
-    <Search :projectOptions="{projectOptions}" @listenToChildEvent="listenToChildEvent"></Search>
+    <Search :projectOptions="{projectOptions}" :searchIsShow="{searchIsShow}" @listenToChildEvent="listenToChildEvent"></Search>
   </div>
   <div id="echarts">
-    <Charts :id="{id}" :projectType="projectType"></Charts>
+    <Charts :id="{id}" :projectType="{projectType}"></Charts>
   </div>
 </div>
 </template>
@@ -21,10 +21,11 @@ export default {
   },
   data () {
     return {
-      id: 'TypeIntention',
+      id: 'typeIntention',
       projectOptions: [],
       SearchData: '',
-      projectType: []
+      projectType: [],
+      searchIsShow: false
     };
   },
   watch: {
@@ -37,7 +38,7 @@ export default {
   mounted () {},
   created () {
     this.getProject('/api/tel/getALLproject', '', this.projectOptions);
-    this.getTelByPB('上海周边', '2017-4-19', '2017-5-19');
+    this.getTelByPB('2017-5-12', '2017-5-19');
   },
   methods: {
     getProject (url, list, val) {
@@ -57,27 +58,27 @@ export default {
         }
       });
     },
-    getTelByPB (project, minbatch, maxbatch) {
+    getTelByPB (minbatch, maxbatch) {
       this.$ajax({
         method: 'post',
-        url: '/api/rate/getTelByPB',
+        url: '/api/rate/getTelByTime',
         data: {
-          project: project,
           maxbatch: maxbatch,
           minbatch: minbatch
         }
       }).then((res) => {
-        if (res.data && res.data.length > 0) {
-          this.projectType = res.data;
+        if (res.data && res.data.data.length > 0) {
+          this.projectType = res.data.data;
+        } else {
+          this.$alert('没有展示项目', '提示信息');
         }
       });
     },
     listenToChildEvent (data) {
       this.SearchData = data;
-      let project = data[0].project;
       let maxbatch = data[0].maxbatch;
       let minbatch = data[0].minbatch;
-      this.getTelByPB(project, minbatch, maxbatch);
+      this.getTelByPB(minbatch, maxbatch);
     }
   }
 };

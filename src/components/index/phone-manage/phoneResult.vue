@@ -2,17 +2,17 @@
 <div>
     <div id="title">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="项目意向率对比" name="first">
+        <el-tab-pane label="项目意向率分析" name="first">
           <div>
             <ProjectIntention></ProjectIntention>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="项目类型对比" name="second">
+        <el-tab-pane label="项目类型分析" name="second">
           <div>
             <ProjectType></ProjectType>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="项目类型意向率对比" name="third">
+        <el-tab-pane label="电话类型分析" name="third">
          <div>
             <TypeIntention></TypeIntention>
           </div>
