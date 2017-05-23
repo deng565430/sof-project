@@ -2,37 +2,7 @@
   <div id="">
     <div class="selectarea" >
       <div class="title"><span>电话清单</span></div>
-      <div id="selectData">
-        <div>
-          <span>名称:</span>
-          <el-select v-model="projectValue" placeholder="请选择名称">
-            <el-option
-              v-for="item in projectOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-        </el-select>
-        </div>
-        <div>
-          <div class="block">
-            <span class="demonstration">批次:</span>
-            <el-date-picker
-              v-model="starTimeValue"
-              type="daterange"
-              placeholder="选择日期范围"
-              :picker-options="pickerOptions2">
-            </el-date-picker>
-          </div>
-        </div>
-      </div>
-      <div id="btn">
-        <div class="block">
-          <span class="wrapper">
-            <el-button type="warning" id="btnWidth" @click="search">搜索</el-button>
-          </span>
-        </div>
-      </div>
+      <Search :projectOptions="{projectOptions}" @listenToChildEvent="listenToChildEvent"></Search>
       <div id="table" v-if="listShow">
         <el-table
           ref="multipleTable"
@@ -83,8 +53,6 @@
             <el-select
             v-model="scope.row.numAllType"
             multiple
-            filterable
-            remote
             placeholder="所有类型">
             <el-option
               v-for="item in scope.row.types"
@@ -131,7 +99,11 @@
 </template>
 
 <script>
+import Search from './ConditionSearch/search';
 export default {
+  components: {
+    Search
+  },
   data () {
     return {
       projectOptions: [],
@@ -229,19 +201,10 @@ export default {
         }
       });
     },
-    search (val, num) {
-      this.recordsFiltered = 0;
-      let project = this.projectValue;
-      let minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
-      let maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
-      if (project == null || project === '') {
-        alert('请先选择项目');
-        return;
-      }
-      if (this.starTimeValue == null || this.starTimeValue === '') {
-        alert('请选择时间范围');
-        return;
-      }
+    listenToChildEvent (data) {
+      let project = data[0].project;
+      let minbatch = data[0].minbatch;
+      let maxbatch = data[0].maxbatch;
       this.tableData.length = [];
       let that = this;
       this.listShow = true;
@@ -287,11 +250,11 @@ export default {
     },
     update (rows) {
       if (!this.multipleSelection) {
-        alert('请先勾选');
+        this.$alert('请先勾选项目', '提示信息');
         return;
       }
       if (this.multipleSelection.length > 3) {
-        alert('选择项目不能超过三条');
+        this.$alert('选择的项目最多三条', '提示信息');
         return;
       }
       let v = '';
@@ -364,15 +327,14 @@ export default {
     display: inline-block
     width: 270px
     span
-      padding-top: 10px
-      vertical-align: top
       display: inline-block
       width:40px
-#btn
-  padding-bottom: 30px
-  text-align: left
-  #btnWidth
-    width: 120px
+  #btn
+    padding-bottom: 30px
+    text-align: left
+    #btnWidth
+      vertical-align: top
+      width: 120px
 #table
   width: 70%
 #tablePage

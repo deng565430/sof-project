@@ -21,7 +21,7 @@ export default {
   },
   data () {
     return {
-      id: 'projectIntention',
+      id: 'projectType',
       projectOptions: [],
       SearchData: '',
       projectType: []
@@ -60,7 +60,7 @@ export default {
     getTelByPB (project, minbatch, maxbatch) {
       this.$ajax({
         method: 'post',
-        url: '/api/rate/getTelByPB',
+        url: '/api/rate/getTelByProject',
         data: {
           project: project,
           maxbatch: maxbatch,

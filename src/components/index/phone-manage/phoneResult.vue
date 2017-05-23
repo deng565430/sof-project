@@ -8,10 +8,14 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="项目类型对比" name="second">
-          22
+          <div>
+            <ProjectType></ProjectType>
+          </div>
         </el-tab-pane>
         <el-tab-pane label="项目类型意向率对比" name="third">
-          33
+         <div>
+            <TypeIntention></TypeIntention>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -21,11 +25,15 @@
 
 <script>
 import ProjectIntention from './Charts/ProjectIntention';
+import ProjectType from './Charts/ProjectType';
+import TypeIntention from './Charts/TypeIntention';
 export default {
 
   name: 'phoneResult',
   components: {
-    ProjectIntention
+    ProjectIntention,
+    ProjectType,
+    TypeIntention
   },
   data () {
     return {
@@ -37,11 +45,8 @@ export default {
   created () {},
   methods: {
     clicks () {
-      this.data.title.text = Math.random();
     },
     handleClick (tab, event) {
-      this.isShow = true;
-      this.data.title.text = Math.random();
     }
   }
 };

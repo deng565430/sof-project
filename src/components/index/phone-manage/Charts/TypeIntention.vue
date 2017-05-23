@@ -4,7 +4,7 @@
     <Search :projectOptions="{projectOptions}" @listenToChildEvent="listenToChildEvent"></Search>
   </div>
   <div id="echarts">
-    <Charts :id="{id}" :projectType="{projectType}"></Charts>
+    <Charts :id="{id}" :projectType="projectType"></Charts>
   </div>
 </div>
 </template>
@@ -21,7 +21,7 @@ export default {
   },
   data () {
     return {
-      id: 'projectIntention',
+      id: 'TypeIntention',
       projectOptions: [],
       SearchData: '',
       projectType: []
@@ -37,7 +37,7 @@ export default {
   mounted () {},
   created () {
     this.getProject('/api/tel/getALLproject', '', this.projectOptions);
-    this.getTelByPB('上海青浦万达茂', '2017-4-19', '2017-5-19');
+    this.getTelByPB('上海周边', '2017-4-19', '2017-5-19');
   },
   methods: {
     getProject (url, list, val) {
@@ -67,10 +67,8 @@ export default {
           minbatch: minbatch
         }
       }).then((res) => {
-        if (res.data && res.data.data.length > 0) {
-          this.projectType = res.data.data;
-        } else {
-          this.$alert('没有展示项目', '提示信息');
+        if (res.data && res.data.length > 0) {
+          this.projectType = res.data;
         }
       });
     },
