@@ -2,7 +2,7 @@
   <div id="">
     <div class="selectarea" >
       <div class="title"><span>电话清单</span></div>
-      <Search :projectOptions="{projectOptions}" @listenToChildEvent="listenToChildEvent"></Search>
+      <Search :projectOptions="{projectOptions}" :searchIsShow="{searchIsShow}" @listenToChildEvent="listenToChildEvent"></Search>
       <div id="table" v-if="listShow">
         <el-table
           ref="multipleTable"
@@ -150,7 +150,8 @@ export default {
       getRowKeys (row) {
         return row.porject;
       },
-      expands: []
+      expands: [],
+      searchIsShow: true
     };
   },
   mounted () {},

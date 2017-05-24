@@ -1,7 +1,7 @@
 <template>
 <div id="selectData">
-        <div>
-          <span>名称:</span>
+        <div v-if="searchIsShow.searchIsShow">
+          <span>项目:</span>
           <el-select v-model="projectValue" placeholder="请选择名称">
             <el-option
               v-for="item in projectOption"
@@ -74,19 +74,19 @@ export default {
       starTimeValue: ''
     };
   },
-  created () {
-    console.log(this.projectOptions.projectOptions);
+  mounted () {
+    this.$nextTick(() => {
+      console.log(this.projectOptions.projectOptions);
+      console.log(this.searchIsShow);
+    });
   },
+  created () {},
   methods: {
     search () {
       this.recordsFiltered = 0;
       let project = this.projectValue;
       let minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
       let maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
-      if (project == null || project === '') {
-        this.$alert('请先选择项目', '提示信息');
-        return;
-      }
       if (this.starTimeValue == null || this.starTimeValue === '') {
         this.$alert('请选择时间范围', '提示信息');
         return;
@@ -98,7 +98,8 @@ export default {
       this.$emit('listenToChildEvent', [data]);
     }
   },
-  props: ['projectOptions']
+  props: ['searchIsShow', 'projectOptions'],
+  ready () {}
 };
 </script>
 

@@ -96,15 +96,6 @@ export default {
         let seriesData = [];
         let legendData = [];
         let tooltipData = [];
-        let adData = [];
-        let ADData = [];
-        let adKwData = [];
-        let uidData = [];
-        let uidKwData = [];
-        let yiLeiKwData = [];
-        let cdmaData = [];
-        let imeiData = [];
-        let proData = [];
         for (let v of data.projectType) {
           tooltipData.push(v.source);
           xAxisData.push(v.batch);
@@ -114,59 +105,38 @@ export default {
         }
         tooltipData = Array.from(new Set(tooltipData));
         xAxisData = Array.from(new Set(xAxisData));
-        for (var i = 0; i < data.projectType.length; i++) {
-          for (var j = 0; j < tooltipData.length; j++) {
-            console.log(1);
-          }
-        }
-        for (let v of data.projectType) {
-          adData.push(v.source === tooltipData[0] ? v.intentionrate : -1);
-          ADData.push(v.source === tooltipData[1] ? v.intentionrate : -1);
-          adKwData.push(v.source === tooltipData[2] ? v.intentionrate : -1);
-          uidData.push(v.source === tooltipData[3] ? v.intentionrate : -1);
-          uidKwData.push(v.source === tooltipData[4] ? v.intentionrate : -1);
-          yiLeiKwData.push(v.source === tooltipData[5] ? v.intentionrate : -1);
-          cdmaData.push(v.source === tooltipData[6] ? v.intentionrate : -1);
-          imeiData.push(v.source === tooltipData[7] ? v.intentionrate : -1);
-          proData.push(v.source === tooltipData[8] ? v.intentionrate : -1);
-        }
-
-        let ad = adData.filter((x, i, item) => {
-          return x !== -1;
-        });
-        let ADD = ADData.filter((x) => {
-          return x !== -1;
-        });
-        let adKw = adKwData.filter((x) => {
-          return x !== -1;
-        });
-        let uid = uidData.filter((x) => {
-          return x !== -1;
-        });
-        let uidKw = uidKwData.filter((x) => {
-          return x !== -1;
-        });
-        let yiLei = yiLeiKwData.filter((x) => {
-          return x !== -1;
-        });
-        let cdma = cdmaData.filter((x) => {
-          return x !== -1;
-        });
-        let imei = imeiData.filter((x) => {
-          return x !== -1;
-        });
-        let pro = proData.filter((x) => {
-          return x !== -1;
-        });
-        let titleText = data.projectType[0].project;
-        let seriesDatas = [];
-        tooltipData.forEach((v, i) => {
+        let intentionrates = [{
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }, {
+          intentionrate: []
+        }];
+        this.disposeData(intentionrates, data, xAxisData, tooltipData);
+        console.log(intentionrates);
+        let tooltipDatas = [];
+        for (let i = 0; i < tooltipData.length; i++) {
           let data = {};
-          data.name = v;
-          data.type = 'type';
-          data.data = ad;
-          seriesDatas.push(data);
-        });
+          data.name = tooltipData[i];
+          data.type = 'line';
+          data.data = intentionrates[i].intentionrate;
+          tooltipDatas.push(data);
+        }
+        let titleText = data.projectType[0].project;
         var projectTypeOption = {
           title: {
             text: titleText
@@ -196,46 +166,93 @@ export default {
           yAxis: {
             type: 'value'
           },
-          series: [{
-            name: tooltipData[0],
-            type: 'line',
-            data: ad
-          }, {
-            name: tooltipData[1],
-            type: 'line',
-            data: ADD
-          }, {
-            name: tooltipData[2],
-            type: 'line',
-            data: adKw
-          }, {
-            name: tooltipData[3],
-            type: 'line',
-            data: uid
-          }, {
-            name: tooltipData[4],
-            type: 'line',
-            data: uidKw
-          }, {
-            name: tooltipData[5],
-            type: 'line',
-            data: yiLei
-          }, {
-            name: tooltipData[6],
-            type: 'line',
-            data: cdma
-          }, {
-            name: tooltipData[7],
-            type: 'line',
-            data: imei
-          }, {
-            name: tooltipData[8],
-            type: 'line',
-            data: pro
-          }]
+          series: tooltipDatas
         };
         this.chart.setOption(projectTypeOption);
+      } else if (id === 'typeIntention') {
+        console.log('typeIntention');
+        let project = [];
+        let source = [];
+        let batch = [];
+        for (let v of data.projectType) {
+          project.push(v.project);
+          source.push(v.source);
+          batch.push(v.batch);
+        }
+        project = Array.from(new Set(project));
+        source = Array.from(new Set(source));
+        batch = Array.from(new Set(batch));
+        console.log(project);
+        console.log(source);
+        console.log(batch);
+        
       }
+    },
+    disposeData (intentionrates, data, xAxisData, tooltipData) {
+      let datas = [{
+        batch: []
+      }, {
+        batch: []
+      }, {
+        batch: []
+      }, {
+        batch: []
+      }, {
+        batch: []
+      }, {
+        batch: []
+      }, {
+        batch: []
+      }, {
+        batch: []
+      }, {
+        batch: []
+      }, {
+        batch: []
+      }];
+      let num = 0;
+      for (var i = 0; i < tooltipData.length; i++) {
+        (function (i) {
+          for (let v of data.projectType) {
+            if (tooltipData[i] === v.source) {
+              datas[num].batch.push({
+                batch: v.batch,
+                source: v.source,
+                intentionrate: v.intentionrate
+              });
+            }
+          }
+        })(i);
+        num++;
+      }
+      for (let y in datas) {
+        for (let x in datas[y].batch) {
+          for (let z in xAxisData) {
+            for (let m in tooltipData) {
+              switch (datas[y].batch[x].source) {
+                case tooltipData[m]:
+                  if (datas[y].batch[x].batch === xAxisData[z]) {
+                    intentionrates[m].intentionrate.length = xAxisData.length;
+                    intentionrates[m].intentionrate[z] = datas[y].batch[x].intentionrate;
+                  }
+                  break;
+              }
+            }
+          }
+        }
+      }
+      for (let t = 0; t < intentionrates.length; t++) {
+        (function (t) {
+          for (let p = 0; p < intentionrates[t].intentionrate.length; p++) {
+            (function (p) {
+              if (typeof (intentionrates[t].intentionrate[p]) === 'undefined') {
+                intentionrates[t].intentionrate[p] = 0;
+              }
+            })(p);
+          }
+        })(t);
+      }
+      return intentionrates;
     }
   },
   props: ['id', 'projectType'],

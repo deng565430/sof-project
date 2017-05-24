@@ -1,7 +1,7 @@
 <template>
 <div>
   <div>
-    <Search :projectOptions="{projectOptions}" @listenToChildEvent="listenToChildEvent"></Search>
+    <Search :projectOptions="{projectOptions}" :searchIsShow="{searchIsShow}" @listenToChildEvent="listenToChildEvent"></Search>
   </div>
   <div id="echarts">
     <Charts :id="{id}" :projectType="{projectType}"></Charts>
@@ -24,7 +24,8 @@ export default {
       id: 'projectType',
       projectOptions: [],
       SearchData: '',
-      projectType: []
+      projectType: [],
+      searchIsShow: true
     };
   },
   watch: {
@@ -75,6 +76,11 @@ export default {
       });
     },
     listenToChildEvent (data) {
+      console.log(data);
+      if (data[0].project == null || data[0].project === '') {
+        this.$alert('请先选择项目', '提示信息');
+        return;
+      }
       this.SearchData = data;
       let project = data[0].project;
       let maxbatch = data[0].maxbatch;
