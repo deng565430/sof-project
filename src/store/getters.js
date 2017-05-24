@@ -4,3 +4,8 @@ export const isLogin = (state) => {
     data.name = state.userName;
     return data;
 }
+export const brieid = (state) => {
+    let data = {}
+    data.brieid = state.brieid;
+    return data;
+}

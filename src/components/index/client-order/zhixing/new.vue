@@ -1,9 +1,9 @@
 <template>
 <div>
-  <div>
+  <div v-show='show3'  >
     <el-tabs v-model="activeName" @tab-click="handleClick">
-       <el-tab-pane label="房地产" name="first" id='1'>
-             <el-table
+       <el-tab-pane label="房产" name="first" id='1'>
+        <el-table
             :data="tableData"
             style="width: 100%;" align='center' @click="" >
             <el-table-column
@@ -37,7 +37,7 @@
               <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
             </template>
             </el-table-column>
-          </el-table>
+      </el-table>
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -48,64 +48,26 @@
             :total="totalCount">
           </el-pagination>
        </el-tab-pane>
-       <el-tab-pane label="医美" name="second" id='2'>
-           <el-table
-            :data="tableData"
-            style="width: 100%;" align='center' @click="" >
-            <el-table-column
-              prop="projiect"
-              label="项目名称"
-              width="180">
-            </el-table-column>
-             <el-table-column
-              prop="phonenum"
-              label="需求量(日)"
-              width="180">
-            </el-table-column>
-            <el-table-column
-              prop="starttime"
-              label="订阅起始时间"
-              width="180">
-            </el-table-column>
-            <el-table-column
-              prop="endtime"
-              label="订阅结束时间">
-            </el-table-column>
-            <el-table-column
-              label="操作">
-             <template scope="scope">
-              <el-button type="text" size="small" @click="handleEdit2(scope.$index, scope.row)" >执行</el-button>
-            </template>
-            </el-table-column>
-             <el-table-column
-              label="上传">
-             <template scope="scope">
-              <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
-            </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            :current-page="currentPage"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="totalCount">
-          </el-pagination>
-        </el-tab-pane>
+       <el-tab-pane label="医美" name="second" id='2' >
+           <Yimeilist :show='{show}' v-show='show4'  @listenToChildEvent="listenToChildEvent"></Yimeilist>
+      </el-tab-pane>
     </el-tabs>
-  </div><!-- 
-  <div class="title"><span>房地产</span></div> -->
-  
+  </div>
+  <div>
+     <Yimeicampaign v-if="show2" :show='showxiangqing' @childrenEventIsShow="childrenEventIsShow"></Yimeicampaign>
+  </div>
 </div>
 </template>
 
 <script>
+import Yimeilist from './yimeilist';
+import Yimeicampaign from './yimeicampaign';
 export default {
-
   name: 'pnoneManage',
-
+  components: {
+    Yimeilist,
+    Yimeicampaign
+  },
   data () {
     return {
       activeName: 'first',
@@ -140,17 +102,59 @@ export default {
       error: null,
       currentPage: 1,
       totalCount: 100,
-      pageSize: 10
+      pageSize: 10,
+      show: [],
+      show2: false,
+      show4: true,
+      show3: true,
+      showxiangqing: false
     };
   },
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
     this.console();
+    this.lists(2, '/api/campaign/getNewCampaign?start=0&length=10&industryId=');
+    console.log(this.show);
   },
   methods: {
+    lists (id, url) {
+      this.show = [];
+      let _this = this;
+      this.$ajax({
+        method: 'get',
+        url: url + id
+      }).then(function (res) {
+        if (res.status === 200 && res.data.recordsFiltered > 0) {
+          console.log(res.data.data);
+          for (let i = 0; i < res.data.data.length; i++) {
+            var obj = {};
+            obj.projiect = res.data.data[i].project_name;
+            obj.phonenum = res.data.data[i].phone_demand;
+            obj.starttime = res.data.data[i].start_date;
+            obj.endtime = res.data.data[i].end_date;
+            obj.changetime = res.data.data[i].create_time;
+            obj.id = res.data.data[i].id;
+            obj.recordsFiltered = res.data.recordsFiltered;
+          };
+          _this.show.push(obj);
+          _this.totalCount = res.data.recordsFiltered;
+        }
+      });
+    },
+    listenToChildEvent (val) {
+      console.log(val);
+      this.show2 = true;
+      this.show3 = false;
+    },
+    childrenEventIsShow (val) {
+      console.log(this.show);
+      this.show2 = false;
+      this.activeName = 'second';
+      this.show3 = true;
+      this.lists(2, '/api/campaign/getNewCampaign?start=0&length=10&industryId=');
+    },
     handleClick (tab, event) {
-      console.log(tab.$el.id);
       this.industryId = tab.$el.id;
       var data = [];
       var datas = [];
@@ -159,7 +163,6 @@ export default {
         method: 'get',
         url: '/api/campaign/getNewCampaign?industryId=' + this.industryId + '&start=0&length=' + _this.pageSize
       }).then(function (res) {
-        console.log(res);
         if (res.status === 200) {
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
@@ -200,8 +203,8 @@ export default {
         method: 'get',
         url: '/api/campaign/getNewCampaign?industryId=1&start=0&length=' + _this.pageSize
       }).then(function (res) {
-        console.log(res);
         if (res.status === 200) {
+          console.log(res);
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
             var objs = {};
@@ -233,9 +236,6 @@ export default {
     },
     handleEdit (index, row) {
       window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
-    },
-    handleEdit2 (index, row) {
-      window.location.href = 'http://localhost:8080/#/client/yimeicampaign?id= ' + row.id;
     },
     handleUp (index, row) {
       window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;

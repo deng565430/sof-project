@@ -103,3 +103,6 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
   color: #20a0ff;
   background: #ccc
 }
+.el-step is-horizontal{
+    width: 33.33% !important
+}

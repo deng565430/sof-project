@@ -8,9 +8,9 @@
     <div v-show='show2' v-loading.body="loading">
     <ul :model="ruleForm">
       <li ><span>公司名称:</span><span>{{11}}</span></li>
-      <li ><span>项目名称:</span><span>{{$store.state.yimei.cname}}</span></li>
-      <li ><span>需求数量:</span><span>{{$store.state.yimei.num}}</span></li>
-      <li ><span>订阅周期:</span><span>{{$store.state.yimei.stratime}}-{{$store.state.yimei.endtime}}</span></li>
+      <li ><span>项目名称:</span><span>{{$store.state.yimeichange.cname}}</span></li>
+      <li ><span>需求数量:</span><span>{{$store.state.yimeichange.num}}</span></li>
+      <li ><span>订阅周期:</span><span>{{$store.state.yimeichange.stratime}}-{{$store.state.yimeichange.endtime}}</span></li>
     </ul>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" class="form1">
           <el-form-item label="线上数据" label-width="100px">
@@ -199,7 +199,7 @@ export default {
       var _this = this;
       this.$ajax({
         method: 'post',
-        url: '/api/beauty/addBeautyCampaign',
+        url: '/api/beauty/updateBeautyCampaign',
         data: data
       }).then((res) => {
         if (res.status === 200) {

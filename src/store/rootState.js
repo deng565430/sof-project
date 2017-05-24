@@ -10,6 +10,22 @@ const state = {
         minbatch: '',
         maxbatch: ''
     },
+    brieid: '',
+    yimei: {
+        cname: '',
+        proname: '',
+        num: '',
+        stratime: '',
+        endtime: ''
+    },
+    yimeichange: {
+        cname: '',
+        proname: '',
+        num: '',
+        stratime: '',
+        endtime: ''
+    },
+    commitIs: false,
     data: [{
         name: '餐厅'
     }, {
