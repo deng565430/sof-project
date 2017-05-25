@@ -53,6 +53,7 @@ export default {
     padding: 10px 150px
     color: white
     height: 40px
+    display: none
     background: #424242
     transition:height 1s
     >:first-child
