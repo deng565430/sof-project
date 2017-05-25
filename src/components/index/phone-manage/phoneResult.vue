@@ -12,7 +12,7 @@
             <ProjectType></ProjectType>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="电话类型分析" name="third">
+        <el-tab-pane label="电话类型分析" name="third" v-if="isShow">
          <div>
             <TypeIntention></TypeIntention>
           </div>

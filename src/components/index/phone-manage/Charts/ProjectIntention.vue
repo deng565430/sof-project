@@ -38,7 +38,7 @@ export default {
   mounted () {},
   created () {
     this.getProject('/api/tel/getALLproject', '', this.projectOptions);
-    this.getTelByPB('上海青浦万达茂', '2017-4-19', '2017-5-19');
+    this.getTelByPB('上海青浦万达茂', '2017-2-19', '2017-5-19');
   },
   methods: {
     getProject (url, list, val) {

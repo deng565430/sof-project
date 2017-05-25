@@ -1,8 +1,10 @@
 <template>
 <div id="orderOne">
-    <com-LeftMenu :dataValue="data"></com-LeftMenu>
+    <LeftMenu :dataValue="data" :childIsShow="childIsShow" @childEventIsShow="childEventIsShow"/>
   <div id="contain">
-    <com-AllIndustry v-if="flag"></com-AllIndustry>
+    <AllIndustry v-if="flag" />
+    <PhoneList v-if="PhoneList" />
+    <PhoneResult v-if="PhoneResult" />
     <router-view></router-view>
   </div>
 </div>
@@ -11,21 +13,46 @@
 <script>
 import LeftMenu from './../../leftMenu/LeftMenu';
 import AllIndustry from './../../allIndustry/AllIndustry';
+import PhoneList from './PhoneList';
+import PhoneResult from './PhoneResult';
 
 export default {
   components: {
-    comLeftMenu: LeftMenu,
-    comAllIndustry: AllIndustry
+    LeftMenu,
+    AllIndustry,
+    PhoneList,
+    PhoneResult
   },
   data () {
     return {
       data: [
-        {'value': '电销系统', 'name': {'url': '/phone/phoneList', 'val': '电话清单'}, 'ing': {'url': '/phone/result ', 'val': '电话效果分析'}, 'now': {'url': '/phone/dingyue ', 'val': '进行中'}, 'hoistory': {'url': '/phone/historyding', 'val': '已完成'}}
+        {'value': '电销系统', 'name': {'url': '', 'val': '电话清单'}, 'ing': {'url': '', 'val': '电话效果分析'}, 'now': {'url': '', 'val': '电话质量分析'}, 'hoistory': {'url': '', 'val': '已完成'}}
       ],
-      flag: false
+      flag: false,
+      childIsShow: false,
+      PhoneList: false,
+      PhoneResult: false
     };
   },
   created () {
+  },
+  methods: {
+    childEventIsShow (data) {
+      switch (data) {
+        case '1':
+          this.PhoneList = true;
+          this.PhoneResult = false;
+          break;
+        case '2':
+          this.PhoneResult = true;
+          this.PhoneList = false;
+          break;
+        case '3':
+          break;
+        case '4':
+          break;
+      }
+    }
   }
 };
 </script>

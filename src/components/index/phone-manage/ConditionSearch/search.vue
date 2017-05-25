@@ -75,10 +75,7 @@ export default {
     };
   },
   mounted () {
-    this.$nextTick(() => {
-      console.log(this.projectOptions.projectOptions);
-      console.log(this.searchIsShow);
-    });
+    this.$nextTick(() => {});
   },
   created () {},
   methods: {
