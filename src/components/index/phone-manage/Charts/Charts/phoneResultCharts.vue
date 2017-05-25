@@ -13,8 +13,7 @@ export default {
   data () {
     return {
       chart: null,
-      datas: this.data,
-      projectTypes: this.projectType
+      datas: this.data
     };
   },
   mounted () {
@@ -36,6 +35,9 @@ export default {
   created () {},
   methods: {
     charts (id, data) {
+      if (data.projectType.length < 1) {
+        return;
+      }
       this.chart = echarts.init(document.getElementById(id));
       if (id === 'projectIntention') {
         console.log('projectIntention');
@@ -48,7 +50,7 @@ export default {
           totalData.push(v.total);
           seriesData.push(v.intentionrate);
         }
-        let titleText = data.projectType[0].project;
+        let titleText = data.projectType[0].project ? data.projectType[0].project : '';
         var option = {
           title: {
             text: titleText
@@ -92,49 +94,35 @@ export default {
       } else if (id === 'projectType') {
         console.log('projectType');
         let xAxisData = [];
-        let totalData = [];
-        let seriesData = [];
-        let legendData = [];
         let tooltipData = [];
         for (let v of data.projectType) {
           tooltipData.push(v.source);
           xAxisData.push(v.batch);
-          totalData.push(v.total);
-          legendData.push(v.source);
-          seriesData.push(v.intentionrate);
+        }
+        for (let k in data.projectType) {
+          if (data.projectType[k] === data.projectType[k + 1]) {
+            console.log(data.projectType[k]);
+          }
         }
         tooltipData = Array.from(new Set(tooltipData));
         xAxisData = Array.from(new Set(xAxisData));
-        let intentionrates = [{
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }, {
-          intentionrate: []
-        }];
-        this.disposeData(intentionrates, data, xAxisData, tooltipData);
-        console.log(intentionrates);
-        let tooltipDatas = [];
+        let seriesData = [];
         for (let i = 0; i < tooltipData.length; i++) {
-          let data = {};
-          data.name = tooltipData[i];
-          data.type = 'line';
-          data.data = intentionrates[i].intentionrate;
-          tooltipDatas.push(data);
+          (function (i) {
+            let datas = {
+              name: tooltipData[i],
+              type: 'line',
+              data: []
+            };
+            seriesData.push(datas);
+            for (let j = 0; j < data.projectType.length; j++) {
+              (function (j) {
+                if (tooltipData[i] === data.projectType[j].source) {
+                  seriesData[i].data.push(data.projectType[j].intentionrate);
+                }
+              })(j);
+            }
+          })(i);
         }
         let titleText = data.projectType[0].project;
         var projectTypeOption = {
@@ -166,7 +154,7 @@ export default {
           yAxis: {
             type: 'value'
           },
-          series: tooltipDatas
+          series: seriesData
         };
         this.chart.setOption(projectTypeOption);
       } else if (id === 'typeIntention') {

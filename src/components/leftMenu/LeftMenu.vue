@@ -1,15 +1,21 @@
 <template>
   <div id='leftMenu'>
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark">
-      <el-submenu index="1" v-for="value in dataValue">
+    <el-menu default-active="2" class="el-menu-vertical-demo" @select="handleSelect"  v-for="value in dataValue" theme="dark" >
         <template slot="title">{{value.value}}</template>
         <el-menu-item-group title="">
-          <el-menu-item index="1-1"><router-link :to="{path:value.name.url}">{{value.name.val}}</router-link></el-menu-item>
-          <el-menu-item index="1-2"><router-link :to="{path:value.ing.url}">{{value.ing.val}}</router-link></el-menu-item>
-          <el-menu-item index="1-3"><router-link :to="{path:value.now.url}">{{value.now.val}}</router-link></el-menu-item>
-          <el-menu-item index="1-4"><router-link :to="{path:value.hoistory.url}">{{value.hoistory.val}}</router-link></el-menu-item>
+            <el-menu-item :index="value.name.val">
+                <router-link :to="{path:value.name.url}">{{value.name.val}}</router-link>
+            </el-menu-item>
+            <el-menu-item :index="value.ing.val">
+                <router-link :to="{path:value.ing.url}">{{value.ing.val}}</router-link>
+            </el-menu-item>
+            <el-menu-item :index="value.now.val">
+                <router-link :to="{path:value.now.url}">{{value.now.val}}</router-link>
+            </el-menu-item>
+            <el-menu-item :index="value.hoistory.val">
+                <router-link :to="{path:value.hoistory.url}">{{value.hoistory.val}}</router-link>
+            </el-menu-item>
         </el-menu-item-group>
-      </el-submenu>
     </el-menu>
   </div>
 </template>
@@ -17,16 +23,13 @@
 <script>
 export default {
   methods: {
-    handleOpen (key, keyPath) {
+    handleSelect (key, keyPath) {
       console.log(key, keyPath);
-    },
-    handleClose (key, keyPath) {
-      console.log(key, keyPath);
+      this.$emit('childEventIsShow', key);
+      this.$emit('changechild', key);
     }
   },
-  props: {
-    dataValue: Array
-  }
+  props: ['dataValue', 'childIsShow']
 };
 </script>
 
@@ -36,7 +39,7 @@ export default {
   height: 100%
 }
 .el-menu--dark{
-  height: 100%;
+  
 }
 #leftMenu a{
   display: inline-block;

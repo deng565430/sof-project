@@ -76,7 +76,6 @@ export default {
       });
     },
     listenToChildEvent (data) {
-      console.log(data);
       if (data[0].project == null || data[0].project === '') {
         this.$alert('请先选择项目', '提示信息');
         return;

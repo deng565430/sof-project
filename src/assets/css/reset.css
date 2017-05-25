@@ -106,3 +106,9 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
 .el-step is-horizontal{
     width: 33.33% !important
 }
+/*.el-form-item{
+    margin-bottom: 0px !important;
+}*/
+.el-checkbox__label{
+    font-size: 13px;
+}

@@ -28,7 +28,7 @@
 			    </el-col>
 			  </el-form-item>
 			   <el-form-item>
-			    <el-button ><router-link to="/client/orderIndex">取 消</router-link></el-button>
+			    <el-button @click="quxiao">取 消</el-button>
 			    <el-button type="primary" :loading="false" @click="submitForm('ruleForm')">确 定</el-button>
 			  </el-form-item>
 		</el-form>
@@ -69,14 +69,18 @@ export default {
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
-    this.console();
+    console.log(this.$parent.selectind);
+    this.id = this.$parent.selectind;
+  },
+  mounted () {
+    this.$on('b-send', (data) => { this.id = data; });
   },
   methods: {
-    console () {
-      var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
-      this.id = id;
+    quxiao () {
+      this.$emit('listinchild');
     },
     submitForm (formName) {
+      var _this = this;
       var b = {
         'demand_side': this.ruleForm.cname,
         'project_name': this.ruleForm.name,
@@ -95,7 +99,7 @@ export default {
           }).then(function (res) {
             if (res.status === 200) {
               console.log(res);
-              window.location.href = 'http://localhost:8080/#/client/orderIndex ';
+              _this.$emit('listinchild');
             }
           });
         } else {
@@ -104,7 +108,8 @@ export default {
         }
       });
     }
-  }
+  },
+  prop: ['selectind']
 };
 </script>
 

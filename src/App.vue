@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <com-header></com-header>
-    <com-login v-if="this.$store.state.dialogVisible"></com-login>
+    <Header/>
+    <Login v-if="this.$store.state.dialogVisible" />
     <router-view></router-view>
-    <com-Alert></com-Alert>
-    <com-footer></com-footer>
+    <Alert/>
+    <Footer/>
   </div>
 </template>
 
@@ -16,10 +16,10 @@ import Alert from './components/alert/alert';
 
 export default {
   components: {
-    comHeader: Header,
-    comFooter: Footer,
-    comLogin: Login,
-    comAlert: Alert
+    Header,
+    Footer,
+    Login,
+    Alert
   },
   data () {
     return {

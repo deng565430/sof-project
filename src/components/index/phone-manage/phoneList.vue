@@ -138,6 +138,7 @@ export default {
         }]
       },
       childMultipleSelection: '',
+      activeName: 'first',
       starTimeValue: '',
       searchValue: {},
       listShow: true,
@@ -203,10 +204,15 @@ export default {
       });
     },
     listenToChildEvent (data) {
+      if (data[0].project == null || data[0].project === '') {
+        this.$alert('请先选择项目', '提示信息');
+        return;
+      }
       let project = data[0].project;
       let minbatch = data[0].minbatch;
       let maxbatch = data[0].maxbatch;
-      this.tableData.length = [];
+      this.tableData = [];
+      this.recordsFiltered = 0;
       let that = this;
       this.listShow = true;
       this.$ajax({
@@ -276,7 +282,7 @@ export default {
         project.push(data);
       }
       project = encodeURIComponent(JSON.stringify(project));
-      let url = `http://192.168.1.106/api/tel/exportTel?project=${project}`;
+      let url = `/api/tel/exportTel?project=${project}`;
       window.location.href = url;
     },
     handleSelectionChange (val) {

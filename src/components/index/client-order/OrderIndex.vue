@@ -1,26 +1,35 @@
 <template>
   <div id="">
-    <div class="selectarea" >
+    <div class="selectarea" v-if='selects'>
       <div class="title"><span>选择行业</span></div>
-      <ul class="select">
-          <li ><router-link to="/client/estateOrder">房地产</router-link></li>
-          <li @click="hangye($event)" v-for='itme in value' :id='itme.id'>{{itme.val}}</li>
+      <ul class="select"><!-- 
+          <li ><router-link to="/client/estateOrder">房地产</router-link></li> -->
+          <li @click="hangye($event)" v-for='itme in value' :id='itme.id'  >{{itme.val}}</li>
       </ul>
     </div>
+
     <div >
+      <EstateOrder v-if="EstateOrder" :selectind='selectind' @listinchild='listinchild'></EstateOrder>
     </div>    
   </div>
 </template>
 
 <script>
+import EstateOrder from './orders/estateOrder';
 export default {
+  components: {
+    EstateOrder
+  },
   data () {
     return {
       dialogform: false,
       value: [{
         id: '',
         val: ''
-      }]
+      }],
+      EstateOrder: false,
+      selects: true,
+      selectind: ''
     };
   },
   created () {
@@ -31,7 +40,13 @@ export default {
   methods: {
     hangye ($event) {
       console.log(event.currentTarget.id);
-      window.location.href = 'http://localhost:8080/#/client/estateOrder?id= ' + event.currentTarget.id;
+      this.selects = false;
+      this.EstateOrder = true;
+      this.selectind = event.currentTarget.id;
+    },
+    listinchild () {
+      this.EstateOrder = false;
+      this.selects = true;
     },
     loading () {
       var _this = this;

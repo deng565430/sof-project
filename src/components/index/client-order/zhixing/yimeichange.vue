@@ -146,8 +146,39 @@ export default {
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
+    this.console();
   },
   methods: {
+    console () {
+      var _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/beauty/getBeautyById?id=' + this.$store.state.brieid
+      }).then((res) => {
+        if (res.status === 200) {
+          console.log(res.data.data);
+          this.numtype1 = res.data.data.types;
+          this.numtype2 = res.data.data.types;
+          this.numtype3 = res.data.data.kw;
+          console.log(this.numtype1);
+          var daatas = [];
+          for (var i = 0; i < res.data.data.types.length; i++) {
+            if (res.data.data.types[i] === 'kw') {
+              _this.isshow = true;
+            }
+          }
+          for (var s = 0; s < res.data.data.types.length; i++) {
+            if (res.data.data.types[s] === 'kw') {
+              daatas.push(res.data.data.types[s]);
+            }
+            if (res.data.data.types[s] === 'note') {
+              daatas.push(res.data.data.types[s]);
+            }
+          }
+          console.log(daatas);
+        }
+      });
+    },
     quxiao () {
       this.$emit('childrenEventIsShow2');
     },
@@ -204,7 +235,7 @@ export default {
       var _this = this;
       this.$ajax({
         method: 'post',
-        url: '/api/beauty/addBeautyCampaign',
+        url: '/api/beauty/updateBeautyCampaign',
         data: data
       }).then((res) => {
         if (res.status === 200) {
@@ -216,17 +247,14 @@ export default {
       this.loading = true;
       var _this = this;
       var type = [];
-      for (var i = 0; i < _this.numtype1.length; i++) {
-        type.push(_this.numtype1[i]);
-      }
-      for (var s = 0; s < _this.numtype2.length; s++) {
-        type.push(_this.numtype2[s]);
-      }
+      console.log(this.numtype1);
+      type = this.numtype1;
       var data = {
         'kw': this.numtype3,
         'option': false,
         'type': type
       };
+      console.log(type);
       this.$ajax({
         method: 'post',
         url: '/api/beauty/getBeautyData',
@@ -251,8 +279,6 @@ export default {
             _this.ruleForm.note = res.data.data.note.data;
           }
           if (_this.active++ > 2) this.active = 0;
-          _this.show2 = false;
-          _this.showxiang = true;
         }
       });
     }

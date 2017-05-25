@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div v-show='show3'  >
+  <div v-if='show3'  >
     <el-tabs v-model="activeName" @tab-click="handleClick">
        <el-tab-pane label="房产" name="first" id='1'>
         <el-table
@@ -49,12 +49,13 @@
           </el-pagination>
        </el-tab-pane>
        <el-tab-pane label="医美" name="second" id='2' >
-           <Yimeilist :show='{show}' v-show='show4'  @listenToChildEvent="listenToChildEvent"></Yimeilist>
+           <Yimeilist :show='{show}' v-show='show4' :again='{again}'  @listenToChildEvent="listenToChildEvent"></Yimeilist>
       </el-tab-pane>
     </el-tabs>
   </div>
-  <div>
-     <Yimeicampaign v-if="show2" :show='showxiangqing' @childrenEventIsShow="childrenEventIsShow"></Yimeicampaign>
+  <div v-if="Yimeicampaign">
+     <Yimeicampaign  v-if='yimei' :showxiangqing='showxiangqing' @childrenEventIsShow="childrenEventIsShow" @childrenEventIsShow2="childrenEventIsShow2"></Yimeicampaign>
+     <Zhichange v-if='zhi' :zhidan="zhidan" @linstizhi="linstizhi"></Zhichange>
   </div>
 </div>
 </template>
@@ -62,11 +63,13 @@
 <script>
 import Yimeilist from './yimeilist';
 import Yimeicampaign from './yimeicampaign';
+import Zhichange from './zhichange';
 export default {
   name: 'pnoneManage',
   components: {
     Yimeilist,
-    Yimeicampaign
+    Yimeicampaign,
+    Zhichange
   },
   data () {
     return {
@@ -104,18 +107,24 @@ export default {
       totalCount: 100,
       pageSize: 10,
       show: [],
+      again: [],
       show2: false,
       show4: true,
       show3: true,
-      showxiangqing: false
+      showxiangqing: true,
+      Yimeicampaign: false,
+      yimei: false,
+      zhi: false,
+      rowid: '',
+      totlanum: ''
     };
   },
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
     this.console();
-    this.lists(2, '/api/campaign/getNewCampaign?start=0&length=10&industryId=');
     console.log(this.show);
+    this.lists(2, '/api/campaign/getNewCampaign?start=0&length=10&industryId=2');
   },
   methods: {
     lists (id, url) {
@@ -123,7 +132,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: url + id
+        url: url
       }).then(function (res) {
         if (res.status === 200 && res.data.recordsFiltered > 0) {
           console.log(res.data.data);
@@ -136,23 +145,54 @@ export default {
             obj.changetime = res.data.data[i].create_time;
             obj.id = res.data.data[i].id;
             obj.recordsFiltered = res.data.recordsFiltered;
+            _this.show[i] = obj;
+            _this.totlanum = res.data.recordsFiltered;
           };
-          _this.show.push(obj);
-          _this.totalCount = res.data.recordsFiltered;
         }
       });
     },
+    linstizhi () {
+      this.Yimeicampaign = false;
+      this.show3 = true;
+      this.console();
+    },
     listenToChildEvent (val) {
-      console.log(val);
-      this.show2 = true;
+      this.Yimeicampaign = true;
+      this.yimei = true;
       this.show3 = false;
     },
-    childrenEventIsShow (val) {
-      console.log(this.show);
-      this.show2 = false;
+    childrenEventIsShow2 (val) {
+      this.Yimeicampaign = false;
       this.activeName = 'second';
       this.show3 = true;
-      this.lists(2, '/api/campaign/getNewCampaign?start=0&length=10&industryId=');
+    },
+    childrenEventIsShow (val) {
+      this.show = [];
+      let _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/campaign/getNewCampaign?start=0&length=10&industryId=2'
+      }).then(function (res) {
+        if (res.status === 200 && res.data.recordsFiltered > 0) {
+          console.log(res.data.data);
+          for (let i = 0; i < res.data.data.length; i++) {
+            var obj = {};
+            obj.projiect = res.data.data[i].project_name;
+            obj.phonenum = res.data.data[i].phone_demand;
+            obj.starttime = res.data.data[i].start_date;
+            obj.endtime = res.data.data[i].end_date;
+            obj.changetime = res.data.data[i].create_time;
+            obj.id = res.data.data[i].id;
+            obj.recordsFiltered = res.data.recordsFiltered;
+            _this.show[i] = obj;
+            _this.totlanum = res.data.recordsFiltered;
+          };
+          console.log(_this.show);
+        }
+      });
+      this.Yimeicampaign = false;
+      this.activeName = 'second';
+      this.show3 = true;
     },
     handleClick (tab, event) {
       this.industryId = tab.$el.id;
@@ -235,7 +275,10 @@ export default {
       this.loadData(this.currentPage, this.pageSize);
     },
     handleEdit (index, row) {
-      window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
+      this.show3 = false;
+      this.Yimeicampaign = true;
+      this.zhi = true;
+      this.rowid = row.id;
     },
     handleUp (index, row) {
       window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
