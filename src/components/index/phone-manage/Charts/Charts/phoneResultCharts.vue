@@ -185,7 +185,6 @@ export default {
         console.log(project);
         console.log(source);
         console.log(batch);
-        
       }
     },
     disposeData (intentionrates, data, xAxisData, tooltipData) {

@@ -25,6 +25,7 @@ const state = {
         stratime: '',
         endtime: ''
     },
+    yimeicampaignmsg: '',
     commitIs: false,
     data: [{
         name: '餐厅'

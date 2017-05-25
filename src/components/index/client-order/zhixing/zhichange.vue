@@ -338,8 +338,7 @@ export default {
         'competing': nameid,
         'project_name': this.ruleForm.name,
         'types': this.wtype,
-        'briefid': this.briefid,
-        'id': id,
+        'briefid': id,
         'ad': ad,
         'kw': kw,
         'code': code,
@@ -349,7 +348,7 @@ export default {
       var _this = this;
       this.$ajax({
         method: 'post',
-        url: '/api/campaign/updateCampaign',
+        url: '/api/campaign/addCampaignRegularly',
         data: data
       }).then(function (res) {
         if (res.status === 200) {
