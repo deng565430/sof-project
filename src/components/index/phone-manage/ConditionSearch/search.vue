@@ -1,7 +1,8 @@
 <template>
 <div id="selectData">
         <div v-if="searchIsShow.searchIsShow">
-          <span>项目:</span>
+        <div class="block">
+          <span class="projectName">项目:</span>
           <el-select v-model="projectValue" placeholder="请选择名称">
             <el-option
               v-for="item in projectOption"
@@ -10,10 +11,11 @@
               :value="item.value">
             </el-option>
           </el-select>
+          </div>
         </div>
         <div>
           <div class="block">
-            <span class="demonstration">批次:</span>
+            <span class="demonstration projectName">批次:</span>
             <el-date-picker
               v-model="starTimeValue"
               type="daterange"
@@ -107,10 +109,15 @@ export default {
   display: flex
   >div
     display: inline-block
-    width: 270px
-    span
-      display: inline-block
-      width:40px
+    width: 280px
+    height:50px
+    >div
+      .projectName
+        display: inline-block
+        width:40px
+        height:100%
+        line-height:40px
+        vertical-align: top
   #btn
     padding-bottom: 30px
     text-align: left

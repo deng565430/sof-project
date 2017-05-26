@@ -42,11 +42,11 @@
             <el-tag
               v-for="tag in competag"
               :closable="true"
-              :key="tag.value"
+              :key="tag.data"
               :id="tag.id"
               @close="handleClose3(tag)"
             >
-            {{tag.value}}
+            {{tag.data}}
             </el-tag>
           </div>
         <el-form class="forms3" label-position='right'>
@@ -99,7 +99,7 @@ export default {
       show: false,
       show2: true,
       competag: [{
-        'value': '',
+        'data': '',
         'id': ''
       }],
       ruleForm: {
@@ -147,7 +147,6 @@ export default {
   created () {
     console.log(this.$parent.rowid);
     this.id = this.$parent.rowid;
-    this.console();
     this.console2();
     this.onloda();
     this.onloda2();
@@ -158,30 +157,39 @@ export default {
       if (this.active++ > 2) this.active = 0;
     },
     console2 () {
+      var _this = this;
       this.$ajax({
         method: 'get',
         url: '/api/campaign/getCampaignInfo?id=' + this.id
       }).then(function (res) {
         if (res.status === 200) {
           console.log(res);
-        }
-      });
-    },
-    console () {
-      let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefById?id=' + this.id
-      }).then(function (res) {
-        if (res.status === 200) {
-          var obj = {};
-          obj.cname = res.data.data.customName;
-          obj.name = res.data.data.proName;
-          obj.num = res.data.data.telneedNum;
-          obj.desc = res.data.data.project_description;
-          obj.value = res.data.data.startTime;
-          obj.value1 = res.data.data.endTime;
-          _this.ruleForm = obj;
+          _this.areatype = res.data.data.districts;
+          _this.wtype = res.data.data.types;
+          if (res.data.data.projects !== []) {
+            _this.competag = res.data.data.projects;
+          }
+          _this.ruleForm.cname = res.data.data.demand_side;
+          _this.ruleForm.name = res.data.data.project_name;
+          _this.ruleForm.num = res.data.data.phone_demand;
+          _this.ruleForm.value = res.data.data.start_date;
+          _this.ruleForm.value1 = res.data.data.end_date;
+          _this.briefid = res.data.data.briefid;
+          console.log(_this.competag);
+          if (res.data.data.address_expand === true && res.data.data.floorname_expand === true) {
+            _this.region = ['按项目扩展', '按区域扩展'];
+          } else if (res.data.data.address_expand === true && res.data.data.floorname_expand === false) {
+            _this.region = ['按项目扩展'];
+          } else if (res.data.data.address_expand === false && res.data.data.floorname_expand === true) {
+            _this.region = ['按区域扩展'];
+          };
+          if (res.data.data.ad === true && res.data.data.kw === true) {
+            _this.numtype = ['浏览数据', '搜索数据'];
+          } else if (res.data.data.ad === true && res.data.data.kw === false) {
+            _this.numtype = ['浏览数据'];
+          } else if (res.data.data.ad === false && res.data.data.kw === true) {
+            _this.numtype = ['搜索数据'];
+          };
         }
       });
     },
@@ -262,6 +270,7 @@ export default {
       console.log(data);
       if (data !== '') {
         this.competag.push(data);
+        console.log(this.competag);
       }
     },
     querySearch (queryString, cb) {
@@ -352,7 +361,7 @@ export default {
         'competing': nameid,
         'project_name': this.ruleForm.name,
         'types': this.wtype,
-        'briefid': this.id,
+        'briefid': this.briefid,
         'ad': ad,
         'kw': kw,
         'code': code,

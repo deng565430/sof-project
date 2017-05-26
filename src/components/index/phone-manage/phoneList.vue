@@ -18,7 +18,7 @@
             <template scope="props">
             <el-table
              :data="props.row.types"
-             style="width: 60%; margin-left:18%">
+             style="width: 100%; margin-left:18%">
              <el-table-column
                prop="type"
                label="类型">
@@ -36,7 +36,7 @@
           </el-table-column>
           <el-table-column 
             prop="project"
-            label="名称"
+            label="项目名称"
             show-overflow-tooltip>
           </el-table-column>
           <el-table-column
@@ -48,17 +48,19 @@
           <el-table-column
             prop="type"
             label="类型"
+            width="400"
             show-overflow-tooltip>
           <template scope="scope">
             <el-select
             v-model="scope.row.numAllType"
             multiple
+            @change="selectChange"
             placeholder="所有类型">
             <el-option
               v-for="item in scope.row.types"
               :key="item.count"
               :label="item.type"
-              :value="item.type">
+              :value="item">
             </el-option>
           </el-select>
           </template>
@@ -71,11 +73,12 @@
           </el-table-column>
         </el-table>
         <div class="block" id="tablePage" v-if="pageShow">
-          <span v-if="recordsFiltered!=0">电话总量：{{recordsFiltered}} 条 </span>
-          <el-pagination style="display: inline-block; vertical-align: top"
+          <span v-if="recordsFiltered != 0">电话总量：{{recordsFiltered}} 个 </span>
+          <el-pagination class="pagination" style="display: inline-block; vertical-align: middle;"
             @current-change="handleCurrentChange"
-            :current-page="currentPage"
+            :current-page.sync="currentPage"
             :page-size="200"
+            layout="total, prev, pager, next"
             :total="tableData.length">
           </el-pagination>
           <span class="wrapper">
@@ -110,33 +113,6 @@ export default {
       projectValue: '',
       typeOptions: [],
       typeValue: '',
-      pickerOptions2: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近一个月',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      },
       childMultipleSelection: '',
       activeName: 'first',
       starTimeValue: '',
@@ -264,13 +240,14 @@ export default {
         this.$alert('选择的项目最多三条', '提示信息');
         return;
       }
-      let v = '';
+      console.log(this.multipleSelection);
       let project = [];
+      let v = '';
       for (v of this.multipleSelection) {
         let type = '';
         if (v.numAllType.length) {
           for (var i = 0; i < v.numAllType.length; i++) {
-            type += `${v.numAllType[i]},`;
+            type += `${v.numAllType[i].type},`;
           }
         } else {
           type = 'all';
@@ -284,9 +261,27 @@ export default {
       project = encodeURIComponent(JSON.stringify(project));
       let url = `/api/tel/exportTel?project=${project}`;
       window.location.href = url;
+      /* for (let i in project) {
+        (function (i) {
+          setTimeout(function () {
+            let data = [];
+            data.push(project[i]);
+            alert(data);
+            data = encodeURIComponent(JSON.stringify(data));
+            let url = `/api/tel/exportTel?project=${data}`;
+            window.location.href = url;
+          }, i * 1000);
+        })(i);
+      } */
     },
     handleSelectionChange (val) {
       this.multipleSelection = val;
+    },
+    selectChange (key) {
+      for (let i of key) {
+        console.log(i);
+      }
+      console.log(key);
     },
     toggleRowSelection (rows) {
       if (rows.types.length > 0) {
@@ -343,8 +338,9 @@ export default {
       vertical-align: top
       width: 120px
 #table
-  width: 70%
+  width: 100%
 #tablePage
+  width: 100%
   padding-top: 10px
   margin-top: 20px
 </style>

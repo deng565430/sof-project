@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div :id="id.id" :style="{width: '1000px', height: '500px'}"></div>
+  <div :id="id.id" :style="{width: '1200px', height: '500px'}"></div>
 </div>
 </template>
 
@@ -59,7 +59,7 @@ export default {
             trigger: 'axis'
           },
           legend: {
-            data: ['总量', '意向率']
+            data: ['意向量', '意向率']
           },
           grid: {
             left: '3%',
@@ -106,7 +106,12 @@ export default {
         }
         tooltipData = Array.from(new Set(tooltipData));
         xAxisData = Array.from(new Set(xAxisData));
+        let tooltipDataYiXiang = tooltipData.map((item) => {
+          return item + ' 意向量';
+        });
         let seriesData = [];
+        let seriesDataYiXiang = [];
+        // 拆分找到所有需要的数据
         for (let i = 0; i < tooltipData.length; i++) {
           (function (i) {
             let datas = {
@@ -115,15 +120,26 @@ export default {
               data: []
             };
             seriesData.push(datas);
+            let datasYiXiang = {
+              name: tooltipDataYiXiang[i],
+              type: 'bar',
+              stack: '意向量',
+              data: []
+            };
+            seriesDataYiXiang.push(datasYiXiang);
             for (let j = 0; j < data.projectType.length; j++) {
               (function (j) {
                 if (tooltipData[i] === data.projectType[j].source) {
                   seriesData[i].data.push(data.projectType[j].intentionrate);
+                  seriesDataYiXiang[i].data.push(data.projectType[j].intention);
                 }
               })(j);
             }
           })(i);
         }
+        // 对两个获取的数据进行合并
+        seriesData = seriesData.concat(seriesDataYiXiang);
+        tooltipData = tooltipData.concat(tooltipDataYiXiang);
         let titleText = data.projectType[0].project;
         var projectTypeOption = {
           title: {
@@ -170,10 +186,14 @@ export default {
         project = Array.from(new Set(project));
         source = Array.from(new Set(source));
         batch = Array.from(new Set(batch));
+<<<<<<< HEAD
         console.log(project);
         console.log(source);
         console.log(batch);
       }
+=======
+      };
+>>>>>>> c53504436bbbca580ca32d3ce43c5462daca3a68
     },
     disposeData (intentionrates, data, xAxisData, tooltipData) {
       let datas = [{

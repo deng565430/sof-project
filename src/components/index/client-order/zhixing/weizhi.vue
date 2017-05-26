@@ -171,7 +171,7 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getAllCampaign?status=0start=0&length=10&industryId=2'
+        url: '/api/campaign/getAllCampaign?status=0&start=0&length=10&industryId=2'
       }).then(function (res) {
         if (res.status === 200 && res.data.recordsFiltered > 0) {
           console.log(res.data.data);

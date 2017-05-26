@@ -7,10 +7,10 @@
     </el-steps>
     <div v-show='show2' v-loading.body="loading">
     <ul :model="ruleForm">
-      <li ><span>公司名称:</span><span>{{11}}</span></li>
-      <li ><span>项目名称:</span><span>{{$store.state.yimei.cname}}</span></li>
-      <li ><span>需求数量:</span><span>{{$store.state.yimei.num}}</span></li>
-      <li style="width: 40%;"><span>订阅周期:</span><span>{{$store.state.yimei.stratime}}-{{$store.state.yimei.endtime}}</span></li>
+      <li ><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
+      <li ><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
+      <li ><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
+      <li style="width: 40%;"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
     </ul>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" class="form1">
           <el-form-item label="线上数据" label-width="100px">
@@ -18,6 +18,9 @@
                 <el-checkbox label="note" >论坛社区</el-checkbox>
                 <el-checkbox label="ind" >医美网站</el-checkbox>
                 <el-checkbox label="kw"   @change='onselect'>搜索词</el-checkbox>
+                <div>线下数据</div>
+                <el-checkbox label="娱乐场所" >娱乐场所</el-checkbox>
+                <el-checkbox label="生活场所" >生活场所</el-checkbox>
               </el-checkbox-group>
           </el-form-item>
           <el-form-item label="搜索词" label-width="100px" v-show="isshow">
@@ -28,12 +31,12 @@
                 <el-checkbox label="综合排名" ></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
-         <el-form-item label="线下数据" label-width="100px">
+         <!-- <el-form-item label="线下数据" label-width="100px">
               <el-checkbox-group v-model="numtype2">
                 <el-checkbox label="娱乐场所" >娱乐场所</el-checkbox>
                 <el-checkbox label="生活场所" >生活场所</el-checkbox>
               </el-checkbox-group>
-          </el-form-item>
+          </el-form-item> -->
          
          <el-form-item>
           <el-button  @click="quxiao">取 消</el-button>
@@ -158,24 +161,18 @@ export default {
         if (res.status === 200) {
           console.log(res.data.data);
           this.numtype1 = res.data.data.types;
-          this.numtype2 = res.data.data.types;
           this.numtype3 = res.data.data.kw;
+          this.ruleForm.cname = res.data.data.demand_side;
+          this.ruleForm.name = res.data.data.project_name;
+          this.ruleForm.num = res.data.data.phone_demand;
+          this.ruleForm.value = res.data.data.start_date;
+          this.ruleForm.value1 = res.data.data.end_date;
           console.log(this.numtype1);
-          var daatas = [];
           for (var i = 0; i < res.data.data.types.length; i++) {
             if (res.data.data.types[i] === 'kw') {
               _this.isshow = true;
             }
           }
-          for (var s = 0; s < res.data.data.types.length; i++) {
-            if (res.data.data.types[s] === 'kw') {
-              daatas.push(res.data.data.types[s]);
-            }
-            if (res.data.data.types[s] === 'note') {
-              daatas.push(res.data.data.types[s]);
-            }
-          }
-          console.log(daatas);
         }
       });
     },
@@ -190,6 +187,7 @@ export default {
     onselect () {
       if (this.isshow === true) {
         this.isshow = false;
+        this.numtype3 = [];
       } else if (this.isshow === false) {
         this.isshow = true;
       }
@@ -199,7 +197,7 @@ export default {
       console.log(brieid);
       console.log(this.$store.state.commitIs);
       var beauty = {
-        'briefid': brieid,
+        'id': brieid,
         'project_name': this.ruleForm.name,
         'select_kw': this.numtype3.join(','),
         'select_type': this.numtype1.join(',')
@@ -247,14 +245,13 @@ export default {
       this.loading = true;
       var _this = this;
       var type = [];
-      console.log(this.numtype1);
       type = this.numtype1;
       var data = {
         'kw': this.numtype3,
         'option': false,
         'type': type
       };
-      console.log(type);
+      console.log(this.numtype3);
       this.$ajax({
         method: 'post',
         url: '/api/beauty/getBeautyData',
@@ -262,7 +259,7 @@ export default {
       }).then(function (res) {
         if (res.status === 200) {
           _this.loading = false;
-          console.log(res.data.data.ind);
+          console.log(res.data.data);
           if (res.data.data.ind !== null) {
             _this.ruleForm.ind = res.data.data.ind.data;
           }
@@ -278,6 +275,8 @@ export default {
           if (res.data.data.note !== null) {
             _this.ruleForm.note = res.data.data.note.data;
           }
+          _this.show2 = false;
+          _this.showxiang = true;
           if (_this.active++ > 2) this.active = 0;
         }
       });
