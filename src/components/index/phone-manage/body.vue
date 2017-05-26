@@ -30,9 +30,9 @@ export default {
       data: [
         {'value': '电销系统', 'name': {'url': '', 'val': '电话清单'}, 'ing': {'url': '', 'val': '电话效果分析'}, 'now': {'url': '', 'val': '电话质量分析'}, 'hoistory': {'url': '', 'val': '已完成'}}
       ],
-      flag: true,
+      flag: false,
       childIsShow: false,
-      PhoneList: false,
+      PhoneList: true,
       PhoneResult: false,
       quality: false
     };
@@ -42,19 +42,19 @@ export default {
   methods: {
     childEventIsShow (data) {
       switch (data) {
-        case '1':
+        case '电话清单':
           this.PhoneList = true;
           this.PhoneResult = false;
           this.quality = false;
           this.flag = false;
           break;
-        case '2':
+        case '电话效果分析':
           this.PhoneResult = true;
           this.PhoneList = false;
           this.quality = false;
           this.flag = false;
           break;
-        case '3':
+        case '电话质量分析':
           this.quality = true;
           this.PhoneResult = false;
           this.PhoneList = false;

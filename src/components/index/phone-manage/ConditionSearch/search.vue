@@ -84,8 +84,8 @@ export default {
     search () {
       this.recordsFiltered = 0;
       let project = this.projectValue;
-      let minbatch = new Date(this.starTimeValue[0]).toLocaleDateString();
-      let maxbatch = new Date(this.starTimeValue[1]).toLocaleDateString();
+      let minbatch = this.format('yyyy-MM-dd', new Date(this.starTimeValue[0]));
+      let maxbatch = this.format('yyyy-MM-dd', new Date(this.starTimeValue[1]));
       if (this.starTimeValue == null || this.starTimeValue === '') {
         this.$alert('请选择时间范围', '提示信息');
         return;
@@ -95,6 +95,26 @@ export default {
       data.minbatch = minbatch;
       data.maxbatch = maxbatch;
       this.$emit('listenToChildEvent', [data]);
+    },
+    format (fmt, time) {
+      var o = {
+        'M+': time.getMonth() + 1,
+        'd+': time.getDate(),
+        'h+': time.getHours(),
+        'm+': time.getMinutes(),
+        's+': time.getSeconds(),
+        'q+': Math.floor((time.getMonth() + 3) / 3),
+        'S': time.getMilliseconds()
+      };
+      if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (time.getFullYear() + '').substr(4 - RegExp.$1.length));
+      }
+      for (var k in o) {
+        if (new RegExp('(' + k + ')').test(fmt)) {
+          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
+        }
+      }
+      return fmt;
     }
   },
   props: ['searchIsShow', 'projectOptions'],

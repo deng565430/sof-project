@@ -8,27 +8,33 @@
           ref="multipleTable"
           :data="tableData"
           :expand-row-keys="expands"
+          stripe
+          border
+          show-summary
+          sum-text="总量"
           max-height=450
-          tooltip-effect="dark"
-          style="width: 100%;"
+          highlight-current-row
+          style="width: 80%;"
           @selection-change="handleSelectionChange"
           @expand="toggleRowSelection" >
           <el-table-column type="expand">
-
-            <template scope="props">
-            <el-table
-             :data="props.row.types"
-             style="width: 70%;">
-             <el-table-column
-               prop="type"
-               label="类型">
-             </el-table-column>
-             <el-table-column
-               prop="count"
-               label="总数">
-             </el-table-column>
-            </el-table>
-            </template>
+              <template scope="props">
+              <el-table
+               :data="props.row.types"
+                border
+               style="width: 65%;">
+               <el-table-column
+                 prop="type"
+                 align="left"
+                 label="类型">
+               </el-table-column>
+               <el-table-column
+                 prop="count"
+                 align="left"
+                 label="总数">
+               </el-table-column>
+              </el-table>
+              </template>
           </el-table-column>
           <el-table-column
             type="selection"
@@ -36,20 +42,20 @@
           </el-table-column>
           <el-table-column 
             prop="project"
-            label="项目名称"
-            show-overflow-tooltip>
+            align="left"
+            label="项目名称">
           </el-table-column>
           <el-table-column
             prop="batch"
-            label="批次"
-            show-overflow-tooltip>
+            align="left"
+            label="批次">
             <template scope="scope">{{ scope.row.batch }}</template>
           </el-table-column>
           <el-table-column
             prop="type"
             label="类型"
-            width="400"
-            show-overflow-tooltip>
+            align="left"
+            width="400">
           <template scope="scope">
             <el-select
             v-model="scope.row.numAllType"
@@ -67,6 +73,7 @@
           </el-table-column>
           <el-table-column
             prop="phone"
+            align="left"
             label="总量"
             show-overflow-tooltip>
             <template scope="scope" >{{ scope.row.phone }}</template>
