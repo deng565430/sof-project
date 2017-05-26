@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div :id="id.id" :style="{width: '1200px', height: '500px'}"></div>
+  <div :id="id.id" :style="{width: '1400px', height: '500px'}"></div>
 </div>
 </template>
 
@@ -56,7 +56,10 @@ export default {
             text: titleText
           },
           tooltip: {
-            trigger: 'axis'
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
           },
           legend: {
             data: ['意向量', '意向率']
@@ -74,14 +77,14 @@ export default {
           },
           xAxis: {
             type: 'category',
-            boundaryGap: false,
-            data: xAxisData
+            data: xAxisData,
+            position: 'bottom'
           },
           yAxis: {
             type: 'value'
           },
           series: [{
-            name: '总量',
+            name: '意向量',
             type: 'bar',
             data: totalData
           }, {
@@ -124,6 +127,7 @@ export default {
               name: tooltipDataYiXiang[i],
               type: 'bar',
               stack: '意向量',
+              barGap: '30%',
               data: []
             };
             seriesDataYiXiang.push(datasYiXiang);
@@ -138,8 +142,8 @@ export default {
           })(i);
         }
         // 对两个获取的数据进行合并
-        seriesData = seriesData.concat(seriesDataYiXiang);
-        tooltipData = tooltipData.concat(tooltipDataYiXiang);
+        seriesData = seriesDataYiXiang.concat(seriesData);
+        tooltipData = tooltipDataYiXiang.concat(tooltipData);
         let titleText = data.projectType[0].project;
         var projectTypeOption = {
           title: {
@@ -149,12 +153,14 @@ export default {
             trigger: 'axis'
           },
           legend: {
-            data: tooltipData
+            data: tooltipData,
+            top: '10%'
           },
           grid: {
             left: '3%',
             right: '4%',
             bottom: '3%',
+            top: '20%',
             containLabel: true
           },
           toolbox: {
@@ -164,8 +170,9 @@ export default {
           },
           xAxis: {
             type: 'category',
-            boundaryGap: false,
-            data: xAxisData
+            data: xAxisData,
+            position: 'bottom',
+            nameGap: 20
           },
           yAxis: {
             type: 'value'

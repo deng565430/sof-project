@@ -2,7 +2,7 @@
 <div id="selectData">
         <div v-if="searchIsShow.searchIsShow">
         <div class="block">
-          <span class="projectName">项目:</span>
+          <span class="projectName">项目名称:</span>
           <el-select v-model="projectValue" placeholder="请选择名称">
             <el-option
               v-for="item in projectOption"
@@ -109,12 +109,12 @@ export default {
   display: flex
   >div
     display: inline-block
-    width: 280px
+    width: 310px
     height:50px
     >div
       .projectName
         display: inline-block
-        width:40px
+        width:70px
         height:100%
         line-height:40px
         vertical-align: top
