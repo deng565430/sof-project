@@ -18,7 +18,7 @@
             <template scope="props">
             <el-table
              :data="props.row.types"
-             style="width: 100%; margin-left:18%">
+             style="width: 70%;">
              <el-table-column
                prop="type"
                label="类型">
