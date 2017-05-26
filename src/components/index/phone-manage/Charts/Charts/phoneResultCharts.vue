@@ -182,25 +182,7 @@ export default {
         this.chart.setOption(projectTypeOption);
       } else if (id === 'typeIntention') {
         console.log('typeIntention');
-<<<<<<< HEAD
-        let project = [];
-        let source = [];
-        let batch = [];
-        for (let v of data.projectType) {
-          project.push(v.project);
-          source.push(v.source);
-          batch.push(v.batch);
-        }
-        project = Array.from(new Set(project));
-        source = Array.from(new Set(source));
-        batch = Array.from(new Set(batch));
-        console.log(project);
-        console.log(source);
-        console.log(batch);
-      }
-=======
       };
->>>>>>> 8b2da168a3fb274b597babb61186a452b710de04
     },
     disposeData (intentionrates, data, xAxisData, tooltipData) {
       let datas = [{
