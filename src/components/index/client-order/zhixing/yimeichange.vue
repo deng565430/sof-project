@@ -1,5 +1,8 @@
 <template>
 <div class="formcontain" v-show="show3">
+  <div style="text-align:left">
+  <el-button type="text" icon="arrow-left" @click="quxiao">返回</el-button>
+  </div>
      <el-steps :space="200" :active="active" class='lines'>
       <el-step title="基础信息" description=""></el-step>
       <el-step title="数据规则" description=""></el-step>
@@ -10,17 +13,19 @@
       <li ><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
       <li ><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
       <li ><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
+      <li ><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
       <li style="width: 40%;"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
     </ul>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" class="form1">
-          <el-form-item label="线上数据" label-width="100px">
+          <el-form-item label="线上数据" label-width="100px" style="margin-bottom:40px">
               <el-checkbox-group v-model="numtype1">
                 <el-checkbox label="note" >论坛社区</el-checkbox>
                 <el-checkbox label="ind" >医美网站</el-checkbox>
                 <el-checkbox label="kw"   @change='onselect'>搜索词</el-checkbox>
-                <div>线下数据</div>
+                <div class="xianxia"> <label>线下数据</label>
                 <el-checkbox label="娱乐场所" >娱乐场所</el-checkbox>
                 <el-checkbox label="生活场所" >生活场所</el-checkbox>
+                </div>
               </el-checkbox-group>
           </el-form-item>
           <el-form-item label="搜索词" label-width="100px" v-show="isshow">
@@ -164,6 +169,7 @@ export default {
           this.numtype3 = res.data.data.kw;
           this.ruleForm.cname = res.data.data.demand_side;
           this.ruleForm.name = res.data.data.project_name;
+          this.ruleForm.desc = res.data.data.project_description;
           this.ruleForm.num = res.data.data.phone_demand;
           this.ruleForm.value = res.data.data.start_date;
           this.ruleForm.value1 = res.data.data.end_date;
@@ -337,36 +343,40 @@ export default {
 .el-button--default a:hover{
   color: #20a0ff
 }
-ul {/*
-  display: flex*/
-  margin-bottom: 20px;
-}
-.form2{
-  padding: 0 150px
-}
-.form1{
-      width: 500px;
-    margin: 0 auto;
-   margin-left: 94px;
-}
-
-.el-checkbox-button__inner{
-  border:0px;
-}
 ul {
-  display: flex;
   margin:20px;
-  height: 30px;
+  min-height: 30px;
   background: hsla(206, 100%, 56%, 0.07);
   margin: 10px 122px;
   border-top: 1px solid #20a0ff;
   padding: 20px;
 }
 ul li{
-  width: 15%
+  margin-bottom: 10px;
+  width: 100% !important;
+  text-align: left;
 }
 ul li span:nth-child(1){
   margin-right: 8px;
+}
+.form2{
+  padding: 0 150px
+}
+.form1{
+      /*width: 500px;*/
+    margin: 0 auto;
+   margin-left: 94px;
+}
+.xianxia{
+  position: absolute;
+  left: -68px;
+  top: 39px;
+}
+.xianxia label{
+  margin-right: 10px
+}
+.el-checkbox-button__inner{
+  border:0px;
 }
 .lines{
   margin-bottom: 40px;

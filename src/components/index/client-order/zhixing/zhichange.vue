@@ -1,18 +1,22 @@
 <template>
 <div class="formcontain">
+  <div style="text-align:left">
+  <el-button type="text" icon="arrow-left" @click="quxiao">返回</el-button>
+  </div>
     <el-steps :space="200" :active="active" class='lines' style="margin-bottom:40px">
       <el-step style="width:22.33%" title="基础信息" description=""></el-step>
       <el-step style="width:22.33%" title="数据规则" description=""></el-step>
       <el-step style="width:10.33%" title="生成执行单" description=""></el-step>
     </el-steps>
     <ul :model="ruleForm">
-      <li style="width:15%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
-      <li style="width:15%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
-      <li style="width:15%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
-      <li style="width:40%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
+      <li style="width:50%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
+      <li style="width:50%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
+      <li style="width:50%"><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
+      <li style="width:50%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
+      <li style="width:50%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
     </ul>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2' class="form1" >
-        <el-form-item label="所属区域" >
+        <el-form-item label="所属区域" style="margin-bottom:0">
             <el-checkbox-group v-model="areatype" class="aa">
               <el-checkbox v-for="type in areas"  :label="type" :key="type">{{type}}</el-checkbox>
             </el-checkbox-group>
@@ -25,16 +29,17 @@
 
 
           <el-form class="demo-form-inline form4" style="margin:10px 0;">
-          <el-form-item label="项目竞品">
+          <el-form-item label="项目竞品" style="margin-bottom:8px;" @click="blur">
             <el-autocomplete
               id='state1.id'
               class="inline-input"
               v-model="state1"
+              icon="close"
+              :on-icon-click="blur"
               :fetch-suggestions="querySearch"
-              placeholder="请输入内容"
               @select="handleSelect"
+              placeholder="请输入内容"
               style="width:300px"
-              @focus="focus"
             ></el-autocomplete>
           </el-form-item>
         </el-form>
@@ -50,7 +55,7 @@
             </el-tag>
           </div>
         <el-form class="forms3" label-position='right'>
-          <el-form-item label="扩展方式" >
+          <el-form-item label="扩展方式" style="margin-bottom:8px;">
               <el-checkbox-group v-model="region">
                 <el-checkbox label="按楼盘名称扩展" ></el-checkbox>
                 <el-checkbox label="按地区扩展"></el-checkbox>
@@ -90,7 +95,10 @@
 </template>
 
 <script>
+import { focus } from 'vue-focus';
+
 export default {
+  directives: { focus: focus },
   data () {
     return {
       state1: '',
@@ -98,10 +106,7 @@ export default {
       loading: false,
       show: false,
       show2: true,
-      competag: [{
-        'value': '',
-        'id': ''
-      }],
+      competag: [],
       ruleForm: {
         cname: '',
         name: '',
@@ -152,6 +157,9 @@ export default {
     this.onloda2();
   },
   methods: {
+    blur () {
+      this.state1 = '';
+    },
     quxiao () {
       this.$emit('listizhi2');
     },
@@ -250,10 +258,11 @@ export default {
     },
     handleSelect (item) {
       var data = item;
-      console.log(data);
-      if (data !== '') {
+      if (data !== '' && this.competag !== []) {
         this.competag.push(data);
       }
+      console.log(data);
+      console.log(this.competag);
     },
     querySearch (queryString, cb) {
       var _this = this;
@@ -266,7 +275,6 @@ export default {
       console.log(this.$el.id);
     },
     onloda2 () {
-      console.log(this.state1);
       var datas = [];
       var _this = this;
       this.$ajax({
@@ -440,7 +448,7 @@ export default {
 <style lang="css" scoped>
 .formcontain{
   width:100%;
-  margin: 0 auto
+  margin: 0 auto;
 }
 .formcontain a{
     display: inline-block;
@@ -485,10 +493,10 @@ export default {
 .el-button--default a:hover{
   color: #20a0ff
 }
-ul {
+/*ul {
   display: flex;
   margin:20px;
-  height: 30px;
+  min-height: 30px;
   background: hsla(206, 100%, 56%, 0.07);
   margin: 10px 122px;
     border-top: 1px solid #20a0ff;
@@ -496,6 +504,19 @@ ul {
 }
 ul li{
   width: 25%
+}*/
+ul {
+  margin:20px;
+  min-height: 30px;
+  background: hsla(206, 100%, 56%, 0.07);
+  margin: 10px 122px;
+  border-top: 1px solid #20a0ff;
+  padding: 20px;
+}
+ul li{
+  margin-bottom: 10px;
+  width: 100% !important;
+  text-align: left;
 }
 ul li span:nth-child(1){
   margin-right: 8px;
@@ -509,18 +530,18 @@ ul li span:nth-child(1){
   border:0px;
 }
 .forms2{
-  width: 280px;
+  /*width: 280px;*/
 }
 .form5 .el-form-item{
   margin-bottom: 20px !important;
 }
 .forms3{
-  width: 320px;
+  /*width: 320px;*/
   padding-left: 14px;
 }
 .tags{
-  /*position: absolute;
-    top: 44px;*/
+  text-align: left;
+  margin-left: 80px
 }
 .tags span{
   margin-right: 10px;

@@ -1,5 +1,8 @@
 <template>
 <div class="formcontain" v-show="show3">
+  <div style="text-align:left">
+  <el-button type="text" icon="arrow-left" @click="quxiao">返回</el-button>
+</div>
      <el-steps :space="200" :active="active" class='lines'>
       <el-step title="基础信息" description=""></el-step>
       <el-step title="数据规则" description=""></el-step>
@@ -270,7 +273,7 @@ export default {
 <style lang="css" scoped>
 .formcontain{
   width:100%;
-  margin: 0 auto
+  margin: 0 auto;
 }
 .formcontain a{
     display: inline-block;
@@ -316,11 +319,27 @@ ul {/*
   display: flex*/
   margin-bottom: 20px;
 }
+ul {
+  margin:20px;
+  min-height: 30px;
+  background: hsla(206, 100%, 56%, 0.07);
+  margin: 10px 122px;
+  border-top: 1px solid #20a0ff;
+  padding: 20px;
+}
+ul li{
+  margin-bottom: 10px;/*
+  width: 100% !important;*/
+  text-align: left;
+}
+ul li span:nth-child(1){
+  margin-right: 8px;
+}
 .form2{
   padding: 0 150px
 }
 .form1{
-      width: 500px;
+      /*width: 500px;*/
     margin: 0 auto;
    margin-left: 94px;
 }
@@ -328,18 +347,7 @@ ul {/*
 .el-checkbox-button__inner{
   border:0px;
 }
-ul {
-  display: flex;
-  margin:20px;
-  height: 30px;
-  background: hsla(206, 100%, 56%, 0.07);
-  margin: 10px 122px;
-  border-top: 1px solid #20a0ff;
-  padding: 20px;
-}
-ul li{
-  width: 15%
-}
+
 ul li span:nth-child(1){
   margin-right: 8px;
 }

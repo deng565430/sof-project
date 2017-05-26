@@ -201,6 +201,7 @@ export default {
             obj.recordsFiltered = res.data.recordsFiltered;
             _this.show[i] = obj;
             _this.totlanum = res.data.recordsFiltered;
+            _this.$store.state.yimei.totalcont = res.data.recordsFiltered;
           };
           console.log(_this.show);
         }
@@ -237,6 +238,7 @@ export default {
           _this.tableData = data;
           _this.options = datas;
           _this.totalCount = res.data.recordsFiltered;
+          _this.$store.state.yimei.totalcont = res.data.recordsFiltered;
         }
       });
     },
@@ -248,6 +250,7 @@ export default {
       }).then(function (res) {
         if (res.status === 200) {
           _this.totalCount = res.data.data.length;
+          _this.$store.state.yimei.totalcont = res.data.recordsFiltered;
         }
       });
     },
@@ -279,6 +282,7 @@ export default {
           _this.tableData = data;
           _this.options = datas;
           _this.totalCount = res.data.recordsFiltered;
+          _this.$store.state.yimei.totalcont = res.data.recordsFiltered;
         }
       });
     },

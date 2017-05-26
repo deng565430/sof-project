@@ -4,6 +4,11 @@
             :data="show.show"
             style="width: 100%;" align='center' @click="" >
             <el-table-column
+              prop="cname"
+              label="公司名称"
+              width="180">
+            </el-table-column>
+            <el-table-column
               prop="projiect"
               label="项目名称"
               width="180">
@@ -68,6 +73,7 @@ export default {
      // 此时 data 已经被 observed 了
     console.log(this.show);
     this.tableData = this.show.show;
+    this.totalCount = this.$store.state.yimei.totalcont2;
   },
   methods: {
     ...mapMutations([

@@ -17,7 +17,10 @@ const state = {
         num: '',
         stratime: '',
         endtime: '',
-        totalcont: ''
+        totalcont: '',
+        totalcont2: '',
+        totalcont3: '',
+        totalcont4: ''
     },
     yimeichange: {
         cname: '',

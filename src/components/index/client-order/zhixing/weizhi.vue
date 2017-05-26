@@ -7,6 +7,11 @@
             :data="tableData"
             style="width: 100%;" align='center' @click="" >
             <el-table-column
+              prop="cname"
+              label="公司名称"
+              width="180">
+            </el-table-column>
+            <el-table-column
               prop="projiect"
               label="项目名称"
               width="180">
@@ -139,6 +144,7 @@ export default {
           console.log(res.data.data);
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
+            obj.cname = res.data.data[i].demand_side;
             obj.projiect = res.data.data[i].project_name;
             obj.phonenum = res.data.data[i].phone_demand;
             obj.starttime = res.data.data[i].start_date;
@@ -148,6 +154,7 @@ export default {
             obj.recordsFiltered = res.data.recordsFiltered;
             _this.show[i] = obj;
             _this.totlanum = res.data.recordsFiltered;
+            _this.$store.state.yimei.totalcont2 = res.data.recordsFiltered;
           };
         }
       });
@@ -183,6 +190,7 @@ export default {
           console.log(res.data.data);
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
+            obj.cname = res.data.data[i].demand_side;
             obj.projiect = res.data.data[i].project_name;
             obj.phonenum = res.data.data[i].phone_demand;
             obj.starttime = res.data.data[i].start_date;
@@ -192,6 +200,7 @@ export default {
             obj.recordsFiltered = res.data.recordsFiltered;
             _this.show[i] = obj;
             _this.totlanum = res.data.recordsFiltered;
+            _this.$store.state.yimei.totalcont2 = res.data.recordsFiltered;
           };
           console.log(_this.show);
         }
@@ -207,13 +216,14 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getAllCampaign?status=0industryId=' + this.industryId + '&start=0&length=' + _this.pageSize
+        url: '/api/campaign/getAllCampaign?status=0&industryId=' + this.industryId + '&start=0&length=' + _this.pageSize
       }).then(function (res) {
         if (res.status === 200) {
           console.log(res);
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
             var objs = {};
+            obj.cname = res.data.data[i].demand_side;
             obj.projiect = res.data.data[i].project_name;
             obj.phonenum = res.data.data[i].phone_demand;
             obj.starttime = res.data.data[i].start_date;
@@ -228,6 +238,7 @@ export default {
           _this.tableData = data;
           _this.options = datas;
           _this.totalCount = res.data.recordsFiltered;
+          _this.$store.state.yimei.totalcont2 = res.data.recordsFiltered;
         }
       });
     },
@@ -238,7 +249,7 @@ export default {
         url: '/api/campaign/getAllCampaign?status=0start=0&length=' + _this.pageSize
       }).then(function (res) {
         if (res.status === 200) {
-          _this.totalCount = res.data.data.length;
+          _this.$store.state.yimei.totalcont2 = res.data.recordsFiltered;
         }
       });
     },
@@ -255,6 +266,7 @@ export default {
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
             var objs = {};
+            obj.cname = res.data.data[i].demand_side;
             obj.projiect = res.data.data[i].project_name;
             obj.phonenum = res.data.data[i].phone_demand;
             obj.starttime = res.data.data[i].start_date;
@@ -269,6 +281,7 @@ export default {
           _this.tableData = data;
           _this.options = datas;
           _this.totalCount = res.data.recordsFiltered;
+          _this.$store.state.yimei.totalcont2 = res.data.recordsFiltered;
         }
       });
     },

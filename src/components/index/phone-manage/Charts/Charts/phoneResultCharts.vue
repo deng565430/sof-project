@@ -182,7 +182,6 @@ export default {
         this.chart.setOption(projectTypeOption);
       } else if (id === 'typeIntention') {
         console.log('typeIntention');
-<<<<<<< HEAD
         let project = [];
         let source = [];
         let batch = [];
@@ -198,9 +197,6 @@ export default {
         console.log(source);
         console.log(batch);
       }
-=======
-      };
->>>>>>> 8b2da168a3fb274b597babb61186a452b710de04
     },
     disposeData (intentionrates, data, xAxisData, tooltipData) {
       let datas = [{

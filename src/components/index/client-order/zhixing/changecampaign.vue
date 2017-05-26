@@ -1,5 +1,8 @@
 <template>
 <div class="formcontain">
+  <div style="text-align:left">
+  <el-button type="text" icon="arrow-left" @click="quxiao">返回</el-button>
+  </div>
     <el-steps :space="200" :active="active" class='lines' style="margin-bottom:40px">
       <el-step style="width:22.33%" title="基础信息" description=""></el-step>
       <el-step style="width:22.33%" title="数据规则" description=""></el-step>
@@ -9,6 +12,7 @@
       <li style="width:15%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
       <li style="width:15%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
       <li style="width:15%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
+      <li style="width:15%"><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
       <li style="width:40%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
     </ul>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2' class="form1" >
@@ -30,6 +34,8 @@
               id='state1.id'
               class="inline-input"
               v-model="state1"
+              icon="close"
+              :on-icon-click="blur"
               :fetch-suggestions="querySearch"
               placeholder="请输入内容"
               @select="handleSelect"
@@ -151,6 +157,9 @@ export default {
     this.onloda2();
   },
   methods: {
+    blur () {
+      this.state1 = '';
+    },
     quxiao () {
       this.$emit('listizhi2');
     },
@@ -172,18 +181,23 @@ export default {
           }
           _this.ruleForm.cname = res.data.data.demand_side;
           _this.ruleForm.name = res.data.data.project_name;
+          _this.ruleForm.desc = res.data.data.project_description;
           _this.ruleForm.num = res.data.data.phone_demand;
           _this.ruleForm.value = res.data.data.start_date;
           _this.ruleForm.value1 = res.data.data.end_date;
           _this.briefid = res.data.data.briefid;
-          console.log(_this.competag);
+          console.log(res.data.data.address_expand);
           if (res.data.data.address_expand === true && res.data.data.floorname_expand === true) {
-            _this.region = ['按项目扩展', '按区域扩展'];
+            _this.region = ['按楼盘名称扩展', '按地区扩展'];
+            console.log(_this.region);
           } else if (res.data.data.address_expand === true && res.data.data.floorname_expand === false) {
-            _this.region = ['按项目扩展'];
+            _this.region = ['按地区扩展'];
+            console.log(_this.region);
           } else if (res.data.data.address_expand === false && res.data.data.floorname_expand === true) {
-            _this.region = ['按区域扩展'];
+            _this.region = ['按楼盘名称扩展'];
+            console.log(_this.region);
           };
+          console.log(_this.region);
           if (res.data.data.ad === true && res.data.data.kw === true) {
             _this.numtype = ['浏览数据', '搜索数据'];
           } else if (res.data.data.ad === true && res.data.data.kw === false) {
@@ -339,9 +353,9 @@ export default {
       ad = false;
       kw = false;
       for (var i = 0; i < this.region.length; i++) {
-        if (this.region[i] === '按项目扩展') {
+        if (this.region[i] === '按楼盘名称扩展') {
           floorname = true;
-        } else if (this.region[i] === '按区域扩展') {
+        } else if (this.region[i] === '按地区扩展') {
           address = true;
         }
       };
@@ -402,9 +416,9 @@ export default {
       ad = false;
       kw = false;
       for (var i = 0; i < this.region.length; i++) {
-        if (this.region[i] === '按项目扩展') {
+        if (this.region[i] === '按楼盘名称扩展') {
           floorname = true;
-        } else if (this.region[i] === '按区域扩展') {
+        } else if (this.region[i] === '按地区扩展') {
           address = true;
         }
       };
@@ -436,8 +450,8 @@ export default {
         data: data
       }).then(function (res) {
         if (res.status === 200) {
-          // _this.show = true;
-          //  _this.show2 = false;
+          _this.show = true;
+          _this.show2 = false;
           _this.ruleForm.kw = res.data.data.codes;
           _this.ruleForm.ad = res.data.data.urls;
           if (_this.active++ > 2) this.active = 0;
@@ -506,16 +520,17 @@ export default {
   color: #20a0ff
 }
 ul {
-  display: flex;
   margin:20px;
-  height: 30px;
+  min-height: 30px;
   background: hsla(206, 100%, 56%, 0.07);
   margin: 10px 122px;
-    border-top: 1px solid #20a0ff;
+  border-top: 1px solid #20a0ff;
   padding: 20px;
 }
 ul li{
-  width: 25%
+  margin-bottom: 10px;
+  width: 100% !important;
+  text-align: left;
 }
 ul li span:nth-child(1){
   margin-right: 8px;
@@ -529,16 +544,18 @@ ul li span:nth-child(1){
   border:0px;
 }
 .forms2{
-  width: 280px;
+  /*width: 280px;*/
 }
 .form5 .el-form-item{
   margin-bottom: 20px !important;
 }
 .forms3{
-  width: 320px;
+  /*width: 320px;*/
   padding-left: 14px;
 }
 .tags{
+  text-align: left;
+  margin-left: 80px
   /*position: absolute;
     top: 44px;*/
 }
