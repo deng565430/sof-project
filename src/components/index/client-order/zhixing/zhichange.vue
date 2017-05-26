@@ -1,8 +1,8 @@
 <template>
 <div class="formcontain">
-    <el-steps :space="200" :active="active" class='lines'>
-      <el-step style="width:33.33%" title="基础信息" description=""></el-step>
-      <el-step style="width:33.33%" title="数据规则" description=""></el-step>
+    <el-steps :space="200" :active="active" class='lines' style="margin-bottom:40px">
+      <el-step style="width:22.33%" title="基础信息" description=""></el-step>
+      <el-step style="width:22.33%" title="数据规则" description=""></el-step>
       <el-step style="width:10.33%" title="生成执行单" description=""></el-step>
     </el-steps>
     <ul :model="ruleForm">
@@ -11,7 +11,7 @@
       <li style="width:15%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
       <li style="width:40%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
     </ul>
-    <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2' class="form1">
+    <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2' class="form1" >
         <el-form-item label="所属区域" >
             <el-checkbox-group v-model="areatype" class="aa">
               <el-checkbox v-for="type in areas"  :label="type" :key="type">{{type}}</el-checkbox>
@@ -24,7 +24,7 @@
           </el-form-item>
 
 
-          <el-form class="demo-form-inline forms2">
+          <el-form class="demo-form-inline form4" style="margin:10px 0;">
           <el-form-item label="项目竞品">
             <el-autocomplete
               id='state1.id'
@@ -33,8 +33,12 @@
               :fetch-suggestions="querySearch"
               placeholder="请输入内容"
               @select="handleSelect"
+              style="width:300px"
+              @focus="focus"
             ></el-autocomplete>
-            <div class="tags">
+          </el-form-item>
+        </el-form>
+          <div class="tags">
             <el-tag
               v-for="tag in competag"
               :closable="true"
@@ -45,30 +49,30 @@
             {{tag.value}}
             </el-tag>
           </div>
-          </el-form-item>
-        </el-form>
-
-
-          <el-form-item label="扩展方式">
+        <el-form class="forms3" label-position='right'>
+          <el-form-item label="扩展方式" >
               <el-checkbox-group v-model="region">
                 <el-checkbox label="按楼盘名称扩展" ></el-checkbox>
                 <el-checkbox label="按地区扩展"></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="所需数据类型" label-width="100px">
+        </el-form>
+        <el-form class="forms2" label-position='right'>
+          <el-form-item label="所需数据类型" label-width="100px" > 
               <el-checkbox-group v-model="numtype">
                 <el-checkbox label="浏览数据" ></el-checkbox>
                 <el-checkbox label="搜索数据" ></el-checkbox>
               </el-checkbox-group>
           </el-form-item>
+        </el-form>
          <el-form-item>
           <el-button ><router-link to="/client/dinging">取 消</router-link></el-button>
           <el-button type="primary" :loading="false" @click="submitForm()">下一步</el-button>
         </el-form-item>
     </el-form>
-    <el-form label-width="80px" v-show='show'>
+    <el-form label-width="80px" v-show='show' style="padding: 0 10%;" class="form5">
       <el-form-item label="文件名称" prop="zTitle">
-            <el-input v-model="ruleForm.zTitle"></el-input>
+            <el-input v-model="ruleForm.zTitle" placeholder="请输入文件名"></el-input>
           </el-form-item>
       <el-form-item label="搜索数据" :model="ruleForm" ref="ruleForm">
         <el-input type="textarea" v-model="ruleForm.ad"></el-input>
@@ -136,12 +140,13 @@ export default {
           { required: true, message: '请输入需求数量', trigger: 'change' }
         ]
       },
-      formLabelWidth: '120px'
+      formLabelWidth: '120px',
+      id: ''
     };
   },
   created () {
-    // 组件创建完后获取数据，
-    // 此时 data 已经被 observed 了
+    console.log(this.$parent.rowid);
+    this.id = this.$parent.rowid;
     this.console();
     this.onloda();
     this.onloda2();
@@ -153,10 +158,9 @@ export default {
     },
     console () {
       let _this = this;
-      var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
       this.$ajax({
         method: 'get',
-        url: '/api/brief/getBriefById?id=' + id
+        url: '/api/brief/getBriefById?id=' + this.id
       }).then(function (res) {
         if (res.status === 200) {
           var obj = {};
@@ -301,7 +305,6 @@ export default {
       });
     },
     submitForm2 () {
-      var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
       var floorname = this.region;
       var address = this.region;
       var code = this.ruleForm.kw;
@@ -338,8 +341,7 @@ export default {
         'competing': nameid,
         'project_name': this.ruleForm.name,
         'types': this.wtype,
-        'briefid': this.briefid,
-        'id': id,
+        'briefid': this.id,
         'ad': ad,
         'kw': kw,
         'code': code,
@@ -349,12 +351,13 @@ export default {
       var _this = this;
       this.$ajax({
         method: 'post',
-        url: '/api/campaign/updateCampaign',
+        url: '/api/campaign/addCampaignRegularly',
         data: data
       }).then(function (res) {
         if (res.status === 200) {
           _this.show = true;
           _this.show2 = false;
+          _this.$emit('linstizhi');
           if (res.data.data.codes === null) {
             console.log('空');
           } else if (res.data.data.urls === null) {
@@ -363,10 +366,14 @@ export default {
         }
       });
     },
+    focus () {
+      console.log('dffsafs');
+    },
     submitForm () {
       var floorname = this.region;
       var address = this.region;
       var ad = this.numtype;
+      var nameid = [];
       var kw = this.numtype;
       floorname = false;
       address = false;
@@ -379,6 +386,9 @@ export default {
           address = true;
         }
       };
+      for (var m = 0; m < this.competag.length; m++) {
+        nameid[m] = this.competag[m].id;
+      }
       for (var s = 0; s < this.numtype.length; s++) {
         if (this.numtype[s] === '浏览数据') {
           ad = true;
@@ -392,7 +402,7 @@ export default {
         'floorname_expand': floorname,
         'kw': kw,
         'district': this.areatype,
-        'name': [this.campaign.id],
+        'name': nameid,
         'project_name': this.ruleForm.name,
         'type': this.wtype
       };
@@ -420,7 +430,8 @@ export default {
   },
   mounted () {
     this.restaurants = this.loadAll();
-  }
+  },
+  prop: ['linstizhi']
 };
 </script>
 
@@ -434,7 +445,7 @@ export default {
     color: #fff
 }
 .form1{
-  padding:0 100px;
+  padding:0 110px;
 }
 .addmore{
   position: absolute;
@@ -474,10 +485,18 @@ export default {
 }
 ul {
   display: flex;
-  margin:20px
+  margin:20px;
+  height: 30px;
+  background: hsla(206, 100%, 56%, 0.07);
+  margin: 10px 122px;
+    border-top: 1px solid #20a0ff;
+  padding: 20px;
 }
 ul li{
   width: 25%
+}
+ul li span:nth-child(1){
+  margin-right: 8px;
 }
 .aa{
       padding: 10px 0;
@@ -489,5 +508,27 @@ ul li{
 }
 .forms2{
   width: 280px;
+}
+.form5 .el-form-item{
+  margin-bottom: 20px !important;
+}
+.forms3{
+  width: 320px;
+  padding-left: 14px;
+}
+.tags{
+  /*position: absolute;
+    top: 44px;*/
+}
+.tags span{
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.form4{
+  /*width: 400px;*/
+  padding: 0 13px;
+  padding-right: 60%;
+  position: relative;
+  margin-bottom: 30px
 }
 </style>

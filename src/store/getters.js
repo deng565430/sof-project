@@ -9,3 +9,6 @@ export const brieid = (state) => {
     data.brieid = state.brieid;
     return data;
 }
+export const yimeicampaignmsg = (state) => {
+    return state.yimeicampaignmsg;
+}

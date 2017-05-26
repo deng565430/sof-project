@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="seleinput">
+  <!-- <div class="seleinput">
     <el-select v-model="type" placeholder="项目名称" v-on:change="handleSelect()">
     <el-option
       v-for="item in typeoptions"
@@ -18,7 +18,8 @@
     </el-option>
   </el-select>
     <el-button type="primary" @click='search' >搜索</el-button>
-  </div>
+  </div> -->
+  <div v-if='table'>
   <el-table
       :data="tableData"
       style="width: 100%;" align='center' @click="" >
@@ -61,16 +62,25 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="totalCount">
     </el-pagination>
+    </div>
+    <div v-if="Changeorder">
+      <Changeorder  :giveid='giveid'   @listinchild='listinchild' @lischeng='lischeng'></Changeorder>
+    </div>
 </div>
 </template>
 
 <script>
+import Changeorder from './orders/changeorder';
 export default {
 
   name: 'dingyue',
-
+  components: {
+    Changeorder
+  },
   data () {
     return {
+      rowid: '',
+      giveid: '',
       tableData: [{
         projiect: '',
         phonenum: '',
@@ -101,7 +111,9 @@ export default {
       error: null,
       currentPage: 1,
       totalCount: 100,
-      pageSize: 10
+      pageSize: 10,
+      Changeorder: false,
+      table: true
     };
   },
   created () {
@@ -114,12 +126,47 @@ export default {
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=0&start=0&length=' + _this.pageSize
+        url: '/api/brief/getBriefListByStatus?status=1&start=0&length=' + _this.pageSize
       }).then(function (res) {
         if (res.status === 200) {
-          _this.totalCount = res.data.data.length;
+          _this.totalCount = res.data.recordsFiltered;
         }
       });
+    },
+    lischeng () {
+      this.table = true;
+      this.Changeorder = false;
+      var data = [];
+      var datas = [];
+      let _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/brief/getBriefListByStatus?status=1&start=0&length=' + _this.pageSize
+      }).then(function (res) {
+        if (res.status === 200) {
+          for (let i = 0; i < res.data.data.length; i++) {
+            var obj = {};
+            var objs = {};
+            obj.projiect = res.data.data[i].project_name;
+            obj.phonenum = res.data.data[i].phone_demand;
+            obj.starttime = res.data.data[i].start_date;
+            obj.endtime = res.data.data[i].end_date;
+            obj.changetime = res.data.data[i].create_time;
+            obj.id = res.data.data[i].id;
+            data[i] = obj;
+            objs.label = res.data.data[i].project_name;
+            objs.value = res.data.data[i];
+            datas[i] = objs;
+          };
+          _this.tableData = data;
+          _this.options = datas;
+          _this.totalCount = res.data.recordsFiltered;
+        }
+      });
+    },
+    listinchild () {
+      this.table = true;
+      this.Changeorder = false;
     },
     console () {
       var data = [];
@@ -160,7 +207,9 @@ export default {
       this.loadData(this.currentPage, this.pageSize);
     },
     handleEdit (index, row) {
-      window.location.href = 'http://localhost:8080/#/client/Changeorder?id= ' + row.id;
+      this.table = false;
+      this.Changeorder = true;
+      this.rowid = row.id;
     },
     search () {
       var _this = this;
