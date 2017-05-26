@@ -16,7 +16,8 @@ const state = {
         proname: '',
         num: '',
         stratime: '',
-        endtime: ''
+        endtime: '',
+        totalcont: ''
     },
     yimeichange: {
         cname: '',

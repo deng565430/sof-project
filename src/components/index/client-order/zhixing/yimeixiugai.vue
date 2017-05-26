@@ -36,7 +36,7 @@
           </el-form-item>
          
          <el-form-item>
-          <el-button ><router-link to="/client/dinging">取 消</router-link></el-button>
+          <el-button >取 消</el-button>
           <el-button type="primary" :loading="false" @click="submitForm()">下一步</el-button>
         </el-form-item>
     </el-form>

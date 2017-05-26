@@ -186,14 +186,10 @@ export default {
         project = Array.from(new Set(project));
         source = Array.from(new Set(source));
         batch = Array.from(new Set(batch));
-<<<<<<< HEAD
         console.log(project);
         console.log(source);
         console.log(batch);
       }
-=======
-      };
->>>>>>> c53504436bbbca580ca32d3ce43c5462daca3a68
     },
     disposeData (intentionrates, data, xAxisData, tooltipData) {
       let datas = [{

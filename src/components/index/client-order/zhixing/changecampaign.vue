@@ -3,7 +3,7 @@
     <el-steps :space="200" :active="active" class='lines' style="margin-bottom:40px">
       <el-step style="width:22.33%" title="基础信息" description=""></el-step>
       <el-step style="width:22.33%" title="数据规则" description=""></el-step>
-      <el-step style="width:10.33%" title="生成执行单" description=""></el-step>
+      <el-step style="width:10.33%" title="修改成功" description=""></el-step>
     </el-steps>
     <ul :model="ruleForm">
       <li style="width:15%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
@@ -42,11 +42,11 @@
             <el-tag
               v-for="tag in competag"
               :closable="true"
-              :key="tag.data"
+              :key="tag.value"
               :id="tag.id"
               @close="handleClose3(tag)"
             >
-            {{tag.data}}
+            {{tag.value}}
             </el-tag>
           </div>
         <el-form class="forms3" label-position='right'>
@@ -66,7 +66,7 @@
           </el-form-item>
         </el-form>
          <el-form-item>
-          <el-button ><router-link to="/client/dinging">取 消</router-link></el-button>
+          <el-button @click="quxiao">取 消</el-button>
           <el-button type="primary" :loading="false" @click="submitForm()">下一步</el-button>
         </el-form-item>
     </el-form>
@@ -99,8 +99,8 @@ export default {
       show: false,
       show2: true,
       competag: [{
-        'data': '',
-        'id': ''
+        'id': '',
+        'value': ''
       }],
       ruleForm: {
         cname: '',
@@ -145,14 +145,15 @@ export default {
     };
   },
   created () {
-    console.log(this.$parent.rowid);
     this.id = this.$parent.rowid;
     this.console2();
     this.onloda();
     this.onloda2();
   },
   methods: {
-
+    quxiao () {
+      this.$emit('listizhi2');
+    },
     next () {
       if (this.active++ > 2) this.active = 0;
     },
@@ -253,7 +254,7 @@ export default {
         if (res.status === 200) {
           for (var i = 0; i < res.data.length; i++) {
             var obj = {};
-            obj.value = res.data[i].data;
+            obj.value = res.data[i].value;
             obj.id = res.data[i].id;
             datas[i] = obj;
           }
@@ -362,6 +363,7 @@ export default {
         'project_name': this.ruleForm.name,
         'types': this.wtype,
         'briefid': this.briefid,
+        'id': this.id,
         'ad': ad,
         'kw': kw,
         'code': code,
@@ -371,7 +373,7 @@ export default {
       var _this = this;
       this.$ajax({
         method: 'post',
-        url: '/api/campaign/addCampaignRegularly',
+        url: '/api/campaign/updateCampaign',
         data: data
       }).then(function (res) {
         if (res.status === 200) {
@@ -409,6 +411,7 @@ export default {
       for (var m = 0; m < this.competag.length; m++) {
         nameid[m] = this.competag[m].id;
       }
+      console.log(this.competag);
       for (var s = 0; s < this.numtype.length; s++) {
         if (this.numtype[s] === '浏览数据') {
           ad = true;
@@ -433,12 +436,11 @@ export default {
         data: data
       }).then(function (res) {
         if (res.status === 200) {
-          _this.show = true;
-          _this.show2 = false;
+          // _this.show = true;
+          //  _this.show2 = false;
           _this.ruleForm.kw = res.data.data.codes;
           _this.ruleForm.ad = res.data.data.urls;
           if (_this.active++ > 2) this.active = 0;
-          console.log(_this.campaign.id);
           if (res.data.data.codes === null) {
             console.log('空');
           } else if (res.data.data.urls === null) {

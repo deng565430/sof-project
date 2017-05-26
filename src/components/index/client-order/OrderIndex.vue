@@ -4,7 +4,7 @@
       <div class="title"><span>选择行业</span></div>
       <ul class="select"><!-- 
           <li ><router-link to="/client/estateOrder">房地产</router-link></li> -->
-          <li @click="hangye($event)" v-for='itme in value' :id='itme.id'  >{{itme.val}}</li>
+          <li @click="hangye" v-for='itme in value' :id='itme.id'  >{{itme.val}}</li>
       </ul>
     </div>
 
@@ -38,11 +38,11 @@ export default {
     this.loading();
   },
   methods: {
-    hangye ($event) {
-      console.log(event.currentTarget.id);
+    hangye (e) {
+      console.log(e.target.id);
       this.selects = false;
       this.EstateOrder = true;
-      this.selectind = event.currentTarget.id;
+      this.selectind = e.target.id;
     },
     listinchild () {
       this.EstateOrder = false;

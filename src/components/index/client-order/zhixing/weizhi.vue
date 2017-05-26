@@ -31,12 +31,12 @@
               <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" >修改</el-button>
             </template>
             </el-table-column>
-             <el-table-column
+            <!--  <el-table-column
               label="上传">
              <template scope="scope">
               <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
             </template>
-            </el-table-column>
+            </el-table-column> -->
       </el-table>
           <el-pagination
             @size-change="handleSizeChange"
@@ -55,7 +55,7 @@
   </div>
   <div v-if="Yimeicampaign">
      <Yimeicampaign  v-if='yimei' :showxiangqing='showxiangqing' @childrenEventIsShow="childrenEventIsShow" @childrenEventIsShow2="childrenEventIsShow2"></Yimeicampaign>
-     <Zhichange v-if='zhi' :zhidan="zhidan" @linstizhi="linstizhi"></Zhichange>
+     <Zhichange v-if='zhi' :zhidan="zhidan" @linstizhi="linstizhi" @listizhi2='listizhi2'></Zhichange>
   </div>
 </div>
 </template>
@@ -73,6 +73,7 @@ export default {
   },
   data () {
     return {
+      zhidan: '',
       activeName: 'first',
       industryId: '',
       tableData: [{
@@ -150,6 +151,11 @@ export default {
           };
         }
       });
+    },
+    listizhi2 () {
+      this.Yimeicampaign = false;
+      this.zhi = false;
+      this.show3 = true;
     },
     linstizhi () {
       this.Yimeicampaign = false;

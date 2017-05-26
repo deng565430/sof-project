@@ -66,7 +66,7 @@
           </el-form-item>
         </el-form>
          <el-form-item>
-          <el-button ><router-link to="/client/dinging">取 消</router-link></el-button>
+          <el-button @click="quxiao">取 消</el-button>
           <el-button type="primary" :loading="false" @click="submitForm()">下一步</el-button>
         </el-form-item>
     </el-form>
@@ -152,7 +152,9 @@ export default {
     this.onloda2();
   },
   methods: {
-
+    quxiao () {
+      this.$emit('listizhi2');
+    },
     next () {
       if (this.active++ > 2) this.active = 0;
     },
@@ -234,7 +236,7 @@ export default {
         if (res.status === 200) {
           for (var i = 0; i < res.data.length; i++) {
             var obj = {};
-            obj.value = res.data[i].data;
+            obj.value = res.data[i].value;
             obj.id = res.data[i].id;
             datas[i] = obj;
           }
