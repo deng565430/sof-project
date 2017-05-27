@@ -183,7 +183,6 @@ export default {
       } else if (id === 'typeIntention') {
         console.log('typeIntention');
       };
-
     },
     disposeData (intentionrates, data, xAxisData, tooltipData) {
       let datas = [{
