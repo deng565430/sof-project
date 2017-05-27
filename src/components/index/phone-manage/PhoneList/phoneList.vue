@@ -5,13 +5,12 @@
       <Search :projectOptions="{projectOptions}" :searchIsShow="{searchIsShow}" @listenToChildEvent="listenToChildEvent"></Search>
       <div id="table" v-if="listShow">
         <el-table
+          v-loading="loading" element-loading-text="拼命加载中"
           ref="multipleTable"
           :data="tableData"
           :expand-row-keys="expands"
           stripe
           border
-          show-summary
-          sum-text="总量"
           max-height=450
           highlight-current-row
           style="width: 80%;"
@@ -21,8 +20,8 @@
               <template scope="props">
               <el-table
                :data="props.row.types"
-                border
-               style="width: 65%;">
+               border
+               style="width: 60%;">
                <el-table-column
                  prop="type"
                  align="left"
@@ -38,7 +37,7 @@
           </el-table-column>
           <el-table-column
             type="selection"
-            width="55">
+            width="65">
           </el-table-column>
           <el-table-column 
             prop="project"
@@ -109,7 +108,7 @@
 </template>
 
 <script>
-import Search from './ConditionSearch/search';
+import Search from '../ConditionSearch/search';
 export default {
   components: {
     Search
@@ -129,13 +128,14 @@ export default {
       inTableData: [],
       recordsFiltered: 0,
       currentPage: 1,
-      pageShow: true,
+      pageShow: false,
       pullDownDate: [],
       getRowKeys (row) {
         return row.porject;
       },
       expands: [],
-      searchIsShow: true
+      searchIsShow: true,
+      loading: true
     };
   },
   mounted () {},
@@ -162,6 +162,7 @@ export default {
       });
     },
     getData (url, list, val) {
+      this.pageShow = false;
       let that = this;
       this.$ajax({
         method: 'post',
@@ -183,6 +184,8 @@ export default {
             d.types = [];
             val.push(d);
           }
+          that.loading = false;
+          that.pageShow = true;
         }
       });
     },
@@ -191,6 +194,7 @@ export default {
         this.$alert('请先选择项目', '提示信息');
         return;
       }
+      this.loading = true;
       let project = data[0].project;
       let minbatch = data[0].minbatch;
       let maxbatch = data[0].maxbatch;
@@ -222,6 +226,8 @@ export default {
             data.types = [];
             that.tableData.push(data);
           }
+          that.loading = false;
+          that.pageShow = true;
         }
       });
       this.pageShow = true;

@@ -1,19 +1,18 @@
 <template>
   <div id='leftMenu'>
-    <el-menu default-active="2" class="el-menu-vertical-demo" @select="handleSelect"  v-for="value in dataValue" theme="dark" >
-        <template slot="title">{{value.value}}</template>
-        <el-menu-item-group title="">
+    <el-menu mode="vertical" class="el-menu-vertical-demo" @select="handleSelect"   theme="dark" >
+        <el-menu-item-group title="" v-for="value in dataValue">
             <el-menu-item :index="value.name.val">
-                <router-link :to="{path:value.name.url}">{{value.name.val}}</router-link>
+                {{value.name.val}}
             </el-menu-item>
             <el-menu-item :index="value.ing.val">
-                <router-link :to="{path:value.ing.url}">{{value.ing.val}}</router-link>
+                {{value.ing.val}}
             </el-menu-item>
             <el-menu-item :index="value.now.val">
-                <router-link :to="{path:value.now.url}">{{value.now.val}}</router-link>
+                {{value.now.val}}
             </el-menu-item>
             <el-menu-item :index="value.hoistory.val">
-                <router-link :to="{path:value.hoistory.url}">{{value.hoistory.val}}</router-link>
+               {{value.hoistory.val}}
             </el-menu-item>
         </el-menu-item-group>
     </el-menu>
