@@ -8,13 +8,28 @@
       <el-step style="width:22.33%" title="数据规则" description=""></el-step>
       <el-step style="width:10.33%" title="修改成功" description=""></el-step>
     </el-steps>
-    <ul :model="ruleForm">
+
+    <el-collapse accordion>
+      <el-collapse-item>
+        <template slot="title">
+          项目需求<!-- <i class="header-icon el-icon-information"> --></i>
+        </template>
+        <ul :model="ruleForm">
       <li style="width:15%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
       <li style="width:15%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
       <li style="width:15%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
       <li style="width:15%"><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
       <li style="width:40%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
     </ul>
+      </el-collapse-item>
+    </el-collapse>
+    <!-- <ul :model="ruleForm">
+      <li style="width:15%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
+      <li style="width:15%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
+      <li style="width:15%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
+      <li style="width:15%"><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
+      <li style="width:40%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
+    </ul> -->
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2' class="form1" >
         <el-form-item label="所属区域" >
             <el-checkbox-group v-model="areatype" class="aa">
@@ -83,6 +98,12 @@
       <el-form-item label="搜索数据" :model="ruleForm" ref="ruleForm">
         <el-input type="textarea" v-model="ruleForm.ad"></el-input>
       </el-form-item>
+
+
+      <Numlist :numlist='numlist' v-if='Numlist'></Numlist>
+
+
+
       <el-form-item label="浏览数据" :model="ruleForm" ref="ruleForm">
         <el-input type="textarea" v-model="ruleForm.kw"></el-input>
       </el-form-item>
@@ -96,7 +117,12 @@
 </template>
 
 <script>
+import Numlist from './numlist';
+
 export default {
+  components: {
+    Numlist
+  },
   data () {
     return {
       state1: '',
@@ -119,6 +145,8 @@ export default {
         ad: '',
         zTitle: ''
       },
+      Numlist: false,
+      numlist: [],
       region: [],
       numtype: [],
       campaign: '',
@@ -173,7 +201,6 @@ export default {
         url: '/api/campaign/getCampaignInfo?id=' + this.id
       }).then(function (res) {
         if (res.status === 200) {
-          console.log(res);
           _this.areatype = res.data.data.districts;
           _this.wtype = res.data.data.types;
           if (res.data.data.projects !== []) {
@@ -186,18 +213,13 @@ export default {
           _this.ruleForm.value = res.data.data.start_date;
           _this.ruleForm.value1 = res.data.data.end_date;
           _this.briefid = res.data.data.briefid;
-          console.log(res.data.data.address_expand);
           if (res.data.data.address_expand === true && res.data.data.floorname_expand === true) {
             _this.region = ['按楼盘名称扩展', '按地区扩展'];
-            console.log(_this.region);
           } else if (res.data.data.address_expand === true && res.data.data.floorname_expand === false) {
             _this.region = ['按地区扩展'];
-            console.log(_this.region);
           } else if (res.data.data.address_expand === false && res.data.data.floorname_expand === true) {
             _this.region = ['按楼盘名称扩展'];
-            console.log(_this.region);
           };
-          console.log(_this.region);
           if (res.data.data.ad === true && res.data.data.kw === true) {
             _this.numtype = ['浏览数据', '搜索数据'];
           } else if (res.data.data.ad === true && res.data.data.kw === false) {
@@ -299,7 +321,6 @@ export default {
       console.log(this.$el.id);
     },
     onloda2 () {
-      console.log(this.state1);
       var datas = [];
       var _this = this;
       this.$ajax({
@@ -425,7 +446,6 @@ export default {
       for (var m = 0; m < this.competag.length; m++) {
         nameid[m] = this.competag[m].id;
       }
-      console.log(this.competag);
       for (var s = 0; s < this.numtype.length; s++) {
         if (this.numtype[s] === '浏览数据') {
           ad = true;
@@ -455,10 +475,21 @@ export default {
           _this.ruleForm.kw = res.data.data.codes;
           _this.ruleForm.ad = res.data.data.urls;
           if (_this.active++ > 2) this.active = 0;
-          if (res.data.data.codes === null) {
-            console.log('空');
-          } else if (res.data.data.urls === null) {
-            console.log('空2');
+          var ress = [];
+          if (res.data.data.urls !== null) {
+            for (var i = 0; i < res.data.data.urls.length; i++) {
+             // console.log(res.data.data.urls[i].split('——'));
+              var obj = {};
+              obj.d = res.data.data.urls[i].split('——')[0];
+              obj.m = res.data.data.urls[i].split('——')[1];
+              obj.c = res.data.data.urls[i].split('——')[2];
+              ress[i] = obj;
+            }
+            _this.numlist = ress;
+            console.log(_this.numlist);
+            _this.Numlist = true;
+          } else if (res.data.data.urls !== null) {
+            console.log(res.data.data.urls[0].split('-'));
           }
         }
       });
@@ -520,11 +551,11 @@ export default {
   color: #20a0ff
 }
 ul {
-  margin:20px;
-  min-height: 30px;
+  /*margin:20px;
+  min-height: 30px;*/
   background: hsla(206, 100%, 56%, 0.07);
-  margin: 10px 122px;
-  border-top: 1px solid #20a0ff;
+  /*margin: 10px 122px;*/
+  /*border-top: 1px solid #20a0ff;*/
   padding: 20px;
 }
 ul li{

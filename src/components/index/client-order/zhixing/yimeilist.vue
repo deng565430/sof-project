@@ -43,8 +43,8 @@
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
+            :page-sizes="pageSizes"
+            :page-size="pageSize"
             :current-page="currentPage"
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalCount">
@@ -62,8 +62,9 @@ export default {
   data () {
     return {
       tableData: this.show.show,
-      currentPage: 1,
-      totalCount: 0,
+      currentPage: 0,
+      pageSizes: [10, 20, 30, 50],
+      totalCount: 100,
       pageSize: 10,
       shows: false
     };
@@ -91,12 +92,14 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val;
-      this.loadData(this.currentPage, this.pageSize);
+      // this.console(this.currentPage - 1, val);
+      this.$emit('listionPage', [this.currentPage, val]);
     },
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`);
+      console.log(this.pageSize);
       this.currentPage = val;
-      this.loadData(this.currentPage, this.pageSize);
+      // this.console(val - 1, this.pageSize);
+      this.$emit('listionPage', [this.currentPage, this.pageSize]);
     }
   },
   props: ['show', 'again']

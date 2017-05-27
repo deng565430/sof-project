@@ -1,29 +1,42 @@
 <template>
 <div class="formcontain">
-    <!-- <el-steps :space="200" :active="active" class='lines' style="margin-bottom:40px">
+  <div style="text-align:left">
+  <el-button type="text" icon="arrow-left" @click="quxiao">返回</el-button>
+  </div><!-- 
+    <el-steps :space="200" :active="active" class='lines' style="margin-bottom:40px">
       <el-step style="width:22.33%" title="基础信息" description=""></el-step>
       <el-step style="width:22.33%" title="数据规则" description=""></el-step>
-      <el-step style="width:10.33%" title="生成执行单" description=""></el-step>
+      <el-step style="width:10.33%" title="修改成功" description=""></el-step>
     </el-steps> -->
-    <el-button type="text" icon="arrow-left" @click="fanhui">返回</el-button>
     <ul :model="ruleForm">
-      <li style="width:50%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
-      <li style="width:50%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
-      <li style="width:50%"><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
-      <li style="width:50%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
-      <li style="width:50%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
+      <li style="width:15%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
+      <li style="width:15%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
+      <li style="width:15%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
+      <li style="width:15%"><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
+      <li style="width:40%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
+      <li style="width:15%"><span>所属区域:</span><span v-for="val in areas">{{val}}</span></li>
+      <li style="width:15%"><span>物业类型:</span><span v-for="val in wtype">{{val}}</span></li>
+      <li style="width:15%"><span>项目竞品:</span><span>{{ruleForm.desc}}</span></li>
+      <li style="width:15%"><span>扩展方式:</span><span v-for="val in region">{{val}}</span></li>
+      <li style="width:15%"><span>所需数据类型:</span><span v-for="val in numtype">{{val}}</span></li>
     </ul>
   
 </div>
 </template>
 
 <script>
-
 export default {
   data () {
     return {
+      state1: '',
+      active: 1,
+      loading: false,
       show: false,
       show2: true,
+      competag: [{
+        'id': '',
+        'value': ''
+      }],
       ruleForm: {
         cname: '',
         name: '',
@@ -35,35 +48,67 @@ export default {
         ad: '',
         zTitle: ''
       },
+      region: [],
+      numtype: [],
+      campaign: '',
+      options: [{
+        value: '',
+        label: ''
+      }],
       briefid: '',
+      tags: [],
+      areas: [],
+      areatype: [],
+      wtypes: [],
+      wtype: [],
       formLabelWidth: '120px',
       id: ''
     };
   },
   created () {
-    console.log(this.$parent.rowid);
     this.id = this.$parent.rowid;
-    this.console();
+    this.console2();
   },
   methods: {
-    fanhui () {
+    quxiao () {
       this.$emit('listizhi2');
     },
-    console () {
-      let _this = this;
+    console2 () {
+      var _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/brief/getBriefById?id=' + this.id
+        url: '/api/campaign/getCampaignInfo?id=' + this.id
       }).then(function (res) {
         if (res.status === 200) {
-          var obj = {};
-          obj.cname = res.data.data.customName;
-          obj.name = res.data.data.proName;
-          obj.num = res.data.data.telneedNum;
-          obj.desc = res.data.data.project_description;
-          obj.value = res.data.data.startTime;
-          obj.value1 = res.data.data.endTime;
-          _this.ruleForm = obj;
+          console.log(res);
+          _this.areatype = res.data.data.districts;
+          _this.wtype = res.data.data.types;
+          if (res.data.data.projects !== []) {
+            _this.competag = res.data.data.projects;
+          }
+          _this.ruleForm.cname = res.data.data.demand_side;
+          _this.ruleForm.name = res.data.data.project_name;
+          _this.ruleForm.desc = res.data.data.project_description;
+          _this.ruleForm.num = res.data.data.phone_demand;
+          _this.ruleForm.value = res.data.data.start_date;
+          _this.ruleForm.value1 = res.data.data.end_date;
+          _this.briefid = res.data.data.briefid;
+          _this.areas = res.data.data.districts;
+          _this.wtype = res.data.data.types;
+          if (res.data.data.address_expand === true && res.data.data.floorname_expand === true) {
+            _this.region = ['按楼盘名称扩展', '按地区扩展'];
+          } else if (res.data.data.address_expand === true && res.data.data.floorname_expand === false) {
+            _this.region = ['按地区扩展'];
+          } else if (res.data.data.address_expand === false && res.data.data.floorname_expand === true) {
+            _this.region = ['按楼盘名称扩展'];
+          };
+          if (res.data.data.ad === true && res.data.data.kw === true) {
+            _this.numtype = ['浏览数据', '搜索数据'];
+          } else if (res.data.data.ad === true && res.data.data.kw === false) {
+            _this.numtype = ['浏览数据'];
+          } else if (res.data.data.ad === false && res.data.data.kw === true) {
+            _this.numtype = ['搜索数据'];
+          };
         }
       });
     }
@@ -75,8 +120,7 @@ export default {
 <style lang="css" scoped>
 .formcontain{
   width:100%;
-  margin: 0 auto;
-  text-align: left;
+  margin: 0 auto
 }
 .formcontain a{
     display: inline-block;
@@ -121,18 +165,6 @@ export default {
 .el-button--default a:hover{
   color: #20a0ff
 }
-/*ul {
-  display: flex;
-  margin:20px;
-  min-height: 30px;
-  background: hsla(206, 100%, 56%, 0.07);
-  margin: 10px 122px;
-    border-top: 1px solid #20a0ff;
-  padding: 20px;
-}
-ul li{
-  width: 25%
-}*/
 ul {
   margin:20px;
   min-height: 30px;
@@ -146,7 +178,7 @@ ul li{
   width: 100% !important;
   text-align: left;
 }
-ul li span:nth-child(1){
+ul li span{
   margin-right: 8px;
 }
 .aa{
@@ -170,6 +202,8 @@ ul li span:nth-child(1){
 .tags{
   text-align: left;
   margin-left: 80px
+  /*position: absolute;
+    top: 44px;*/
 }
 .tags span{
   margin-right: 10px;

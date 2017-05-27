@@ -8,13 +8,20 @@
       <el-step style="width:22.33%" title="数据规则" description=""></el-step>
       <el-step style="width:10.33%" title="生成执行单" description=""></el-step>
     </el-steps>
-    <ul :model="ruleForm">
-      <li style="width:50%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
-      <li style="width:50%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
-      <li style="width:50%"><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
-      <li style="width:50%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
-      <li style="width:50%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
+    <el-collapse accordion>
+      <el-collapse-item>
+        <template slot="title">
+          项目需求<!-- <i class="header-icon el-icon-information"> --></i>
+        </template>
+        <ul :model="ruleForm">
+      <li style="width:15%"><span>公司名称:</span><span>{{ruleForm.cname}}</span></li>
+      <li style="width:15%"><span>项目名称:</span><span>{{ruleForm.name}}</span></li>
+      <li style="width:15%"><span>需求数量:</span><span>{{ruleForm.num}}</span></li>
+      <li style="width:15%"><span>项目描述:</span><span>{{ruleForm.desc}}</span></li>
+      <li style="width:40%"><span>订阅周期:</span><span>{{ruleForm.value}}-{{ruleForm.value1}}</span></li>
     </ul>
+      </el-collapse-item>
+    </el-collapse>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2' class="form1" >
         <el-form-item label="所属区域" style="margin-bottom:0">
             <el-checkbox-group v-model="areatype" class="aa">
@@ -426,11 +433,6 @@ export default {
           _this.ruleForm.ad = res.data.data.urls;
           if (_this.active++ > 2) this.active = 0;
           console.log(_this.campaign.id);
-          if (res.data.data.codes === null) {
-            console.log('空');
-          } else if (res.data.data.urls === null) {
-            console.log('空2');
-          }
         }
       });
     }
@@ -490,24 +492,12 @@ export default {
 .el-button--default a:hover{
   color: #20a0ff
 }
-/*ul {
-  display: flex;
-  margin:20px;
-  min-height: 30px;
-  background: hsla(206, 100%, 56%, 0.07);
-  margin: 10px 122px;
-    border-top: 1px solid #20a0ff;
-  padding: 20px;
-}
-ul li{
-  width: 25%
-}*/
 ul {
-  margin:20px;
-  min-height: 30px;
+  /*margin:20px;
+  min-height: 30px;*/
   background: hsla(206, 100%, 56%, 0.07);
-  margin: 10px 122px;
-  border-top: 1px solid #20a0ff;
+  /*margin: 10px 122px;*/
+  /*border-top: 1px solid #20a0ff;*/
   padding: 20px;
 }
 ul li{

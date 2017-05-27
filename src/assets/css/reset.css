@@ -128,3 +128,14 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
 .el-form-item__content{
     line-height: 27px !important;
 }
+.el-collapse{
+    width: 80%;
+    margin: 0 auto;
+    text-align: left;
+}
+.el-collapse-item__header{
+    background: hsla(206, 100%, 56%, 0.07) !important;
+}
+.el-collapse-item__content{
+    padding:0px !important;
+}

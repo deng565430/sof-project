@@ -46,15 +46,15 @@
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
+            :page-sizes="pageSizes"
+            :page-size="pageSize"
             :current-page="currentPage"
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalCount">
           </el-pagination>
        </el-tab-pane>
        <el-tab-pane label="医美" name="second" id='2' >
-           <Yimeilist :show='{show}' v-show='show4' :again='{again}'  @listenToChildEvent="listenToChildEvent"></Yimeilist>
+           <Yimeilist :show='{show}' v-show='show4' :again='{again}'  @listenToChildEvent="listenToChildEvent"  @listionPage="listionPage"></Yimeilist>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -109,7 +109,8 @@ export default {
       loading: false,
       post: null,
       error: null,
-      currentPage: 1,
+      currentPage: 0,
+      pageSizes: [10, 20, 30, 50],
       totalCount: 100,
       pageSize: 10,
       show: [],
@@ -128,17 +129,20 @@ export default {
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
-    this.console();
-    console.log(this.show);
-    this.lists(2, '/api/campaign/getNewCampaign?start=0&length=10&industryId=2');
+    this.console(0, 10);
+    this.lists(0, 10);
   },
   methods: {
-    lists (id, url) {
+    listionPage (val, res) {
+      this.lists(val[0], val[1]);
+      console.log(res);
+    },
+    pagechange (val, val2) {
       this.show = [];
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: url
+        url: '/api/campaign/getNewCampaign?industryId=2&start=' + val + '&length=' + val2 + ''
       }).then(function (res) {
         if (res.status === 200 && res.data.recordsFiltered > 0) {
           console.log(res.data.data);
@@ -157,6 +161,31 @@ export default {
             _this.$store.state.yimei.totalcont = res.data.recordsFiltered;
           };
           console.log(_this.show);
+        }
+      });
+    },
+    lists (val, val2) {
+      this.show = [];
+      let _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/campaign/getNewCampaign?industryId=2&start=' + val + '&length=' + val2 + ''
+      }).then(function (res) {
+        if (res.status === 200 && res.data.recordsFiltered > 0) {
+          for (let i = 0; i < res.data.data.length; i++) {
+            var obj = {};
+            obj.cname = res.data.data[i].demand_side;
+            obj.projiect = res.data.data[i].project_name;
+            obj.phonenum = res.data.data[i].phone_demand;
+            obj.starttime = res.data.data[i].start_date;
+            obj.endtime = res.data.data[i].end_date;
+            obj.changetime = res.data.data[i].create_time;
+            obj.id = res.data.data[i].id;
+            obj.recordsFiltered = res.data.recordsFiltered;
+            _this.show[i] = obj;
+            _this.totlanum = res.data.recordsFiltered;
+            _this.$store.state.yimei.totalcont = res.data.recordsFiltered;
+          };
         }
       });
     },
@@ -242,25 +271,13 @@ export default {
         }
       });
     },
-    loadData (pageNum, pageSize) {
-      let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getNewCampaign?start=0&length=' + _this.pageSize
-      }).then(function (res) {
-        if (res.status === 200) {
-          _this.totalCount = res.data.data.length;
-          _this.$store.state.yimei.totalcont = res.data.recordsFiltered;
-        }
-      });
-    },
-    console () {
+    console (currentPage, pageSize) {
       var data = [];
       var datas = [];
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getNewCampaign?industryId=1&start=0&length=' + _this.pageSize
+        url: '/api/campaign/getNewCampaign?industryId=1&start=' + currentPage + '&length=' + pageSize
       }).then(function (res) {
         if (res.status === 200) {
           console.log(res);
@@ -288,12 +305,11 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val;
-      this.loadData(this.currentPage, this.pageSize);
+      this.console(this.currentPage - 1, val);
     },
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`);
       this.currentPage = val;
-      this.loadData(this.currentPage, this.pageSize);
+      this.console(val - 1, this.pageSize);
     },
     handleEdit (index, row) {
       this.show3 = false;
@@ -303,35 +319,7 @@ export default {
     },
     handleUp (index, row) {
       window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
-    },
-    search () {
-      var _this = this;
-      var data = [];
-      console.log(this.projectName.project_name);
-      var flag = this.projectName.project_name;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=0&start=0&length=' + _this.pageSize + '&kw_flag=' + 1 + '&kw=' + flag
-      }).then(function (res) {
-        console.log(res);
-        if (res.status === 200) {
-          for (let i = 0; i < res.data.data.length; i++) {
-            var obj = {};
-            obj.compant = res.data.data[i].demand_side;
-            obj.projiect = res.data.data[i].project_name;
-            obj.phonenum = res.data.data[i].phone_demand;
-            obj.starttime = res.data.data[i].start_date;
-            obj.endtime = res.data.data[i].end_date;
-            obj.changetime = res.data.data[i].create_time;
-            obj.dec = res.data.data[i].project_description;
-            data[i] = obj;
-          };
-          _this.tableData = data;
-          _this.totalCount = res.data.recordsFiltered;
-        }
-      });
-    },
-    handleSelect () {}
+    }
   }
 };
 </script>

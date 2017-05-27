@@ -56,8 +56,8 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[10, 20, 30, 40]"
-      :page-size="10"
+      :page-sizes="pageSizes"
+      :page-size="pageSize"
       :current-page="currentPage"
       layout="total, sizes, prev, pager, next, jumper"
       :total="totalCount">
@@ -109,7 +109,8 @@ export default {
       loading: false,
       post: null,
       error: null,
-      currentPage: 1,
+      currentPage: 0,
+      pageSizes: [10, 20, 30, 50],
       totalCount: 100,
       pageSize: 10,
       Changeorder: false,
@@ -119,20 +120,9 @@ export default {
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
-    this.console();
+    this.console(0, 10);
   },
   methods: {
-    loadData (pageNum, pageSize) {
-      let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=0&start=0&length=' + _this.pageSize
-      }).then(function (res) {
-        if (res.status === 200) {
-          _this.totalCount = res.data.recordsFiltered;
-        }
-      });
-    },
     lischeng () {
       this.table = true;
       this.Changeorder = false;
@@ -168,13 +158,13 @@ export default {
       this.table = true;
       this.Changeorder = false;
     },
-    console () {
+    console (currentPage, pageSize) {
       var data = [];
       var datas = [];
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=0&start=0&length=' + _this.pageSize
+        url: '/api/brief/getBriefListByStatus?status=0&start=' + currentPage + '&length=' + pageSize
       }).then(function (res) {
         if (res.status === 200) {
           for (let i = 0; i < res.data.data.length; i++) {
@@ -199,46 +189,19 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val;
-      this.loadData(this.currentPage, this.pageSize);
+      console.log(this.currentPage - 1, val);
+      this.console(this.currentPage - 1, val);
     },
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`);
       this.currentPage = val;
-      this.loadData(this.currentPage, this.pageSize);
+      console.log(val - 1, this.pageSize);
+      this.console(val - 1, this.pageSize);
     },
     handleEdit (index, row) {
       this.table = false;
       this.Changeorder = true;
       this.rowid = row.id;
-    },
-    search () {
-      var _this = this;
-      var data = [];
-      console.log(this.projectName.project_name);
-      var flag = this.projectName.project_name;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=0&start=0&length=' + _this.pageSize + '&kw_flag=' + 1 + '&kw=' + flag
-      }).then(function (res) {
-        console.log(res);
-        if (res.status === 200) {
-          for (let i = 0; i < res.data.data.length; i++) {
-            var obj = {};
-            obj.compant = res.data.data[i].demand_side;
-            obj.projiect = res.data.data[i].project_name;
-            obj.phonenum = res.data.data[i].phone_demand;
-            obj.starttime = res.data.data[i].start_date;
-            obj.endtime = res.data.data[i].end_date;
-            obj.changetime = res.data.data[i].create_time;
-            obj.dec = res.data.data[i].project_description;
-            data[i] = obj;
-          };
-          _this.tableData = data;
-          _this.totalCount = res.data.recordsFiltered;
-        }
-      });
-    },
-    handleSelect () {}
+    }
   }
 };
 </script>

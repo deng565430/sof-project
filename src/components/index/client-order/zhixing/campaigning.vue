@@ -46,8 +46,8 @@
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
+            :page-sizes="pageSizes"
+            :page-size="pageSize"
             :current-page="currentPage"
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalCount">
@@ -109,7 +109,8 @@ export default {
       loading: false,
       post: null,
       error: null,
-      currentPage: 1,
+      currentPage: 0,
+      pageSizes: [10, 20, 30, 50],
       totalCount: 100,
       pageSize: 10,
       show: [],
@@ -128,8 +129,7 @@ export default {
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
-    this.console();
-    console.log(this.show);
+    this.console(0, 10);
     this.lists(2, '/api/campaign/getAllCampaign?status=1&industryId=2&start=0&length=10');
   },
   methods: {
@@ -242,25 +242,13 @@ export default {
         }
       });
     },
-    loadData (pageNum, pageSize) {
-      let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getAllCampaign?status=1start=0&length=' + _this.pageSize
-      }).then(function (res) {
-        if (res.status === 200) {
-          _this.totalCount = res.data.data.length;
-          _this.$store.state.yimei.totalcont4 = res.data.recordsFiltered;
-        }
-      });
-    },
-    console () {
+    console (currentPage, pageSize) {
       var data = [];
       var datas = [];
       let _this = this;
       this.$ajax({
         method: 'get',
-        url: '/api/campaign/getAllCampaign?status=1&industryId=1&start=0&length=' + _this.pageSize
+        url: '/api/campaign/getAllCampaign?status=1&industryId=1&start=' + currentPage + '&length=' + _this.pageSize
       }).then(function (res) {
         if (res.status === 200) {
           console.log(res);
@@ -288,12 +276,12 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val;
-      this.loadData(this.currentPage, this.pageSize);
+      this.console(this.currentPage - 1, val);
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`);
       this.currentPage = val;
-      this.loadData(this.currentPage, this.pageSize);
+      this.console(val - 1, this.pageSize);
     },
     handleEdit (index, row) {
       this.show3 = false;
