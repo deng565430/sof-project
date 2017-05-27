@@ -13,9 +13,9 @@
 <script>
 import LeftMenu from './../../leftMenu/LeftMenu';
 import AllIndustry from './../../allIndustry/AllIndustry';
-import PhoneList from './phoneList';
-import PhoneResult from './phoneResult';
-import Quality from './quality';
+import PhoneList from './phoneList/phoneList';
+import PhoneResult from './phoneResult/phoneResult';
+import Quality from './QualityAnalysis/QualityAnalysis';
 
 export default {
   components: {

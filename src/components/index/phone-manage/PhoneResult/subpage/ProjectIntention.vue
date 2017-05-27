@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import Search from './../ConditionSearch/search';
-import Charts from './Charts/phoneResultCharts';
+import Search from '../../ConditionSearch/search';
+import Charts from '../../Charts/phoneResultCharts';
 export default {
 
   name: 'ProjectIntention',
@@ -21,10 +21,10 @@ export default {
   },
   data () {
     return {
-      id: 'projectType',
+      id: 'projectIntention',
       projectOptions: [],
       SearchData: '',
-      projectType: [],
+      projectType: {},
       searchIsShow: true
     };
   },
@@ -38,7 +38,7 @@ export default {
   mounted () {},
   created () {
     this.getProject('/api/tel/getALLproject', '', this.projectOptions);
-    this.getTelByPB('上海青浦万达茂', '2017-4-19', '2017-5-19');
+    this.getTelByPB('上海青浦万达茂', '2017-2-19', '2017-5-19');
   },
   methods: {
     getProject (url, list, val) {
@@ -61,7 +61,7 @@ export default {
     getTelByPB (project, minbatch, maxbatch) {
       this.$ajax({
         method: 'post',
-        url: '/api/rate/getTelByProject',
+        url: '/api/rate/getTelByPB',
         data: {
           project: project,
           maxbatch: maxbatch,
@@ -69,10 +69,62 @@ export default {
         }
       }).then((res) => {
         if (res.data && res.data.data.length > 0) {
-          this.projectType = res.data.data;
+          let v = '';
+          let xAxisData = [];
+          let totalData = [];
+          let seriesData = [];
+          for (v of res.data.data) {
+            xAxisData.push(v.batch);
+            totalData.push(v.total);
+            seriesData.push(v.intentionrate);
+          }
+          let titleText = res.data.data[0].project ? res.data.data[0].project : '';
+          this.projectType = {
+            title: {
+              text: titleText
+            },
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                type: 'shadow'
+              }
+            },
+            legend: {
+              data: ['意向量', '意向率']
+            },
+            grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            xAxis: {
+              type: 'category',
+              data: xAxisData,
+              position: 'bottom'
+            },
+            yAxis: {
+              type: 'value'
+            },
+            series: [{
+              name: '意向量',
+              type: 'bar',
+              data: totalData
+            }, {
+              name: '意向率',
+              type: 'line',
+              data: seriesData
+            }]
+          };
         } else {
           this.$alert('没有展示项目', '提示信息');
         }
+        console.log(this.projectType);
       });
     },
     listenToChildEvent (data) {

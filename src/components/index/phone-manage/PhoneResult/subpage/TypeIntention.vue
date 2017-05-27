@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import Search from './../ConditionSearch/search';
-import Charts from './Charts/phoneResultCharts';
+import Search from '../../ConditionSearch/search';
+import Charts from '../../Charts/phoneResultCharts';
 export default {
 
   name: 'ProjectIntention',
@@ -24,7 +24,7 @@ export default {
       id: 'typeIntention',
       projectOptions: [],
       SearchData: '',
-      projectType: [],
+      projectType: {},
       searchIsShow: false
     };
   },

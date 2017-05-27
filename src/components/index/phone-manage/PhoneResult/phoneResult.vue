@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import ProjectIntention from './Charts/ProjectIntention';
-import ProjectType from './Charts/ProjectType';
-import TypeIntention from './Charts/TypeIntention';
+import ProjectIntention from './subpage/ProjectIntention';
+import ProjectType from './subpage/ProjectType';
+import TypeIntention from './subpage/TypeIntention';
 export default {
 
   name: 'phoneResult',
