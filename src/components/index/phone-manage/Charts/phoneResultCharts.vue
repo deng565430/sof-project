@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div :id="id.id ? id.id : id.compareThisWeekId" :style="chartStyle ? chartStyle : {width: '1400px', height: '500px'}"></div>
+  <div v-loading="loading" element-loading-text="拼命加载中" :id="id.id ? id.id : id.compareThisWeekId" :style="chartStyle ? chartStyle : {width: '1400px', height: '500px'}"></div>
 </div>
 </template>
 
@@ -37,9 +37,12 @@ export default {
   methods: {
     charts (id, data) {
       console.log(id);
-      console.log(data);
-      if (id.compareThisWeekId === 'compareThisWeekId') {
+      if (!id || !data) {
+        return;
+      }
+      if (id.compareThisWeekId === 'compareThisWeek') {
         this.chart = echarts.init(document.getElementById(id.compareThisWeekId));
+        this.chart.setOption(data.compareThisWeek);
       }
       this.chart = echarts.init(document.getElementById(id.id));
       if (data.thisWeek) {

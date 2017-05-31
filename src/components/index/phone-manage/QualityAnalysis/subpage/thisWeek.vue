@@ -57,73 +57,96 @@ export default {
         url: url
       }).then((res) => {
         if (res.data && res.data.data) {
+          const datas = res.data.data;
           if (flag) {
-            data[0].endLess = Number(res.data.data.sum);
-            data[1].endLess = Number(res.data.data.less10);
-            data[2].endLess = Number(res.data.data.less20);
-            data[3].endLess = Number(res.data.data.less30);
-            data[4].endLess = Number(res.data.data.gre30);
+            data[0].endLess = Number(datas.sum);
+            data[1].endLess = Number(datas.less10);
+            data[2].endLess = Number(datas.less20);
+            data[3].endLess = Number(datas.less30);
+            data[4].endLess = Number(datas.gre30);
           } else {
-            data[0].less = Number(res.data.data.sum);
-            data[1].less = Number(res.data.data.less10);
-            data[2].less = Number(res.data.data.less20);
-            data[3].less = Number(res.data.data.less30);
-            data[4].less = Number(res.data.data.gre30);
-            data[0].per = res.data.data.sum_per.split('-')[1];
-            data[1].per = res.data.data.less1_per.split('-')[1];
-            data[2].per = res.data.data.less2_per.split('-')[1];
-            data[3].per = res.data.data.less3_per.split('-')[1];
-            data[4].per = res.data.data.gre3_per.split('-')[1];
+            data[0].less = Number(datas.sum);
+            data[1].less = Number(datas.less10);
+            data[2].less = Number(datas.less20);
+            data[3].less = Number(datas.less30);
+            data[4].less = Number(datas.gre30);
+            data[0].per = datas.sum_per.indexOf('-') !== -1 ? datas.sum_per.split('-')[1] : datas.sum_per.split('+')[1];
+            data[1].per = datas.sum_per.indexOf('-') !== -1 ? datas.less1_per.split('-')[1] : datas.less1_per.split('+')[1];
+            data[2].per = datas.sum_per.indexOf('-') !== -1 ? datas.less2_per.split('-')[1] : datas.less2_per.split('+')[1];
+            data[3].per = datas.sum_per.indexOf('-') !== -1 ? datas.less3_per.split('-')[1] : datas.less3_per.split('+')[1];
+            data[4].per = datas.sum_per.indexOf('-') !== -1 ? datas.gre3_per.split('-')[1] : datas.gre3_per.split('+')[1];
           }
+          const legendData = [];
+          const seriesData = [];
+          const compareSeriesData = [];
+          for (let i = 1; i < data.length; i++) {
+            legendData.push(data[i].title);
+            let thisWeekData = {};
+            let compareData = {};
+            thisWeekData.value = data[i].less;
+            thisWeekData.name = data[i].title;
+            compareData.value = data[i].endLess;
+            compareData.name = data[i].title;
+            seriesData.push(thisWeekData);
+            compareSeriesData.push(compareData);
+          }
+          this.thisWeek = {
+            title: {
+              text: '本周通话时长统计',
+              x: 'center',
+              y: '10%'
+            },
+            tooltip: {
+              trigger: 'item',
+              formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {},
+            series: [{
+              name: '访问来源',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '60%'],
+              data: seriesData,
+              itemStyle: {
+                emphasis: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }]
+          };
+          this.compareThisWeek = {
+            title: {
+              text: '上周通话时长统计',
+              x: 'center',
+              y: '10%'
+            },
+            tooltip: {
+              trigger: 'item',
+              formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {},
+            series: [{
+              name: '访问来源',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '60%'],
+              data: compareSeriesData,
+              itemStyle: {
+                emphasis: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }]
+          };
         }
       });
     },
     getCharts () {
-      this.thisWeek = {
-        title: {
-          text: '某站点用户访问来源',
-          subtext: '纯属虚构',
-          x: 'center'
-        },
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
-        },
-        legend: {
-          orient: 'vertical',
-          left: 'left',
-          data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
-        },
-        series: [{
-          name: '访问来源',
-          type: 'pie',
-          radius: '55%',
-          center: ['50%', '60%'],
-          data: [{
-            value: 335,
-            name: '直接访问'
-          }, {
-            value: 310,
-            name: '邮件营销'
-          }, {
-            value: 234,
-            name: '联盟广告'
-          }, {
-            value: 135,
-            name: '视频广告'
-          }, {
-            value: 1548,
-            name: '搜索引擎'
-          }],
-          itemStyle: {
-            emphasis: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          }
-        }]
-      };
+
     }
   }
 };

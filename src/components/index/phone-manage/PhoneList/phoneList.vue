@@ -215,7 +215,6 @@ export default {
           var v = '';
           for (v of res.data.data) {
             that.getData('/api/tel/getTypeCountByCondition', {project: project, maxbatch: v.batch}, that.pullDownDate);
-            that.recordsFiltered += v.count;
             let data = {};
             data.project = project;
             data.batch = v.batch;
