@@ -1,8 +1,7 @@
 <template>
 <div class="dataSearch">
   <div id="search">
-    <div class="top">
-        <div class="block">
+      <div class="block">
           <span class="demonstration">时间:</span>
           <TimeSelect @dataEvent="dataEvent" />
         </div>
@@ -17,8 +16,6 @@
             </el-option>
           </el-select>
         </div>  
-    </div>
-    <div class="bottom">
         <div class="block">
           <span class="demonstration">业务员:</span>
           <el-select v-model="salesmanValue" @change="change" placeholder="请选择">
@@ -35,10 +32,9 @@
           <el-input v-model="phoneInput" placeholder="请输入客户电话"></el-input>
         </div>
       
-    </div>
-  </div>
-  <div class="block" style="text-align: left">
+  <div class="block searchSeek" style="">
     <el-button type="warning" icon="search" @click="dataSearch">搜索</el-button>
+  </div>
   </div>
 </div>
   
@@ -87,7 +83,7 @@ export default {
       data.minbatch = this.timeValue.minbatch;
       data.maxbatch = this.timeValue.maxbatch;
       data.phoneInput = this.phoneInput || '';
-      this.$emit('childEvent', data);
+      this.$emit('addChildEvent', data);
     },
     dataEvent (data) {
       this.timeValue = data;
@@ -105,21 +101,17 @@ export default {
   border-top: 0
   box-shadow: 1px 2px 10px #888
   margin-bottom: 10px
+  width: 350px
+  padding: 20px
   .block
-      display: flex
-      width: 260px
-      span
-        width: 70px
-        line-height: 40px
-  .top
     display: flex
-    width: 100%
-    height: 60px 
-  .bottom
-    display: flex
-    height: 50px
-    width: 60%
+    width: 300px
+    span
+      width: 70px
+      line-height: 40px
     .phoneSpan
       width: 92px
-      
+  .searchSeek
+    padding-top: 10px
+    margin: 0 auto
 </style>

@@ -1,29 +1,30 @@
 <template>
 <div>
-  <el-table :data="tableData" border style="width: 100%" height="250">
-    <el-table-column fixed prop="date" label="日期" width="150">
+  <el-table :data="contrastTableData" border style="width: 100%">
+    <el-table-column fixed prop="username" label="业务员" align="left" width="150">
     </el-table-column>
-    <el-table-column prop="name" label="姓名" width="120">
+    <el-table-column prop="call_time" label="拨打时间" align="left" width="180">
     </el-table-column>
-    <el-table-column prop="province" label="省份" width="120">
+    <el-table-column prop="phone" label="拨打电话" align="left" width="150">
     </el-table-column>
-    <el-table-column prop="city" label="市区" width="120">
+    <el-table-column prop="duration" label="音频时长" align="left" width="100">
     </el-table-column>
-    <el-table-column prop="address" label="地址" width="300">
-    </el-table-column>
-    <el-table-column prop="zip" label="邮编" width="120">
+    <el-table-column prop="path" label="音频" align="left" width="400">
+      <template scope="props">
+        <audio height="100" width="50" controls>
+          <source :src="props.row.path" type="audio/mpeg"/>
+        </audio>
+      </template>
     </el-table-column>
   </el-table>
   <div class="block">
-    <span class="demonstration">完整功能</span>
     <el-pagination
-      @size-change="handleSizeChange"
+       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :page-size="20"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
+      :total="recordsTotal">
     </el-pagination>
   </div>
 </div>
@@ -36,67 +37,22 @@ export default {
 
   data () {
     return {
-      tableData: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }],
-      currentPage: 4
+      currentPage: 1,
+      pageSize: 10,
+      page: 1
     };
   },
   methods: {
     handleSizeChange (val) {
-      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.$emit('childPage', {pageSize: this.pageSize, page: this.page});
     },
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.$emit('childPage', {pageSize: this.pageSize, page: this.page});
     }
-  }
+  },
+  props: ['contrastTableData', 'recordsTotal']
 };
 </script>
 

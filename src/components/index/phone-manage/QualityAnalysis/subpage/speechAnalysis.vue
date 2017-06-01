@@ -4,7 +4,7 @@
     <DataSearch :salesmanOptions="salesmanOptions" :sectionOptions="sectionOptions" @childEvent="childEvent"/>
   </div>
   <div class="weekCharts">
-   <Charts :id="{id}" :projectType="{thisWeek}" :chartStyle="chartStyle"></Charts>
+   <Charts :id="{id}" :projectType="projectType[0]" :chartStyle="chartStyle"></Charts>
  </div>
    <div v-if="isShow" class="isShow"> 
       <div>
@@ -22,7 +22,7 @@ import DataSearch from '../../DataSearch/DataSearch';
 import Charts from '../../Charts/phoneResultCharts';
 export default {
 
-  name: 'phonalyzr',
+  name: 'speechAnalysis',
   components: {
     DataSearch,
     Charts
@@ -31,12 +31,16 @@ export default {
     return {
       salesmanOptions: [],
       sectionOptions: [],
-      isShow: true
+      isShow: true,
+      id: 'speechAnalysis',
+      projectType: [],
+      sectionValue: '',
+      salesmanValue: ''
     };
   },
   created () {
     this.getDate('/api/audior/getAudioCallSales', this.salesmanOptions, this.sectionOptions);
-    this.getAllJSONByName();
+    this.getAllJSONByName(0, '', '', '', '2017-02-23%20-%202017-05-31', this.projectType);
   },
   methods: {
     getDate (url, salesmanOptions, sectionOptions) {
@@ -44,7 +48,6 @@ export default {
         method: 'get',
         url: url
       }).then(res => {
-        console.log(res);
         if (res.data && res.data.data) {
           const data = res.data.data;
           const section = [];
@@ -67,21 +70,155 @@ export default {
       });
     },
     childEvent (data) {
+      alert(this.projectType);
+      console.log(this.projectType);
       console.log(data);
-      this.$ajax({
-        method: 'get',
-        url: '/api/kwords/getAllJSONByName',
-        data: {}
-      }).then(res => {
-        console.log(res);
-      });
+      this.sectionValue = data.sectionValue;
+      this.salesmanValue = data.salesmanValue.label;
+      const time = `${data.minbatch}%20-%20${data.maxbatch}`;
+      this.getAllJSONByName(0, data.phoneInput, data.salesmanValue.value, data.sectionValue, time);
     },
-    getAllJSONByName () {
+    getAllJSONByName (role, phone, searchValue, depart, dataTime, projectTypes) {
       this.$ajax({
         method: 'get',
-        url: '/api/kwords/getAllJSONByName_order?role=0&phone=&search[value]=&depart=&data_time=2017-02-23%20-%202017-05-31'
+        url: `/api/kwords/getAllJSONByName?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`
       }).then(res => {
-        console.log(res.data);
+        if (res.data && res.data.data) {
+          let projectType = {};
+          if (res.data.code === 1) {
+            projectType = {
+              noDataLoadingOption: {
+                text: '暂无数据',
+                effect: 'bubble',
+                effectOption: {
+                  effect: {
+                    n: 0
+                  }
+                }
+              }
+            };
+          }
+          let data = res.data.data;
+          let xAxisData = [];
+          let positiveData = [];
+          let negativeData = [];
+          let neutralData = [];
+          for (let v of data) {
+            xAxisData.push(v.dimension);
+            positiveData.push(v.positive);
+            negativeData.push(v.negative);
+            neutralData.push(v.neutral);
+          }
+          const titleText = this.salesmanValue === '' ? (this.sectionValue === '' ? '所有部门' : this.sectionValue) : this.salesmanValue;
+          projectType = {
+            noDataLoadingOption: {
+              text: '暂无数据',
+              effect: 'bubble',
+              effectOption: {
+                effect: {
+                  n: 0
+                }
+              }
+            },
+            title: {
+              text: titleText + '话题热度',
+              x: 'center',
+              y: 'top'
+            },
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                type: 'shadow'
+              }
+            },
+            legend: {
+              data: ['正面', '负面', '中性'],
+              y: 'bottom'
+
+            },
+            toolbox: {
+              show: true,
+              feature: {
+                mark: {
+                  show: false
+                },
+                dataView: {
+                  show: true,
+                  readOnly: true
+                },
+                magicType: {
+                  show: true,
+                  type: ['line', 'bar']
+                },
+                saveAsImage: {
+                  show: true
+                }
+              }
+            },
+            grid: {
+              left: '3%',
+              right: '2%',
+              bottom: '12%',
+              containLabel: true
+            },
+            yAxis: [{
+              show: true,
+              type: 'value',
+              splitArea: {
+                show: true
+              }
+            }],
+            xAxis: {
+              type: 'category',
+              data: xAxisData
+            },
+            series: [{
+              name: '正面',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              barWidth: 40,
+              data: positiveData,
+              markPoint: {
+                data: []
+              }
+            }, {
+              name: '负面',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              data: negativeData,
+              markPoint: {
+                data: []
+              }
+            }, {
+              name: '中性',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              data: neutralData,
+              markPoint: {
+                data: []
+              }
+            }]
+          };
+          projectTypes.push(projectType);
+        }
       });
     }
   }
