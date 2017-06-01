@@ -66,7 +66,11 @@ export default {
       pageSizes: [10, 20, 30, 50],
       totalCount: 100,
       pageSize: 10,
-      shows: false
+      shows: false,
+      numdatas: [],
+      numdatas2: [],
+      tieba: [],
+      web: []
     };
   },
   created () {
@@ -80,15 +84,34 @@ export default {
     ...mapMutations([
       'setBrieid' // 映射 this.increment() 为 this.$store.commit('increment')
     ], 10),
+    numtype () {
+      var _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/beauty/getBeautyType'
+      }).then((res) => {
+        if (res.status === 200) {
+          for (var key in res.data.data.parts) {
+            // console.log('属性：' + key + ',值:' + res.data.data.parts[key]);
+            _this.numdatas.push(key);
+            var obj = {};
+            obj = res.data.data.parts[key];
+            _this.numdatas2.push(obj);
+          }
+          this.tieba.push(res.data.data.forum);
+          this.web.push(res.data.data.website);
+        }
+      });
+    },
     handleEdit2 (index, row) {
-      this.$emit('listenToChildEvent', [this.shows, row.id]);
+      this.numtype();
       this.$store.state.brieid = row.id;
       this.$store.state.yimei.cname = row.id;
       this.$store.state.yimei.proname = row.projiect;
       this.$store.state.yimei.num = row.phonenum;
       this.$store.state.yimei.stratime = row.starttime;
       this.$store.state.yimei.endtime = row.endtime;
-      console.log(this.$store.state.brieid);
+      this.$emit('listenToChildEvent', [this.shows, row.id, this.numdatas, this.numdatas2, this.tieba, this.web]);
     },
     handleSizeChange (val) {
       this.pageSize = val;

@@ -3,7 +3,8 @@
   <div  >
         <el-table
             :data="tableData"
-            style="width: 100%;max-height:200px" align='center' @click="" >
+            height="250"
+            style="width: 100%;max-height:300px" align='center' @click="" >
             <el-table-column
               prop="d"
               label="1"
@@ -20,7 +21,7 @@
               width="180">
             </el-table-column>
       </el-table>
-          <el-pagination
+          <!-- <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :page-sizes="pageSizes"
@@ -28,9 +29,7 @@
             :current-page="currentPage"
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalCount">
-          </el-pagination>
-       </el-tab-pane>
-      
+          </el-pagination> -->
   </div>
   
 </div>
@@ -42,8 +41,8 @@ export default {
   data () {
     return {
       tableData: this.numlist,
-      pageSizes: [10, 20],
-      pageSize: 10,
+      pageSizes: [5, 10],
+      pageSize: 5,
       currentPage: 0,
       totalCount: 100
     };
@@ -71,5 +70,11 @@ export default {
   line-height: 34px;
   border-left: 1px solid #2495d4;
   padding-left: 10px
+}
+.el-table__header{
+  width: 100% !important
+}
+.el-table__body{
+  width: 100% !important
 }
 </style>

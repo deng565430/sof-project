@@ -15,8 +15,39 @@
       <li ><span>需求数量:</span><span>{{$store.state.yimei.num}}</span></li>
       <li style="width: 40%;"><span>订阅周期:</span><span>{{$store.state.yimei.stratime}}-{{$store.state.yimei.endtime}}</span></li>
     </ul>
-    <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" class="form1">
-          <el-form-item label="线上数据" label-width="100px">
+    <el-form ref="ruleForm" :model="ruleForm" label-width="80px" class="form1">
+          <el-form-item label="部位：" label-width="100px" style="margin-bottom:0px">
+              <el-radio-group v-model="checkboxGroup1"  @change="handleCheckedCitiesChange">
+                <el-radio-button  v-for="numdata in numdatas"  :label="numdata" :key="numdata" >{{numdata}}</el-radio-button>
+              </el-radio-group>
+          </el-form-item >
+              <div  v-if="numdataisshow" style="margin-bottom:0px;margin-left:100px" class="c1">
+              <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>   -->
+              <el-checkbox-group v-model="checkboxGroup2" @change="handleCheckedCitiesChange3">
+                <el-checkbox-button  v-for="numdata in numdatas2" :label="numdata" :key="numdata" >{{numdata}}</el-checkbox-button>
+              </el-checkbox-group>
+          </div>
+          <el-form-item label="数据类型：" label-width="100px" style="margin-bottom:0px" >
+              <el-radio-group v-model="numtype1"  @change="handleCheckedCitiesChange2">
+              <el-radio-button  v-for="numdata in numtypes"  :label="numdata.id" :key="numdata.value" >{{numdata.value}}</el-radio-button>
+                <!-- <el-radio-button label="note" >论坛社区</el-radio-button>
+                <el-radio-button label="ind" >医美网站</el-radio-button>
+                <el-radio-button label="kw">搜索词</el-radio-button>
+                <el-radio-button label="fun" >娱乐场所</el-radio-button>
+                <el-radio-button label="life" >生活场所</el-radio-button> -->
+              </el-radio-group>
+          </el-form-item>
+          <div  v-if="numtype1isshow" style="margin-bottom:0px;margin-left:100px" class="c1">
+              <el-checkbox-group v-model="checkboxGroup3" @change="handleCheckedCitiesChange4">
+                <el-checkbox-button  v-for="numdata in numdatas3" :label="numdata" :key="numdata" >{{numdata}}</el-checkbox-button>
+              </el-checkbox-group>
+          </div>
+          <div  v-if="numtype1isshow2" style="margin-bottom:0px;margin-left:100px" class="c1">
+              <el-radio-group v-model="checkboxGroup4" @change="handleCheckedCitiesChange5">
+                <el-radio-button  v-for="area in area" :label="area" :key="area" >{{area}}</el-radio-button>
+              </el-radio-group>
+          </div>
+          <!-- <el-form-item label="线上数据" label-width="100px">
               <el-checkbox-group v-model="numtype1">
                 <el-checkbox label="note" >论坛社区</el-checkbox>
                 <el-checkbox label="ind" >医美网站</el-checkbox>
@@ -36,8 +67,22 @@
                 <el-checkbox label="娱乐场所" >娱乐场所</el-checkbox>
                 <el-checkbox label="生活场所" >生活场所</el-checkbox>
               </el-checkbox-group>
-          </el-form-item>
-         
+          </el-form-item> -->
+          <el-form-item label="已选条件">
+               <div class="onselect">
+                   <el-tag
+                    v-for="tag in onselect"
+                    :closable="closable"
+                    :key="tag.value"
+                    :id="tag.id"
+                    :type="typecolor"
+                    @close="handleClose3(tag)"
+                  >
+                  {{tag.value}}
+                  </el-tag>
+                  <el-button type="text" @click="qingkong">清空</el-button>
+               </div>
+         </el-form-item>
          <el-form-item>
           <el-button  @click="quxiao">取 消</el-button>
           <el-button type="primary" :loading="false" @click="submitForm()">下一步</el-button>
@@ -45,9 +90,6 @@
     </el-form>
   </div>
     <el-form label-width="80px" v-show='showxiang' class='form2'>
-      <!-- <el-form-item label="文件名称" prop="zTitle">
-            <el-input v-model="ruleForm.zTitle"></el-input>
-      </el-form-item> -->
       <el-form-item label="社区论坛" :model="ruleForm" ref="ruleForm" v-show='lshow'>
         <el-input v-model="ruleForm.zTitle1" placeholder="请输入社区论坛名"></el-input>
         <el-input type="textarea" v-model="ruleForm.note"></el-input>
@@ -78,9 +120,18 @@
 </div>
 </template>
 <script>
+const numtypes = [{id: 'note', value: '论坛社区'}, {id: 'ind', value: '医美网站'}, {id: 'kw', value: '搜索词'}, {id: 'fun', value: '娱乐场所'}, {id: 'life', value: '生活场所'}];
+const area = ['闸北区', '闵行区', '宝山区', '嘉定区', '普陀区', '杨浦区', '静安区', '浦东新区', '虹口区', '徐汇区', '黄浦区', '卢湾区', '长宁区', '昆山市', '青浦区', '松江区', '奉贤区', '金山区', '崇明区', '嘉兴市', '川沙区', '吴江区', '莘庄区'];
 export default {
   data () {
     return {
+      typecolor: 'danger',
+      closable: true,
+      onselect: [{
+        value: '1',
+        id: '1'
+      }],
+      area: area,
       lshow: true,
       yshow: true,
       sshow: true,
@@ -114,7 +165,7 @@ export default {
       },
       region: [],
       numtype: [],
-      numtype1: [],
+      numtype1: '',
       numtype2: [],
       numtype3: [],
       campaign: '',
@@ -128,29 +179,206 @@ export default {
       areatype: [],
       wtypes: [],
       wtype: [],
-      rules: {
-        cname: [
-          { required: true, message: '请输入公司名称', trigger: 'blur' }
-        ],
-        name: [
-          { required: true, message: '请输入项目名称', trigger: 'blur' }
-        ],
-        desc: [
-          { required: true, message: '请输入项目描述', trigger: 'blur' }
-        ],
-        num: [
-          { required: true, message: '请输入需求数量', trigger: 'change' }
-        ]
-      },
       formLabelWidth: '120px',
-      id: ''
+      id: '',
+      numtypes: numtypes,
+      numdatas: [],
+      numdatas2: [],
+      numdatas3: [],
+      checkboxGroup1: '',
+      checkboxGroup2: [''],
+      checkboxGroup3: [''],
+      checkboxGroup4: [''],
+      numdataisshow: false,
+      numtype1isshow: false,
+      numtype1isshow2: false,
+      isIndeterminate: true,
+      checkAll: true
     };
   },
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
+    this.numdatas = this.$parent.numdatas;
   },
   methods: {
+    handleCheckAllChange (event) {
+      this.checkedCities = event.target.checked ? this.numdatas2 : [];
+      this.isIndeterminate = false;
+    },
+    qingkong () {
+      for (var s = 0; s < this.onselect.length; s++) {
+        if (this.onselect[s] !== 0) {
+          this.onselect.splice(s);
+          this.checkboxGroup1 = '';
+          this.checkboxGroup2 = [''];
+        }
+      }
+    },
+    handleCheckedCitiesChange2 (value) {
+      this.checkboxGroup3 = [];
+      for (var s = 0; s < this.onselect.length; s++) {
+        if (this.onselect[s].id === 'cc') {
+          this.onselect.splice(s);
+        }
+      }
+      if (this.checkboxGroup1 === '') {
+        this.$message({
+          showClose: true,
+          message: '请先选择部位！',
+          type: 'warning'
+        });
+        this.numtype1 = '';
+      } else {
+        this.numtype1isshow = true;
+        this.numtype1isshow2 = false;
+        var a = '';
+        if (value === 'note') {
+          this.numdatas3 = this.$parent.tieba[0];
+          a = '社区论坛';
+        }
+        if (value === 'ind') {
+          this.numdatas3 = this.$parent.web[0];
+          a = '医美网站';
+        }
+        if (value === 'kw') {
+          this.numtype1isshow = false;
+          a = '搜索词';
+        }
+        if (value === 'fun') {
+          this.numtype1isshow = false;
+          this.numtype1isshow2 = true;
+          a = '娱乐场所';
+        }
+        if (value === 'life') {
+          this.numtype1isshow = false;
+          this.numtype1isshow2 = true;
+          a = '生活场所';
+        }
+        var obj = {};
+        obj.value = a;
+        obj.id = 'cc';
+        if (value !== '') {
+          this.onselect.push(obj);
+        }
+      }
+    },
+    handleCheckedCitiesChange3 (value) {
+      var obj = {};
+      for (var i = 0; i < value.length; i++) {
+        obj.value = value[i];
+        obj.id = 'class2';
+      }
+      if (value.length !== 0) {
+        this.onselect.push(obj);
+      }
+      console.log(this.onselect);
+    },
+    handleCheckedCitiesChange4 (value) {
+      console.log(value);
+      var obj = {};
+      for (var i = 0; i < value.length; i++) {
+        obj.value = value[i];
+        obj.id = 'class3';
+      }
+      if (value.length !== 0) {
+        this.onselect.push(obj);
+      }
+    },
+    handleCheckedCitiesChange (value) {
+      this.numdataisshow = true;
+      for (var s = 0; s < this.onselect.length; s++) {
+        if (this.onselect[s] !== 0) {
+          this.onselect.splice(s);
+        }
+      }
+      this.checkboxGroup2 = [''];
+      if (value === '面目轮廓') {
+        this.numdatas2 = this.$parent.numdatas2[0];
+      } else if (value === '胸部整形') {
+        this.numdatas2 = this.$parent.numdatas2[1];
+      } else if (value === '鼻部整形') {
+        this.numdatas2 = this.$parent.numdatas2[4];
+      } else if (value === '长久脱毛') {
+        this.numdatas2 = this.$parent.numdatas2[8];
+      } else if (value === '私密整形') {
+        this.numdatas2 = this.$parent.numdatas2[11];
+      } else if (value === '眼部整形') {
+        this.numdatas2 = this.$parent.numdatas2[7];
+      } else if (value === '皮肤美容') {
+        this.numdatas2 = this.$parent.numdatas2[3];
+      } else if (value === '瘦身纤体') {
+        this.numdatas2 = this.$parent.numdatas2[6];
+      } else if (value === '毛发种植') {
+        this.numdatas2 = this.$parent.numdatas2[5];
+      } else if (value === '口腔美容') {
+        this.numdatas2 = this.$parent.numdatas2[10];
+      } else if (value === '医美综合') {
+        this.numdatas2 = this.$parent.numdatas2[9];
+      } else if (value === '医美产品') {
+        this.numdatas2 = this.$parent.numdatas2[2];
+      }
+      var obj = {};
+      obj.value = value;
+      obj.id = value;
+      if (value.length !== 0) {
+        this.onselect.push(obj);
+      }
+    },
+    handleClose3 (tag) {
+      // this.checkboxGroup1 = '';
+      console.log(tag.value);
+      this.onselect.splice(this.onselect.indexOf(tag), 1);
+      // this.checkboxGroup2.splice(this.checkboxGroup2.indexOf(tag.id), 1);
+      if (tag.id === 'cc') {
+        for (var m = 0; m < this.onselect.length; m++) {
+          this.numtype1 = '';
+          if (this.onselect[m].id === 'class3') {
+            this.onselect.splice(m);
+            this.numtype1 = '';
+            this.checkboxGroup3 = [];
+          }
+        }
+      }
+      if (tag.id === this.checkboxGroup1) {
+        this.checkboxGroup1 = '';
+        for (var s = 0; s < this.onselect.length; s++) {
+          if (this.onselect[s].id === 'class2') {
+            this.onselect.splice(s);
+            this.checkboxGroup1 = '';
+            this.checkboxGroup2 = '';
+          }
+        }
+      }
+      for (var q = 0; q < this.onselect.length; q++) {
+        if (this.onselect[q].value === 'class2') {
+          this.onselect.splice(q);
+          this.checkboxGroup2 = '';
+        }
+      }
+      for (var a = 0; a < this.checkboxGroup2.length; a++) {
+        if (this.checkboxGroup2[a] === tag.value) {
+          this.checkboxGroup2.splice(a, 1);
+          break;
+        }
+      }
+      for (var b = 0; b < this.checkboxGroup3.length; b++) {
+        if (this.checkboxGroup3[b] === tag.value) {
+          this.checkboxGroup3.splice(b, 1);
+          break;
+        }
+      }
+    },
+    numtype () {
+      this.$ajax({
+        method: 'get',
+        url: '/api/beauty/getBeautyType'
+      }).then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+        }
+      });
+    },
     quxiao () {
       this.$emit('childrenEventIsShow2');
     },
@@ -160,10 +388,8 @@ export default {
       if (this.active-- < 0) this.active = 2;
     },
     onselect () {
-      if (this.isshow === true) {
-        this.isshow = false;
-      } else if (this.isshow === false) {
-        this.isshow = true;
+      if (this.numtype1isshow === true) {
+        this.numtype1isshow = false;
       }
     },
     submitForm2 () {
@@ -354,5 +580,15 @@ ul li span:nth-child(1){
 .lines{
   margin-bottom: 40px;
 }
-
+.c1{
+  border: 1px solid #ccc;
+  text-align: left;
+  margin-left: 100px
+}
+.onselect{
+  text-align: left;
+}
+.el-form-item__content{
+  margin-left: 0px !important
+}
 </style>

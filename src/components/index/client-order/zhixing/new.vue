@@ -123,7 +123,11 @@ export default {
       yimei: false,
       zhi: false,
       rowid: '',
-      totlanum: ''
+      totlanum: '',
+      numdatas: [],
+      numdatas2: [],
+      tieba: [],
+      web: []
     };
   },
   created () {
@@ -200,9 +204,14 @@ export default {
       this.console();
     },
     listenToChildEvent (val) {
+      this.numdatas = val[2];
+      this.numdatas2 = val[3];
+      this.tieba = val[4];
+      this.web = val[5];
+      console.log(this.web);
+      this.show3 = false;
       this.Yimeicampaign = true;
       this.yimei = true;
-      this.show3 = false;
     },
     childrenEventIsShow2 (val) {
       this.Yimeicampaign = false;
