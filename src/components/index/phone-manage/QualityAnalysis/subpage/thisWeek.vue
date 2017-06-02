@@ -21,14 +21,14 @@
    <el-tag class="borderData">数据概览</el-tag>
  </div>
  <div class="weekCharts">
-   <Charts :id="{id}" :projectType="{thisWeek}" :chartStyle="chartStyle"></Charts>
-   <Charts :id="{compareThisWeekId}" :projectType="{compareThisWeek}" :chartStyle="chartStyle"></Charts>
+   <Charts :id="id" :projectType="thisWeek" :chartStyle="chartStyle"></Charts>
+   <Charts :id="compareThisWeekId" :projectType="compareThisWeek" :chartStyle="chartStyle"></Charts>
  </div>
 </div>
 </template>
 
 <script>
-import Charts from '../../Charts/phoneResultCharts';
+import Charts from '../../Charts/charts';
 export default {
 
   name: 'thisWeek',

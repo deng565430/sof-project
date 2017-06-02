@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div :id="id.id ? id.id : id.compareThisWeekId" :style="chartStyle ? chartStyle : {width: '1400px', height: '500px'}"></div>
+  <div v-loading="loading" element-loading-text="拼命加载中" :id="id" :style="chartStyle ? chartStyle : {width: '1400px', height: '500px'}"></div>
 </div>
 </template>
 
@@ -13,7 +13,7 @@ export default {
   data () {
     return {
       chart: null,
-      datas: this.data
+      loading: true
     };
   },
   mounted () {
@@ -27,8 +27,6 @@ export default {
   watch: {
     'projectType': {
       handler: function (val, oldValue) {
-        console.log(this.id);
-        console.log(val);
         this.charts(this.id, val);
       },
       deep: true
@@ -37,24 +35,11 @@ export default {
   created () {},
   methods: {
     charts (id, data) {
-      alert(id);
       if (!id || !data) {
         return;
       }
-      if (id.compareThisWeekId) {
-        this.chart = echarts.init(document.getElementById(id.compareThisWeekId));
-        this.chart.setOption(data.compareThisWeek);
-      }
-      if (id.comparePhonalyzrId) {
-        alert(id.comparePhonalyzrId);
-        this.chart = echarts.init(document.getElementById(id.comparePhonalyzrId));
-        this.chart.setOption(data.comparePhonalyzr);
-      }
-      this.chart = echarts.init(document.getElementById(id.id));
-      if (data.thisWeek) {
-        this.chart.setOption(data.thisWeek);
-      }
-      this.chart.setOption(data.projectType);
+      this.chart = echarts.init(document.getElementById(id));
+      this.chart.setOption(data);
     }
   },
   props: ['id', 'projectType', 'chartStyle'],

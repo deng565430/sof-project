@@ -1,15 +1,15 @@
 <template>
-<div>
-  <el-table :data="contrastTableData" border style="width: 100%">
+<div style="padding-right: 20px">
+  <el-table :data="contrastTableData" stripe border style="width: 100%;">
     <el-table-column fixed prop="username" label="业务员" align="left" width="150">
     </el-table-column>
-    <el-table-column prop="call_time" label="拨打时间" align="left" width="180">
+    <el-table-column prop="call_time" label="拨打时间" align="left" width="200">
     </el-table-column>
     <el-table-column prop="phone" label="拨打电话" align="left" width="150">
     </el-table-column>
-    <el-table-column prop="duration" label="音频时长" align="left" width="100">
+    <el-table-column prop="duration" label="音频时长" align="left" width="130">
     </el-table-column>
-    <el-table-column prop="path" label="音频" align="left" width="400">
+    <el-table-column prop="path" label="音频" align="left" width="347">
       <template scope="props">
         <audio height="100" width="50" controls>
           <source :src="props.row.path" type="audio/mpeg"/>
@@ -22,7 +22,7 @@
        @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-size="20"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="recordsTotal">
     </el-pagination>

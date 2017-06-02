@@ -4,46 +4,68 @@
     <DataSearch :salesmanOptions="salesmanOptions" :sectionOptions="sectionOptions" @childEvent="childEvent"/>
   </div>
   <div class="weekCharts">
-   <Charts :id="{id}" :projectType="projectType[0]" :chartStyle="chartStyle"></Charts>
+   <Charts :id="id" :projectType="projectType[0]"></Charts>
  </div>
    <div v-if="isShow" class="isShow"> 
       <div>
-        <p><span>+ </span> 添加对比项</p>
+        <el-button type="text" style="line-height: 300px" @click="addContrast">+ 添加对比项目</el-button>
+      </div>
+      <div v-if="addContrastShow" id="addContrastShow">
+        <DataSearchContrast :salesmanOptions="dataSalesmanOptions" :sectionOptions="dataSectionOptions" @addChildEvent="addChildEvent"/>
       </div>
    </div> 
     <div v-else>
-      <Charts :id="{compareThisWeekId}" :projectType="{compareThisWeek}" :chartStyle="chartStyle"></Charts>
+      <Charts :id="addSpeechAnalysisId" :projectType="addSpeechAnalysis[0]"></Charts>
+      <div style="text-align: left">
+        <el-button type="danger" style="line-height: 10px; margin-bottom: 100px" @click="rmContrast">取消选择</el-button>
+      </div>
     </div>
 </div>
 </template>
 
 <script>
 import DataSearch from '../../DataSearch/DataSearch';
-import Charts from '../../Charts/phoneResultCharts';
+import Charts from '../../Charts/charts';
+import DataSearchContrast from '../../DataSearch/DataSearchContrast';
 export default {
 
   name: 'speechAnalysis',
   components: {
     DataSearch,
-    Charts
+    Charts,
+    DataSearchContrast
   },
   data () {
     return {
       salesmanOptions: [],
+      dataSalesmanOptions: [],
       sectionOptions: [],
+      dataSectionOptions: [],
       isShow: true,
       id: 'speechAnalysis',
+      addSpeechAnalysisId: 'addSpeechAnalysis',
       projectType: [],
       sectionValue: '',
-      salesmanValue: ''
+      addSectionValue: '',
+      salesmanValue: '',
+      addSalesmanValue: '',
+      salesmanLabel: '',
+      addSalesmanLabel: '',
+      phoneInput: '',
+      addPhoneInput: '',
+      time: '',
+      addTime: '',
+      addContrastShow: false,
+      role: 0,
+      addSpeechAnalysis: []
     };
   },
   created () {
-    this.getDate('/api/audior/getAudioCallSales', this.salesmanOptions, this.sectionOptions);
-    this.getAllJSONByName(0, '', '', '', '2017-02-23%20-%202017-05-31', this.projectType);
+    this.getDate('/api/audior/getAudioCallSales', this.salesmanOptions, this.dataSalesmanOptions, this.sectionOptions, this.dataSectionOptions);
+    this.getAllJSONByNameOrder(0, '', '', '', '2017-02-23%20-%202017-05-31', this.salesmanLabel, this.projectType);
   },
   methods: {
-    getDate (url, salesmanOptions, sectionOptions) {
+    getDate (url, salesmanOptions, dataSalesmanOptions, sectionOptions, dataSectionOptions) {
       this.$ajax({
         method: 'get',
         url: url
@@ -58,6 +80,7 @@ export default {
             salesman.label = v.name;
             section.push(v.depart);
             salesmanOptions.push(salesman);
+            dataSalesmanOptions.push(salesman);
           }
           const sectionData = Array.from(new Set(section));
           for (let val of sectionData) {
@@ -65,76 +88,104 @@ export default {
             sections.value = val;
             sections.label = val;
             sectionOptions.push(sections);
+            dataSectionOptions.push(sections);
           }
         }
       });
     },
     childEvent (data) {
-      alert(this.projectType);
-      console.log(this.projectType);
-      console.log(data);
+      this.projectType = [];
       this.sectionValue = data.sectionValue;
-      this.salesmanValue = data.salesmanValue.label;
-      const time = `${data.minbatch}%20-%20${data.maxbatch}`;
-      this.getAllJSONByName(0, data.phoneInput, data.salesmanValue.value, data.sectionValue, time);
+      this.salesmanValue = data.salesmanValue ? data.salesmanValue.value : '';
+      this.salesmanLabel = data.salesmanValue ? data.salesmanValue.label : '';
+      this.phoneInput = data.phoneInput;
+      this.time = `${data.minbatch}%20-%20${data.maxbatch}`;
+      this.getAllJSONByNameOrder(this.role, this.phoneInput, this.salesmanValue, this.sectionValue, this.time, this.salesmanLabel, this.projectType);
     },
-    getAllJSONByName (role, phone, searchValue, depart, dataTime, projectTypes) {
+    addChildEvent (data) {
+      this.addSpeechAnalysis = [];
+      this.addContrastTableData = [];
+      this.addRecordsTotal = [];
+      this.addSectionValue = data.sectionValue;
+      this.addSalesmanValue = data.salesmanValue ? data.salesmanValue.value : '';
+      this.addSalesmanLabel = data.salesmanValue ? data.salesmanValue.label : '';
+      this.addPhoneInput = data.phoneInput;
+      this.addTime = `${data.minbatch}%20-%20${data.maxbatch}`;
+      this.getAllJSONByNameOrder(this.role, this.addPhoneInput, this.addSalesmanValue, this.addSectionValue, this.addTime, this.addSalesmanLabel, this.addSpeechAnalysis, true);
+      this.isShow = false;
+    },
+    addContrast () {
+      this.addContrastShow = true;
+    },
+    rmContrast () {
+      this.isShow = true;
+      this.addContrastShow = false;
+    },
+    getAllJSONByNameOrder (role, phone, searchValue, depart, dataTime, salesmanLabel, projectTypes, flag) {
+      const _this = this;
       this.$ajax({
         method: 'get',
-        url: `/api/kwords/getAllJSONByName?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`
+        url: `/api/kwords/getAllJSONByName_order?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`
       }).then(res => {
-        if (res.data && res.data.data) {
+        if (res.data) {
           let projectType = {};
+          let kwName = [];
+          console.log(kwName);
           if (res.data.code === 1) {
-            projectType = {
-              noDataLoadingOption: {
-                text: '暂无数据',
-                effect: 'bubble',
-                effectOption: {
-                  effect: {
-                    n: 0
-                  }
-                }
-              }
-            };
+            _this.$alert(res.data.msg + ', 暂时没有数据', '提示消息');
+            if (flag) {
+              _this.isShow = true;
+              _this.addContrastShow = false;
+            }
+            return;
           }
           let data = res.data.data;
-          let xAxisData = [];
-          let positiveData = [];
-          let negativeData = [];
-          let neutralData = [];
           for (let v of data) {
-            xAxisData.push(v.dimension);
-            positiveData.push(v.positive);
-            negativeData.push(v.negative);
-            neutralData.push(v.neutral);
+            kwName.push(v.order_num);
           }
-          const titleText = this.salesmanValue === '' ? (this.sectionValue === '' ? '所有部门' : this.sectionValue) : this.salesmanValue;
-          projectType = {
-            noDataLoadingOption: {
-              text: '暂无数据',
-              effect: 'bubble',
-              effectOption: {
-                effect: {
-                  n: 0
+          const legendData = ['面积', '客户态度', '位置', '价格', '项目及反馈'];
+          let seriesData = [];
+          for (let i in legendData) {
+            let obj = {};
+            obj.name = legendData[i];
+            obj.type = 'bar';
+            obj.stack = '总量';
+            obj.label = {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            };
+            obj.data = (function () {
+              let objData = [];
+              switch (i) {
+                case 0:
+                  return names('area');
+                case 1:
+                  return names('attitude');
+                case 2:
+                  return names('position');
+                case 3:
+                  return names('price');
+                default:
+                  return names('proj_props');
+              }
+
+              function names (name) {
+                for (let j of data) {
+                  objData.push(j[name]);
                 }
+                return objData;
               }
-            },
-            title: {
-              text: titleText + '话题热度',
-              x: 'center',
-              y: 'top'
-            },
+            })();
+            seriesData.push(obj);
+          }
+          projectType = {
             tooltip: {
-              trigger: 'axis',
-              axisPointer: {
-                type: 'shadow'
-              }
+              trigger: 'axis'
             },
             legend: {
-              data: ['正面', '负面', '中性'],
-              y: 'bottom'
-
+              data: legendData
             },
             toolbox: {
               show: true,
@@ -157,65 +208,18 @@ export default {
             },
             grid: {
               left: '3%',
-              right: '2%',
-              bottom: '12%',
+              right: '4%',
+              bottom: '3%',
               containLabel: true
             },
-            yAxis: [{
-              show: true,
-              type: 'value',
-              splitArea: {
-                show: true
-              }
-            }],
-            xAxis: {
+            xAxis: [{
               type: 'category',
-              data: xAxisData
-            },
-            series: [{
-              name: '正面',
-              type: 'bar',
-              stack: '总量',
-              label: {
-                normal: {
-                  show: true,
-                  position: 'insideRight'
-                }
-              },
-              barWidth: 40,
-              data: positiveData,
-              markPoint: {
-                data: []
-              }
-            }, {
-              name: '负面',
-              type: 'bar',
-              stack: '总量',
-              label: {
-                normal: {
-                  show: true,
-                  position: 'insideRight'
-                }
-              },
-              data: negativeData,
-              markPoint: {
-                data: []
-              }
-            }, {
-              name: '中性',
-              type: 'bar',
-              stack: '总量',
-              label: {
-                normal: {
-                  show: true,
-                  position: 'insideRight'
-                }
-              },
-              data: neutralData,
-              markPoint: {
-                data: []
-              }
-            }]
+              data: kwName
+            }],
+            yAxis: [{
+              type: 'value'
+            }],
+            series: seriesData
           };
           projectTypes.push(projectType);
         }
@@ -227,10 +231,10 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
 .isShow
-  width: 200px
-  height: 200px
+  width: 300px
+  height: 300px
   border: 1px solid #d3ddf4
-  margin: auto 200px
+  margin: 30px 300px
   p
     line-height: 200px
 </style>

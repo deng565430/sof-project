@@ -4,26 +4,28 @@
     <DataSearch :salesmanOptions="salesmanOptions" :sectionOptions="sectionOptions" @childEvent="childEvent"/>
   </div>
   <div class="weekCharts">
-   <Charts :id="id" :projectType="{projectType: projectType[0]}" :chartStyle="chartStyle"></Charts>
+   <Charts :id="id" :projectType="projectType[0]" :chartStyle="chartStyle"></Charts>
    <div v-if="isShow" class="isShow"> 
       <div>
-        <el-button type="text" style="line-height: 200px" @click="addContrast">+ 添加对比项目</el-button>
+        <el-button type="text" style="line-height: 300px" @click="addContrast">+ 添加对比项目</el-button>
       </div>
       <div v-if="addContrastShow" id="addContrastShow">
         <DataSearchContrast :salesmanOptions="dataSalesmanOptions" :sectionOptions="dataSectionOptions" @addChildEvent="addChildEvent"/>
       </div>
    </div> 
    <div v-else>
-    <Charts :id="comparePhonalyzrId" :projectType="{comparePhonalyzr: comparePhonalyzr[0]}" :chartStyle="chartStyle"></Charts>
+    <Charts :id="comparePhonalyzrId" :projectType="comparePhonalyzr[0]" :chartStyle="chartStyle"></Charts>
+     <div style="text-align: left">
+        <el-button type="danger" style="line-height: 10px;" @click="rmContrast">取消选择</el-button>
+      </div>
    </div>
  </div>
- <div class="weekCharts">
-   <ContrastTable :contrastTableData="contrastTableData" :recordsTotal="recordsTotal[0]" @childPage="childPage"></ContrastTable>
-   <div v-if="isShow" class=""> 
-      
-    </div>
-    <div v-else >
-      <ContrastTable></ContrastTable>
+ <div  class="contrastTableStyle">
+   <div :style="ContrastTableStyle">
+      <ContrastTable :contrastTableData="contrastTableData" :recordsTotal="recordsTotal[0]" @childPage="childPage"></ContrastTable> 
+   </div>
+    <div v-if="!isShow" :style="ContrastTableStyle">
+      <ContrastTable :contrastTableData="addContrastTableData" :recordsTotal="addRecordsTotal[0]" @childPage="addChildPages"></ContrastTable>
     </div>
  </div>
 </div>
@@ -32,7 +34,7 @@
 <script>
 import DataSearch from '../../DataSearch/DataSearch';
 import DataSearchContrast from '../../DataSearch/DataSearchContrast';
-import Charts from '../../Charts/phoneResultCharts';
+import Charts from '../../Charts/charts';
 import ContrastTable from '../../contrastTable/contrastTable';
 export default {
 
@@ -49,7 +51,7 @@ export default {
       dataSalesmanOptions: [],
       sectionOptions: [],
       dataSectionOptions: [],
-      chartStyle: {width: '500px', height: '400px', display: 'inline-block'},
+      chartStyle: {width: '600px', height: '400px', display: 'inline-block'},
       isShow: true,
       id: 'phonalyzr',
       comparePhonalyzrId: 'comparePhonalyzr',
@@ -63,19 +65,22 @@ export default {
       salesmanLabel: '',
       addSalesmanLabel: '',
       contrastTableData: [],
+      addContrastTableData: [],
       recordsTotal: [],
+      addRecordsTotal: [],
       role: 0,
       phoneInput: '',
       addPhoneInput: '',
       time: '',
       addTime: '',
-      addContrastShow: false
+      addContrastShow: false,
+      ContrastTableStyle: {width: '1000px', marginTop: '30px'}
     };
   },
   created () {
     this.getDate('/api/audior/getAudioCallSales', this.salesmanOptions, this.dataSalesmanOptions, this.sectionOptions, this.dataSectionOptions);
     this.getAllJSONByName(0, '', '', '', '2017-02-23%20-%202017-05-31', this.salesmanLabel, this.projectType);
-    this.getProductorList('', '', '', '2017-02-23%20-%202017-05-31', 1, 20, this.contrastTableData, this.recordsTotal);
+    this.getProductorList('', '', '', '2017-02-23%20-%202017-05-31', 1, 10, this.contrastTableData, this.recordsTotal);
   },
   methods: {
     getDate (url, salesmanOptions, dataSalesmanOptions, sectionOptions, dataSectionOptions) {
@@ -108,43 +113,47 @@ export default {
     },
     childEvent (data) {
       this.projectType = [];
+      this.contrastTableData = [];
+      this.recordsTotal = [];
       this.sectionValue = data.sectionValue;
-      this.salesmanValue = data.salesmanValue.value;
-      this.salesmanLabel = data.salesmanValue.label;
+      this.salesmanValue = data.salesmanValue ? data.salesmanValue.value : '';
+      this.salesmanLabel = data.salesmanValue ? data.salesmanValue.label : '';
       this.phoneInput = data.phoneInput;
       this.time = `${data.minbatch}%20-%20${data.maxbatch}`;
       this.getAllJSONByName(this.role, this.phoneInput, this.salesmanValue, this.sectionValue, this.time, this.salesmanLabel, this.projectType);
+      this.getProductorList(this.sectionValue, this.phoneInput, this.salesmanValue, this.time, 1, 10, this.contrastTableData, this.recordsTotal);
     },
     addChildEvent (data) {
       this.comparePhonalyzr = [];
+      this.addContrastTableData = [];
+      this.addRecordsTotal = [];
       this.addSectionValue = data.sectionValue;
-      this.addSalesmanValue = data.salesmanValue.value;
-      this.addSalesmanLabel = data.salesmanValue.label;
+      this.addSalesmanValue = data.salesmanValue ? data.salesmanValue.value : '';
+      this.addSalesmanLabel = data.salesmanValue ? data.salesmanValue.label : '';
       this.addPhoneInput = data.phoneInput;
+      const innerWiteh = window.innerWidth;
       this.addTime = `${data.minbatch}%20-%20${data.maxbatch}`;
-      this.getAllJSONByName(0, '', '', '', '2017-02-23%20-%202017-05-31', this.addSalesmanLabel, this.comparePhonalyzr);
-      /* this.getAllJSONByName(this.role, this.addPhoneInput, this.addSalesmanValue, this.addSectionValue, this.addTime, this.addSalesmanLabel, this.comparePhonalyzr); */
+      this.ContrastTableStyle = {width: (innerWiteh - 500) / 2 + 'px', marginTop: '30px'};
+      this.getAllJSONByName(this.role, this.addPhoneInput, this.addSalesmanValue, this.addSectionValue, this.addTime, this.addSalesmanLabel, this.comparePhonalyzr, true);
+      this.getProductorList(this.addSectionValue, this.addPhoneInput, this.addSalesmanValue, this.addTime, 1, 10, this.addContrastTableData, this.addRecordsTotal);
       this.isShow = false;
     },
-    getAllJSONByName (role, phone, searchValue, depart, dataTime, salesmanLabel, projectTypes) {
+    getAllJSONByName (role, phone, searchValue, depart, dataTime, salesmanLabel, projectTypes, flag) {
+      const _this = this;
       let projectType = {};
       this.$ajax({
         method: 'get',
         url: `/api/kwords/getAllJSONByName?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`
       }).then(res => {
-        if (res.data && res.data.data) {
+        if (res.data) {
           if (res.data.code === 1) {
-            projectType = {
-              noDataLoadingOption: {
-                text: '暂无数据',
-                effect: 'bubble',
-                effectOption: {
-                  effect: {
-                    n: 0
-                  }
-                }
-              }
-            };
+            _this.$alert(res.data.msg + ', 暂时没有数据', '提示消息');
+            if (flag) {
+              _this.isShow = true;
+              _this.addContrastShow = false;
+              _this.ContrastTableStyle = {marginTop: '30px', width: '1000px'};
+            }
+            return;
           }
           let data = res.data.data;
           let xAxisData = [];
@@ -293,10 +302,20 @@ export default {
     childPage (data) {
       this.contrastTableData = [];
       this.recordsTotal = [];
-      this.getProductorList('', '', '', '2017-02-23%20-%202017-05-31', data.page, data.pageSize, this.contrastTableData, this.recordsTotal);
+      this.getProductorList(this.sectionValue, this.phoneInput, this.salesmanValue, this.time, data.page, data.pageSize, this.contrastTableData, this.recordsTotal);
+    },
+    addChildPages (data) {
+      this.addContrastTableData = [];
+      this.addRecordsTotal = [];
+      this.getProductorList(this.addSectionValue, this.addPhoneInput, this.addSalesmanValue, this.addTime, data.page, data.pageSize, this.addContrastTableData, this.addRecordsTotal);
     },
     addContrast () {
       this.addContrastShow = true;
+    },
+    rmContrast () {
+      this.isShow = true;
+      this.addContrastShow = false;
+      this.ContrastTableStyle = {marginTop: '30px', width: '1000px'};
     }
   }
 };
@@ -309,10 +328,16 @@ export default {
   border: 1px solid #d3ddf4
   margin: auto 200px
 .weekCharts
+  display: flex
   margin-top: 30px
 #addContrastShow
   height: 200px
   width: 500px
   position: relative
-  top: -230px
+  top: -290px
+  left: -50px
+.contrastTableStyle
+  display: flex
+  margin-bottom: 20px
+  width: 1000px
 </style>

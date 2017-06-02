@@ -126,6 +126,7 @@ export default {
 #selectData
   padding-top: 30px
   padding-bottom: 30px
+  width: 1000px
   display: flex
   >div
     display: inline-block

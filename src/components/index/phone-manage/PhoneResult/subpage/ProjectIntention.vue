@@ -4,14 +4,14 @@
     <Search :projectOptions="{projectOptions}" :searchIsShow="{searchIsShow}" @listenToChildEvent="listenToChildEvent"></Search>
   </div>
   <div id="echarts">
-    <Charts :id="{id}" :projectType="{projectType}"></Charts>
+    <Charts :id="id" :projectType="projectType"></Charts>
   </div>
 </div>
 </template>
 
 <script>
 import Search from '../../ConditionSearch/search';
-import Charts from '../../Charts/phoneResultCharts';
+import Charts from '../../Charts/charts';
 export default {
 
   name: 'ProjectIntention',

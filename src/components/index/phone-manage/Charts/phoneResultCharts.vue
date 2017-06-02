@@ -27,8 +27,6 @@ export default {
   watch: {
     'projectType': {
       handler: function (val, oldValue) {
-        console.log(this.id);
-        console.log(val);
         this.charts(this.id, val);
       },
       deep: true
@@ -37,12 +35,11 @@ export default {
   created () {},
   methods: {
     charts (id, data) {
-      // alert(id);
       if (!id || !data) {
         return;
       }
       this.chart = echarts.init(document.getElementById(id));
-      this.chart.setOption(data.projectType);
+      this.chart.setOption(data);
     }
   },
   props: ['id', 'projectType', 'chartStyle'],

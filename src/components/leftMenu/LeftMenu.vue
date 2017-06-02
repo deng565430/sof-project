@@ -1,6 +1,6 @@
 <template>
   <div id='leftMenu'>
-    <el-menu mode="vertical" class="el-menu-vertical-demo" @select="handleSelect"   theme="dark" >
+    <el-menu mode="vertical" class="el-menu-vertical-demo" style="width: 200px" @select="handleSelect"   theme="dark" >
         <el-menu-item-group title="" v-for="value in dataValue">
             <el-menu-item :index="value.name.val">
                 {{value.name.val}}

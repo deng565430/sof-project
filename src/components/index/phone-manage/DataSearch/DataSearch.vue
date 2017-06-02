@@ -8,7 +8,7 @@
         </div>
         <div class="block">
           <span class="demonstration">部门:</span>
-          <el-select v-model="sectionValue" @change="remoteMethod" placeholder="请选择">
+          <el-select v-model="sectionValue" clearable @change="remoteMethod" placeholder="请选择">
             <el-option
               v-for="item in sectionOptions"
               :key="item.value"
@@ -23,7 +23,7 @@
           <span class="demonstration">业务员:</span>
           <el-select v-model="salesmanValue" @change="change" placeholder="请选择">
             <el-option
-              v-for="item in salesmanOptions"
+              v-for="item in optionData"
               :key="item.value"
               :label="item.label"
               :value="item">
@@ -57,24 +57,24 @@ export default {
       sectionValue: '',
       salesmanValue: '',
       phoneInput: '',
-      filterSalesmanOptions: this.salesmanOptions,
-      timeValue: {}
+      timeValue: {},
+      optionData: []
     };
   },
-  created () {},
+  created () {
+    this.remoteMethod('');
+  },
   methods: {
     remoteMethod (val) {
+      this.optionData = [];
       this.salesmanValue = '';
-      let filterSalesmanOptionsData = [];
-      this.filterSalesmanOptions.filter(item => {
+      this.salesmanOptions.filter(item => {
         if (item.depart === val) {
-          filterSalesmanOptionsData.push(item);
-        };
+          this.optionData.push(item);
+        } else if (val === '') {
+          this.optionData.push(item);
+        }
       });
-      this.salesmanOptions = filterSalesmanOptionsData;
-    },
-    change (item) {
-      console.log(item);
     },
     dataSearch () {
       if (this.timeValue.minbatch == null || this.timeValue.maxbatch == null) {
@@ -82,7 +82,7 @@ export default {
         return;
       }
       let data = {};
-      data.sectionValue = this.sectionValue || '所有部门';
+      data.sectionValue = this.sectionValue || '';
       data.salesmanValue = this.salesmanValue;
       data.minbatch = this.timeValue.minbatch;
       data.maxbatch = this.timeValue.maxbatch;
@@ -100,6 +100,7 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .dataSearch
   background-color: white
+  width: 1200px
 #search
   border: 1px solid  #ccc
   border-top: 0
@@ -121,5 +122,4 @@ export default {
     width: 60%
     .phoneSpan
       width: 92px
-      
 </style>

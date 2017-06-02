@@ -1,6 +1,8 @@
 <template>
 <div id="orderOne">
+  <div id="leftMenu">
     <LeftMenu :dataValue="data" :childIsShow="childIsShow" @childEventIsShow="childEventIsShow"/>
+  </div>
   <div id="contain">
     <AllIndustry v-if="flag" />
     <PhoneList v-if="PhoneList" />
@@ -73,8 +75,10 @@ export default {
     height: 100%
     display: flex
     #contain
-      width: 90%
+      width: 100%
       height: 100%
       padding: 20px
       box-sizing: border-box
+    #leftMenu
+      width: 200px  
 </style>
