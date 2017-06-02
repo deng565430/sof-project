@@ -267,6 +267,7 @@ export default {
       }
       console.log(data);
       console.log(this.competag);
+      this.state1 = '';
     },
     querySearch (queryString, cb) {
       var _this = this;

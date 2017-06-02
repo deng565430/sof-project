@@ -43,31 +43,18 @@
               </el-checkbox-group>
           </div>
           <div  v-if="numtype1isshow2" style="margin-bottom:0px;margin-left:100px" class="c1">
-              <el-radio-group v-model="checkboxGroup4" @change="handleCheckedCitiesChange5">
-                <el-radio-button  v-for="area in area" :label="area" :key="area" >{{area}}</el-radio-button>
-              </el-radio-group>
+              <el-checkbox-group v-model="checkboxGroup4" @change="handleCheckedCitiesChange5">
+                <el-checkbox-button  v-for="area in area" :label="area" :key="area" >{{area}}</el-checkbox-button>
+              </el-checkbox-group>
+              <el-autocomplete
+                class="inline-input"
+                v-model="state1"
+                :icon="close"
+                :fetch-suggestions="querySearch"
+                placeholder="请输入内容"
+                @select="handleSelect"
+              ></el-autocomplete>
           </div>
-          <!-- <el-form-item label="线上数据" label-width="100px">
-              <el-checkbox-group v-model="numtype1">
-                <el-checkbox label="note" >论坛社区</el-checkbox>
-                <el-checkbox label="ind" >医美网站</el-checkbox>
-                <el-checkbox label="kw"   @change='onselect'>搜索词</el-checkbox>
-              </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="搜索词" label-width="100px" v-show="isshow">
-              <el-checkbox-group v-model="numtype3">
-                <el-checkbox label="搜索量" ></el-checkbox>
-                <el-checkbox label="竞价" ></el-checkbox>
-                <el-checkbox label="转化率" ></el-checkbox>
-                <el-checkbox label="综合排名" ></el-checkbox>
-              </el-checkbox-group>
-          </el-form-item>
-         <el-form-item label="线下数据" label-width="100px">
-              <el-checkbox-group v-model="numtype2">
-                <el-checkbox label="娱乐场所" >娱乐场所</el-checkbox>
-                <el-checkbox label="生活场所" >生活场所</el-checkbox>
-              </el-checkbox-group>
-          </el-form-item> -->
           <el-form-item label="已选条件">
                <div class="onselect">
                    <el-tag
@@ -125,6 +112,8 @@ const area = ['闸北区', '闵行区', '宝山区', '嘉定区', '普陀区', '
 export default {
   data () {
     return {
+      close: 'close',
+      state1: '',
       typecolor: 'danger',
       closable: true,
       onselect: [{
@@ -193,7 +182,8 @@ export default {
       numtype1isshow: false,
       numtype1isshow2: false,
       isIndeterminate: true,
-      checkAll: true
+      checkAll: true,
+      restaurants: []
     };
   },
   created () {
@@ -202,6 +192,48 @@ export default {
     this.numdatas = this.$parent.numdatas;
   },
   methods: {
+    handleIconClick (ev) {
+      this.state1 = '';
+    },
+    handleSelect (item) {
+      this.onselect.push(item);
+      this.state1 = '';
+    },
+    querySearch (queryString, cb) {
+      var _this = this;
+      var restaurants = _this.restaurants;
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter (queryString) {
+      return (restaurant) => {
+        return (restaurant.value.indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    loadAll (district, kw, type) {
+      var datas = [];
+      var _this = this;
+      this.$ajax({
+        method: 'post',
+        url: '/api/beauty/getBeautyPlace',
+        data: {
+          'district': district,
+          'kw': kw,
+          'type': type
+        }
+      }).then(function (res) {
+        for (var i = 0; i < res.data.data.length; i++) {
+          var obj = {};
+          obj.value = res.data.data[i];
+          obj.id = 1;
+          datas[i] = obj;
+        }
+        console.log(datas);
+        _this.restaurants = datas;
+        return _this.restaurants;
+      });
+    },
     handleCheckAllChange (event) {
       this.checkedCities = event.target.checked ? this.numdatas2 : [];
       this.isIndeterminate = false;
@@ -216,7 +248,7 @@ export default {
       }
     },
     handleCheckedCitiesChange2 (value) {
-      this.checkboxGroup3 = [];
+      // this.checkboxGroup3 = [];
       for (var s = 0; s < this.onselect.length; s++) {
         if (this.onselect[s].id === 'cc') {
           this.onselect.splice(s);
@@ -228,7 +260,7 @@ export default {
           message: '请先选择部位！',
           type: 'warning'
         });
-        this.numtype1 = '';
+        // this.numtype1 = '';
       } else {
         this.numtype1isshow = true;
         this.numtype1isshow2 = false;
@@ -248,19 +280,36 @@ export default {
         if (value === 'fun') {
           this.numtype1isshow = false;
           this.numtype1isshow2 = true;
+          this.checkboxGroup4 = [];
           a = '娱乐场所';
+          //  this.restaurants = this.loadAll(area, '', a);
         }
         if (value === 'life') {
           this.numtype1isshow = false;
           this.numtype1isshow2 = true;
+          this.checkboxGroup4 = [];
           a = '生活场所';
+          // this.restaurants = this.loadAll(area, '', a);
         }
         var obj = {};
         obj.value = a;
         obj.id = 'cc';
+        /* console.log(this.onselect);
+        for (var s = 0; s < this.onselect.length; s++) {
+          if (this.onselect[s].value !== a && value !== '') {
+            // this.onselect.push(obj);
+            console.log(this.onselect[s].value);
+            console.log(a);
+          }
+        } */
         if (value !== '') {
           this.onselect.push(obj);
         }
+        /*  for (var s = 0; s < this.onselect.length; s++) {
+          if (this.onselect[s].value === a) {
+            console.log(this.onselect[s]);
+          }
+        } */
       }
     },
     handleCheckedCitiesChange3 (value) {
@@ -273,6 +322,21 @@ export default {
         this.onselect.push(obj);
       }
       console.log(this.onselect);
+    },
+    handleCheckedCitiesChange5 (value) {
+      for (var i = 0; i < value.length; i++) {
+        if (value[i] === '') {
+          value.splice(i);
+        }
+      }
+      var a = '';
+      if (this.numtype1 === 'fun') {
+        a = '娱乐场所';
+      }
+      if (this.numtype1 === 'life') {
+        a = '生活场所';
+      }
+      this.loadAll(this.checkboxGroup4, this.state1, a);
     },
     handleCheckedCitiesChange4 (value) {
       console.log(value);
@@ -442,54 +506,46 @@ export default {
       });
     },
     submitForm () {
-      this.loading = true;
-      var _this = this;
-      var type = [];
-      for (var i = 0; i < _this.numtype1.length; i++) {
-        type.push(_this.numtype1[i]);
+      // this.loading = true;
+      console.log(this.checkboxGroup1);
+      console.log(this.checkboxGroup2);
+      console.log(this.checkboxGroup3);
+      console.log(this.numtype1);
+      for (var i = 0; i < this.onselect.length; i++) {
+        if (this.onselect[i].id === 1) {
+          console.log(this.onselect[i].value);
+        }
       }
-      for (var s = 0; s < _this.numtype2.length; s++) {
-        type.push(_this.numtype2[s]);
+      for (var s = 0; s < this.checkboxGroup2.length; s++) {
+        var datatype = [];
+        this.checkboxGroup2.splice('');
+        console.log(this.checkboxGroup2[s]);
+        datatype.push(this.checkboxGroup2[s]);
       }
+      console.log(datatype);
       var data = {
-        'kw': this.numtype3,
-        'option': false,
-        'type': type
+        'datatype': '{' + this.checkboxGroup1 + ':' + datatype + '}',
+        'parts': '{' + this.numtype1 + ':' + this.checkboxGroup3 + '}'
+      };
+      console.log(data);
+      /* var data = {
+        'datatype': '{' + this.checkboxGroup1 + ':' + this.checkboxGroup2 + '}',
+        'parts': '{' + this.numtype1 + ':' + this.checkboxGroup3 + '}'
       };
       this.$ajax({
         method: 'post',
         url: '/api/beauty/getBeautyData',
         data: data
-      }).then(function (res) {
+      }).then((res) => {
         if (res.status === 200) {
-          _this.loading = false;
-          console.log(res.data.data.ind);
-          if (res.data.data.ind !== null) {
-            _this.ruleForm.ind = res.data.data.ind.data;
-          }
-          if (res.data.data.fun !== null) {
-            _this.ruleForm.fun = res.data.data.fun.data;
-          }
-          if (res.data.data.kw !== null) {
-            _this.ruleForm.kw = res.data.data.kw.data;
-          }
-          if (res.data.data.life !== null) {
-            _this.ruleForm.life = res.data.data.life.data;
-          }
-          if (res.data.data.note !== null) {
-            _this.ruleForm.note = res.data.data.note.data;
-          }
-          if (_this.active++ > 2) this.active = 0;
-          _this.show2 = false;
-          _this.showxiang = true;
+          console.log(res);
         }
-      });
+      }); */
     }
   },
   mounted () {
     this.$on('a-msg', function (a) {
       this.briefid = a;
-      console.log(2222222);
     });
   },
   props: ['showxiangqing', 'linsten']
