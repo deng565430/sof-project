@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div :id="id" :style="chartStyle ? chartStyle : {width: '1400px', height: '500px'}"></div>
+  <div :id="id.id ? id.id : id.compareThisWeekId" :style="chartStyle ? chartStyle : {width: '1400px', height: '500px'}"></div>
 </div>
 </template>
 
@@ -37,11 +37,23 @@ export default {
   created () {},
   methods: {
     charts (id, data) {
-      // alert(id);
+      alert(id);
       if (!id || !data) {
         return;
       }
-      this.chart = echarts.init(document.getElementById(id));
+      if (id.compareThisWeekId) {
+        this.chart = echarts.init(document.getElementById(id.compareThisWeekId));
+        this.chart.setOption(data.compareThisWeek);
+      }
+      if (id.comparePhonalyzrId) {
+        alert(id.comparePhonalyzrId);
+        this.chart = echarts.init(document.getElementById(id.comparePhonalyzrId));
+        this.chart.setOption(data.comparePhonalyzr);
+      }
+      this.chart = echarts.init(document.getElementById(id.id));
+      if (data.thisWeek) {
+        this.chart.setOption(data.thisWeek);
+      }
       this.chart.setOption(data.projectType);
     }
   },
