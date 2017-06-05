@@ -25,12 +25,12 @@
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="80px" v-show='show2' class="form1" >
         <el-form-item label="所属区域" style="margin-bottom:0">
             <el-checkbox-group v-model="areatype" class="aa">
-              <el-checkbox v-for="type in areas"  :label="type" :key="type">{{type}}</el-checkbox>
+              <el-checkbox-button v-for="type in areas"  :label="type" :key="type">{{type}}</el-checkbox-button>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="物业类型" >
             <el-checkbox-group v-model="wtype" class="aa">
-              <el-checkbox v-for="type in wtypes"  :label="type" :key="type">{{type}}</el-checkbox>
+              <el-checkbox-button v-for="type in wtypes"  :label="type" :key="type">{{type}}</el-checkbox-button>
             </el-checkbox-group>
           </el-form-item>
 

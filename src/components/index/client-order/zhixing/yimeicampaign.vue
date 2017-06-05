@@ -22,7 +22,7 @@
               </el-radio-group>
           </el-form-item >
               <div  v-if="numdataisshow" style="margin-bottom:0px;margin-left:100px" class="c1">
-              <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>   -->
+              <el-checkbox-button :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox-button>
               <el-checkbox-group v-model="checkboxGroup2" @change="handleCheckedCitiesChange3">
                 <el-checkbox-button  v-for="numdata in numdatas2" :label="numdata" :key="numdata" >{{numdata}}</el-checkbox-button>
               </el-checkbox-group>
@@ -38,14 +38,16 @@
               </el-radio-group>
           </el-form-item>
           <div  v-if="numtype1isshow" style="margin-bottom:0px;margin-left:100px" class="c1">
+              <el-checkbox-button :indeterminate="isIndeterminate1" v-model="checkAll1" @change="handleCheckAllChange1">全选</el-checkbox-button>
               <el-checkbox-group v-model="checkboxGroup3" @change="handleCheckedCitiesChange4">
                 <el-checkbox-button  v-for="numdata in numdatas3" :label="numdata" :key="numdata" >{{numdata}}</el-checkbox-button>
               </el-checkbox-group>
           </div>
-          <div  v-if="numtype1isshow2" style="margin-bottom:0px;margin-left:100px" class="c1">
+          <div  v-if="numtype1isshow2" style="margin-bottom:0px;margin-left:100px" class="c2">
               <el-checkbox-group v-model="checkboxGroup4" @change="handleCheckedCitiesChange5">
                 <el-checkbox-button  v-for="area in area" :label="area" :key="area" >{{area}}</el-checkbox-button>
               </el-checkbox-group>
+              <el-form-item label="搜索场所" v-if="sousuo">
               <el-autocomplete
                 class="inline-input"
                 v-model="state1"
@@ -54,6 +56,7 @@
                 placeholder="请输入内容"
                 @select="handleSelect"
               ></el-autocomplete>
+              </el-form-item>
           </div>
           <el-form-item label="已选条件">
                <div class="onselect">
@@ -77,25 +80,9 @@
     </el-form>
   </div>
     <el-form label-width="80px" v-show='showxiang' class='form2'>
-      <el-form-item label="社区论坛" :model="ruleForm" ref="ruleForm" v-show='lshow'>
-        <el-input v-model="ruleForm.zTitle1" placeholder="请输入社区论坛名"></el-input>
+      <el-form-item :label="ruleForm.numname" :model="ruleForm" ref="ruleForm" >
+        <el-input v-model="ruleForm.zTitle1" placeholder="请输入文件名"></el-input>
         <el-input type="textarea" v-model="ruleForm.note"></el-input>
-      </el-form-item>
-      <el-form-item label="医美网站" :model="ruleForm" ref="ruleForm" v-show='yshow'>
-        <el-input v-model="ruleForm.zTitle2" placeholder="请输入医美网站文件名"></el-input>
-        <el-input type="textarea" v-model="ruleForm.ind" ></el-input>
-      </el-form-item>
-      <el-form-item label="搜索词" :model="ruleForm" ref="ruleForm" v-show='sshow'>
-        <el-input v-model="ruleForm.zTitle3" placeholder="请输入搜索词文件名"></el-input>
-        <el-input type="textarea" v-model="ruleForm.kw"></el-input>
-      </el-form-item>
-      <el-form-item label="娱乐场所" :model="ruleForm" ref="ruleForm" v-show='ylshow'>
-        <el-input v-model="ruleForm.zTitle4" placeholder="请输入娱乐场所文件名"></el-input>
-        <el-input type="textarea" v-model="ruleForm.fun"></el-input>
-      </el-form-item>
-      <el-form-item label="生活场所" :model="ruleForm" ref="ruleForm" v-show='shshow'>
-        <el-input v-model="ruleForm.zTitle5" placeholder="请输入生活场所文件名"></el-input>
-        <el-input type="textarea" v-model="ruleForm.life"></el-input>
       </el-form-item>
       <el-form-item>
           <el-button  @click="before()">上一步</el-button>
@@ -112,13 +99,18 @@ const area = ['闸北区', '闵行区', '宝山区', '嘉定区', '普陀区', '
 export default {
   data () {
     return {
+      sousuo: false,
+      isIndeterminate: false,
+      checkAll: false,
+      isIndeterminate1: false,
+      checkAll1: false,
       close: 'close',
       state1: '',
       typecolor: 'danger',
       closable: true,
       onselect: [{
-        value: '1',
-        id: '1'
+        value: '',
+        id: ''
       }],
       area: area,
       lshow: true,
@@ -135,6 +127,7 @@ export default {
       active: 1,
       checked: false,
       ruleForm: {
+        numname: '',
         cname: '',
         name: '',
         num: '',
@@ -181,8 +174,6 @@ export default {
       numdataisshow: false,
       numtype1isshow: false,
       numtype1isshow2: false,
-      isIndeterminate: true,
-      checkAll: true,
       restaurants: []
     };
   },
@@ -192,6 +183,52 @@ export default {
     this.numdatas = this.$parent.numdatas;
   },
   methods: {
+    handleCheckAllChange (event) {
+      var _this = this;
+      this.checkboxGroup2 = event.target.checked ? this.numdatas2 : [];
+      this.isIndeterminate = false;
+      console.log(this.checkboxGroup2);
+      // Array.prototype.push.apply(this.onselect, this.checkboxGroup2);
+      if (this.checkboxGroup2.length !== 0) {
+        for (var i = 0; i < this.checkboxGroup2.length; i++) {
+          var obj = {};
+          obj.id = 'class2';
+          obj.value = this.checkboxGroup2[i];
+          this.onselect.push(obj);
+        }
+      } else {
+        for (var s = 0; s < this.onselect.length; s++) {
+          if (this.onselect[s].id === 'class2') {
+            // console.log(this.onselect[s].id);
+            _this.onselect.splice(s);
+          }
+        }
+      }
+      console.log(this.onselect);
+    },
+    handleCheckAllChange1 (event) {
+      var _this = this;
+      this.checkboxGroup3 = event.target.checked ? this.numdatas3 : [];
+      this.isIndeterminate1 = false;
+      console.log(this.checkboxGroup3);
+      // Array.prototype.push.apply(this.onselect, this.checkboxGroup2);
+      if (this.checkboxGroup3.length !== 0) {
+        for (var i = 0; i < this.checkboxGroup3.length; i++) {
+          var obj = {};
+          obj.id = 'class3';
+          obj.value = this.checkboxGroup3[i];
+          this.onselect.push(obj);
+        }
+      } else {
+        for (var s = 0; s < this.onselect.length; s++) {
+          if (this.onselect[s].id === 'class3') {
+            // console.log(this.onselect[s].id);
+            _this.onselect.splice(s);
+          }
+        }
+      }
+      console.log(this.onselect);
+    },
     handleIconClick (ev) {
       this.state1 = '';
     },
@@ -229,14 +266,9 @@ export default {
           obj.id = 1;
           datas[i] = obj;
         }
-        console.log(datas);
         _this.restaurants = datas;
         return _this.restaurants;
       });
-    },
-    handleCheckAllChange (event) {
-      this.checkedCities = event.target.checked ? this.numdatas2 : [];
-      this.isIndeterminate = false;
     },
     qingkong () {
       for (var s = 0; s < this.onselect.length; s++) {
@@ -248,7 +280,6 @@ export default {
       }
     },
     handleCheckedCitiesChange2 (value) {
-      // this.checkboxGroup3 = [];
       for (var s = 0; s < this.onselect.length; s++) {
         if (this.onselect[s].id === 'cc') {
           this.onselect.splice(s);
@@ -262,8 +293,10 @@ export default {
         });
         // this.numtype1 = '';
       } else {
+        this.checkboxGroup3 = [''];
         this.numtype1isshow = true;
         this.numtype1isshow2 = false;
+        this.sousuo = false;
         var a = '';
         if (value === 'note') {
           this.numdatas3 = this.$parent.tieba[0];
@@ -321,9 +354,9 @@ export default {
       if (value.length !== 0) {
         this.onselect.push(obj);
       }
-      console.log(this.onselect);
     },
     handleCheckedCitiesChange5 (value) {
+      this.sousuo = true;
       for (var i = 0; i < value.length; i++) {
         if (value[i] === '') {
           value.splice(i);
@@ -339,7 +372,6 @@ export default {
       this.loadAll(this.checkboxGroup4, this.state1, a);
     },
     handleCheckedCitiesChange4 (value) {
-      console.log(value);
       var obj = {};
       for (var i = 0; i < value.length; i++) {
         obj.value = value[i];
@@ -391,7 +423,6 @@ export default {
     },
     handleClose3 (tag) {
       // this.checkboxGroup1 = '';
-      console.log(tag.value);
       this.onselect.splice(this.onselect.indexOf(tag), 1);
       // this.checkboxGroup2.splice(this.checkboxGroup2.indexOf(tag.id), 1);
       if (tag.id === 'cc') {
@@ -457,42 +488,60 @@ export default {
       }
     },
     submitForm2 () {
+      var funcs = [];
+      for (var i = 0; i < this.onselect.length; i++) {
+        if (this.onselect[i].id === 1) {
+          funcs.push(this.onselect[i].value);
+        }
+      }
+      for (var s = 0; s < this.checkboxGroup2.length; s++) {
+        var datatype = [];
+        if (this.checkboxGroup2[s] === '') {
+          this.checkboxGroup2.splice(s, 1);
+        }
+        datatype = this.checkboxGroup2;
+      }
+      for (var n = 0; n < this.checkboxGroup3.length; n++) {
+        var parts = [];
+        if (this.checkboxGroup3[n] === '') {
+          this.checkboxGroup3.splice(n, 1);
+        }
+        parts = this.checkboxGroup3;
+      }
+      var a = {};
+      var b = {};
+      b[this.checkboxGroup1] = datatype;
+      if (this.numtype1 === 'fun' || this.numtype1 === 'life') {
+        a[this.numtype1] = funcs;
+      }
+      if (this.numtype1 === 'ind' || this.numtype1 === 'note' || this.numtype1 === 'kw') {
+        a[this.numtype1] = parts;
+      }
       var brieid = this.$store.state.brieid;
       console.log(brieid);
-      console.log(this.$store.state.commitIs);
+      console.log(this.id);
       var beauty = {
         'briefid': brieid,
-        'project_name': this.ruleForm.name,
-        'select_kw': this.numtype3.join(','),
-        'select_type': this.numtype1.join(',')
+        'project_name': this.$store.state.yimei.cname,
+        'id': '',
+        'datatype': a,
+        'parts': b
       };
       var fun = {
-        'data': this.ruleForm.fun,
-        'file_name': this.ruleForm.zTitle4
-      };
-      var ind = {
-        'data': this.ruleForm.ind,
-        'file_name': this.ruleForm.zTitle2
-      };
-      var kw = {
-        'data': this.ruleForm.kw,
-        'file_name': this.ruleForm.zTitle3
-      };
-      var life = {
-        'data': this.ruleForm.life,
-        'file_name': this.ruleForm.zTitle4
-      };
-      var note = {
         'data': this.ruleForm.note,
         'file_name': this.ruleForm.zTitle1
       };
+      var sa = {
+        'data': [],
+        'file_name': ''
+      };
       var data = {
         'beauty': beauty,
-        'fun': fun,
-        'ind': ind,
-        'kw': kw,
-        'life': life,
-        'note': note
+        'fun': sa,
+        'ind': sa,
+        'kw': sa,
+        'life': sa,
+        'note': fun
       };
       var _this = this;
       this.$ajax({
@@ -507,30 +556,43 @@ export default {
     },
     submitForm () {
       // this.loading = true;
-      console.log(this.checkboxGroup1);
+      /* console.log(this.checkboxGroup1);
       console.log(this.checkboxGroup2);
       console.log(this.checkboxGroup3);
-      console.log(this.numtype1);
+      console.log(this.numtype1); */
+      var funcs = [];
       for (var i = 0; i < this.onselect.length; i++) {
         if (this.onselect[i].id === 1) {
-          console.log(this.onselect[i].value);
+          funcs.push(this.onselect[i].value);
         }
       }
       for (var s = 0; s < this.checkboxGroup2.length; s++) {
         var datatype = [];
-        this.checkboxGroup2.splice('');
-        console.log(this.checkboxGroup2[s]);
-        datatype.push(this.checkboxGroup2[s]);
+        if (this.checkboxGroup2[s] === '') {
+          this.checkboxGroup2.splice(s, 1);
+        }
+        datatype = this.checkboxGroup2;
       }
-      console.log(datatype);
+      for (var n = 0; n < this.checkboxGroup3.length; n++) {
+        var parts = [];
+        if (this.checkboxGroup3[n] === '') {
+          this.checkboxGroup3.splice(n, 1);
+        }
+        parts = this.checkboxGroup3;
+      }
+      var a = {};
+      var b = {};
+      b[this.checkboxGroup1] = datatype;
+      if (this.numtype1 === 'fun' || this.numtype1 === 'life') {
+        a[this.numtype1] = funcs;
+      }
+      if (this.numtype1 === 'ind' || this.numtype1 === 'note' || this.numtype1 === 'kw') {
+        a[this.numtype1] = parts;
+      }
+      // var a = {ss: parts};
       var data = {
-        'datatype': '{' + this.checkboxGroup1 + ':' + datatype + '}',
-        'parts': '{' + this.numtype1 + ':' + this.checkboxGroup3 + '}'
-      };
-      console.log(data);
-      /* var data = {
-        'datatype': '{' + this.checkboxGroup1 + ':' + this.checkboxGroup2 + '}',
-        'parts': '{' + this.numtype1 + ':' + this.checkboxGroup3 + '}'
+        'datatype': a,
+        'parts': b
       };
       this.$ajax({
         method: 'post',
@@ -538,9 +600,30 @@ export default {
         data: data
       }).then((res) => {
         if (res.status === 200) {
-          console.log(res);
+          this.showxiang = true;
+          this.show2 = false;
+          if (this.numtype1 === 'note') {
+            this.ruleForm.numname = '论坛社区';
+            this.ruleForm.note = res.data.data.note.data;
+          }
+          if (this.numtype1 === 'kw') {
+            this.ruleForm.numname = '搜索词';
+            this.ruleForm.note = res.data.data.kw.data;
+          }
+          if (this.numtype1 === 'ind') {
+            this.ruleForm.numname = '医美网站';
+            this.ruleForm.note = res.data.data.ind.data;
+          }
+          if (this.numtype1 === 'fun') {
+            this.ruleForm.numname = '娱乐场所';
+            this.ruleForm.note = res.data.data.fun.data;
+          }
+          if (this.numtype1 === 'life') {
+            this.ruleForm.numname = '生活场所';
+            this.ruleForm.note = res.data.data.life.data;
+          }
         }
-      }); */
+      });
     }
   },
   mounted () {
@@ -639,7 +722,13 @@ ul li span:nth-child(1){
 .c1{
   border: 1px solid #ccc;
   text-align: left;
-  margin-left: 100px
+  margin-left: 100px;
+  display: flex;
+}
+.c2{
+  border: 1px solid #ccc;
+  text-align: left;
+  margin-left: 100px;
 }
 .onselect{
   text-align: left;
