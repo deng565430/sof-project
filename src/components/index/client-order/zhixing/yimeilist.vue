@@ -36,7 +36,15 @@
              <el-table-column
               label="上传">
              <template scope="scope">
-              <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button>
+              <!-- <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button> -->
+                <el-upload
+                  class="upload-demo"
+                  action="http://192.168.1.133/api/CampaignUpload/fileupload"
+                  :file-list="fileList"
+                  :before-upload="beforeUpload">
+                  <el-button size="small" type="primary">点击上传</el-button><!-- 
+                  <div slot="tip" class="el-upload__tip">jintext文件</div> -->
+                </el-upload>
             </template>
             </el-table-column>
           </el-table>
@@ -61,6 +69,7 @@ export default {
   name: 'fangchanlist',
   data () {
     return {
+      fileList: [],
       tableData: this.show.show,
       currentPage: 0,
       pageSizes: [10, 20, 30, 50],
@@ -102,6 +111,9 @@ export default {
           this.web.push(res.data.data.website);
         }
       });
+    },
+    beforeUpload (file) {
+      console.log(file);
     },
     handleEdit2 (index, row) {
       this.numtype();

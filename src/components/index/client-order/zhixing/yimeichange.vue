@@ -22,7 +22,7 @@
                 <el-radio-button  v-for="numdata in numdatas"  :label="numdata" :key="numdata" >{{numdata}}</el-radio-button>
               </el-radio-group>
           </el-form-item >
-              <div  v-if="numdataisshow" style="margin-bottom:0px;margin-left:100px" class="c1">
+          <div  v-if="numdataisshow" style="margin-bottom:0px;margin-left:100px" class="c1">
               <el-checkbox-button :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox-button>
               <el-checkbox-group v-model="checkboxGroup2" @change="handleCheckedCitiesChange3">
                 <el-checkbox-button  v-for="numdata in numdatas2" :label="numdata" :key="numdata" >{{numdata}}</el-checkbox-button>
@@ -169,29 +169,61 @@ export default {
       numdatas2: [],
       numdatas3: [],
       checkboxGroup1: '',
-      checkboxGroup2: [''],
+      checkboxGroup2: [],
       checkboxGroup3: [''],
       checkboxGroup4: [''],
       numdataisshow: false,
       numtype1isshow: false,
       numtype1isshow2: false,
-      restaurants: []
+      restaurants: [],
+      bcheckboxGroup2: []
     };
   },
   created () {
     // 组件创建完后获取数据，
     // 此时 data 已经被 observed 了
-    this.numdatas = this.$parent.numdatas;
+    // this.numdatas = this.$parent.numdatas;
+    this.numtypess();
     this.console();
   },
   methods: {
+    numtypess () {
+      var _this = this;
+      this.$ajax({
+        method: 'get',
+        url: '/api/beauty/getBeautyType'
+      }).then((res) => {
+        if (res.status === 200) {
+          var arr = [];
+          var arr2 = [];
+          console.log(res.data.data);
+          for (var key in res.data.data.parts) {
+            // console.log('属性：' + key + ',值:' + res.data.data.parts[key]);
+            _this.numdatas.push(key);
+            _this.numdataisshow = false;
+            arr.push(...res.data.data.parts[key]);
+          }
+          arr2.push(...res.data.data.forum, ...res.data.data.website);
+          // _this.numdataisshow = true;
+          this.console();
+          /* if (this.numtype1 === 'note' || this.numtype1 === 'ind') {
+            _this.numtype1isshow = true;
+            _this.numtype1isshow2 = false;
+          } else if (this.numtype1 === 'fun' || this.numtype1 === 'life') {
+            _this.numtype1isshow2 = true;
+            _this.numtype1isshow = false;
+          } */
+        }
+      });
+    },
     console () {
-      // var _this = this;
+      var _this = this;
       this.$ajax({
         method: 'get',
         url: '/api/beauty/getBeautyById?id=' + this.$store.state.brieid
       }).then((res) => {
         if (res.status === 200) {
+          this.numdataisshow = true;
           console.log(res.data.data);
           this.ruleForm.cname = res.data.data.demand_side;
           this.ruleForm.name = res.data.data.project_name;
@@ -200,23 +232,37 @@ export default {
           this.ruleForm.value = res.data.data.start_date;
           this.ruleForm.value1 = res.data.data.end_date;
           this.checkboxGroup1 = res.data.data.parts[0].key;
-          // this.numtype1 = '论坛社区';
-          if (res.data.data.data_type[0].key === 'note') {
-            this.numtype1 = '论坛社区';
-          } else if (res.data.data.data_type[0].key === 'ind') {
-            this.numtype1 = '医美网站';
-          } else if (res.data.data.data_type[0].key === 'kw') {
-            this.numtype1 = '搜索词';
-          } else if (res.data.data.data_type[0].key === 'fun') {
-            this.numtype1 = '生活场所';
-          } else if (res.data.data.data_type[0].key === 'life') {
-            this.numtype1 = '娱乐场所';
-          }
-          console.log(this.checkboxGroup1);
-          console.log(this.numtype1);
+          this.numtype1 = res.data.data.data_type[0].key;
           this.checkboxGroup2 = res.data.data.parts[0].value.split(',');
-          // Array.prototype.push.apply(this.checkboxGroup2, a);
-          console.log(this.checkboxGroup2);
+          if (this.checkboxGroup2.length !== '') {
+            for (var i = 0; i < this.checkboxGroup2.length; i++) {
+              var obj = {};
+              obj.id = 'class2';
+              obj.value = this.checkboxGroup2[i];
+              if (this.onselect !== this.checkboxGroup2[i]) {
+                this.onselect.push(obj);
+              }
+            };
+          }
+          if (this.numtype1 === 'note' || this.numtype1 === 'ind') {
+            this.checkboxGroup3 = res.data.data.data_type[0].value.split(',');
+            for (var s = 0; s < this.checkboxGroup3.length; s++) {
+              var objs = {};
+              objs.id = 'class3';
+              objs.value = this.checkboxGroup3[s];
+              if (this.onselect !== this.checkboxGroup3[s]) {
+                this.onselect.push(objs);
+              }
+            };
+          }
+          _this.numdataisshow = true;
+          if (this.numtype1 === 'note' || this.numtype1 === 'ind') {
+            _this.numtype1isshow = true;
+            _this.numtype1isshow2 = false;
+          } else if (this.numtype1 === 'fun' || this.numtype1 === 'life') {
+            _this.numtype1isshow2 = true;
+            _this.numtype1isshow = false;
+          }
         }
       });
     },
@@ -317,6 +363,7 @@ export default {
       }
     },
     handleCheckedCitiesChange2 (value) {
+      console.log(this.numtype1);
       for (var s = 0; s < this.onselect.length; s++) {
         if (this.onselect[s].id === 'cc') {
           this.onselect.splice(s);
@@ -370,6 +417,7 @@ export default {
       }
     },
     handleCheckedCitiesChange3 (value) {
+      console.log(this.numdatas2);
       console.log(this.checkboxGroup2);
       var obj = {};
       for (var i = 0; i < value.length; i++) {
@@ -488,16 +536,6 @@ export default {
           break;
         }
       }
-    },
-    numtype () {
-      this.$ajax({
-        method: 'get',
-        url: '/api/beauty/getBeautyType'
-      }).then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-        }
-      });
     },
     quxiao () {
       this.$emit('childrenEventIsShow2');
