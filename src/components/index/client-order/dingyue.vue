@@ -21,6 +21,7 @@
   </div> -->
   <div v-if='table'>
   <el-table
+       height='445'
       :data="tableData"
       style="width: 100%;" align='center' @click="" >
       <el-table-column

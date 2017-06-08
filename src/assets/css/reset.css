@@ -172,3 +172,6 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
 .el-table__body{
   width: 100% !important
 }
+/*.el-table__body-wrapper{
+  height: 402px;
+}*/
