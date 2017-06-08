@@ -23,13 +23,17 @@ module.exports = {
     },
     dev: {
         env: require('./dev.env'),
-        port: 8080,
+        port: 8888,
         autoOpenBrowser: true,
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         proxyTable: {
             '/api': {
+<<<<<<< Updated upstream
                 target: 'http://192.168.1.109/api',
+=======
+                target: 'http://192.168.1.103/api',
+>>>>>>> Stashed changes
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': ''

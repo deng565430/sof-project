@@ -44,7 +44,7 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
   #footer
-    z-index:999
+    z-index:99999999999
     position: fixed
     left: 0
     right: 0
@@ -53,7 +53,6 @@ export default {
     padding: 10px 150px
     color: white
     height: 40px
-    display: none
     background: #424242
     transition:height 1s
     >:first-child

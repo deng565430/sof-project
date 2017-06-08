@@ -1,6 +1,6 @@
 <template>
   <div id='leftMenu'>
-    <el-menu mode="vertical" class="el-menu-vertical-demo" style="width: 200px" @select="handleSelect"   theme="dark" >
+    <el-menu mode="vertical" :default-active="index" class="el-menu-vertical-demo" style="width: 200px" @select="handleSelect"   theme="dark" >
         <el-menu-item-group title="" v-for="value in dataValue">
             <el-menu-item :index="value.name.val">
                 {{value.name.val}}
@@ -21,6 +21,11 @@
 
 <script>
 export default {
+  data () {
+    return {
+      index: this.dataValue[0].name.val
+    };
+  },
   methods: {
     handleSelect (key, keyPath) {
       this.$emit('childEventIsShow', key);

@@ -338,6 +338,6 @@ export default {
   left: -50px
 .contrastTableStyle
   display: flex
-  margin-bottom: 20px
+  margin-bottom: 90px
   width: 1000px
 </style>

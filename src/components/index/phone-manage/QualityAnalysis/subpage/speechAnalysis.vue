@@ -235,6 +235,7 @@ export default {
   height: 300px
   border: 1px solid #d3ddf4
   margin: 30px 300px
+  margin-bottom: 90px
   p
     line-height: 200px
 </style>

@@ -194,4 +194,5 @@ export default {
        width: 10%
 .weekCharts
   display: flex
+  padding-bottom: 90px
 </style>

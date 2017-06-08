@@ -1,16 +1,28 @@
 <template>
 <div id="upload">
-  <el-upload
-  class="upload-demo"
-  ref="upload"
-  action="https://jsonplaceholder.typicode.com/posts/"
-  :on-preview="handlePreview"
-  :on-remove="handleRemove"
-  :auto-upload="false">
-  <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-  <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-</el-upload>
+  <div class="block">
+    <span class="projectName">文件类型:</span>
+    <el-select v-model="value" placeholder="请选择">
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+  </div>
+   <div class="block">
+      <el-upload
+        class="upload-demo"
+        ref="upload"
+        action="/api/audior/uploadAudior"
+        :on-error="iferr"
+        :on-success="ifsuccess"
+        :auto-upload="false">
+        <el-button slot="trigger" size="small" type="primary">选取上传的音频文件</el-button>
+        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+      </el-upload>
+   </div>
 </div>
 </template>
 
@@ -20,24 +32,53 @@ export default {
   name: 'audioUpload',
 
   data () {
-    return {};
+    return {
+      options: [{
+        value: '意向客户',
+        label: '意向客户'
+      }, {
+        value: '非意向客户',
+        label: '非意向客户'
+      }],
+      value: ''
+    };
   },
   methods: {
     submitUpload () {
-      alert(2);
       this.$refs.upload.submit();
     },
-    handleRemove (file, fileList) {
-      console.log(file, fileList);
+    iferr (file) {
+      this.$alert(file.msg, '提示信息');
     },
-    handlePreview (file) {
-      console.log(file);
+    ifsuccess (file) {
+      this.$alert(file.msg, '提示信息');
     }
+    /* request (file) {
+      const form = new FormData();
+      form.append('file', file.file, file.file.name);
+      this.$ajax({
+        method: 'post',
+        url: '/api/audior/uploadAudior',
+        headers: {'Content-Type': 'multipart/form-data'},
+        data: form
+      }).then(res => {
+        if (res.data.code === 0) {
+          this.$alert(res.data.msg, '提示信息');
+        } else {
+          this.$alert(res.data.msg, '提示信息');
+        }
+      });
+    } */
   }
 };
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 #upload
-  width: 300px
+  display: flex
+  .block
+    width: 300px
+    .upload-demo
+      button
+        height: 35px
 </style>
