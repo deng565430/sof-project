@@ -66,10 +66,7 @@ export default {
   },
   methods: {
     getDate (url, salesmanOptions, dataSalesmanOptions, sectionOptions, dataSectionOptions) {
-      this.$ajax({
-        method: 'get',
-        url: url
-      }).then(res => {
+      this.$api.get(url).then(res => {
         if (res.data && res.data.data) {
           const data = res.data.data;
           const section = [];
@@ -123,10 +120,8 @@ export default {
     },
     getAllJSONByNameOrder (role, phone, searchValue, depart, dataTime, salesmanLabel, projectTypes, flag) {
       const _this = this;
-      this.$ajax({
-        method: 'get',
-        url: `/api/kwords/getAllJSONByName_order?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`
-      }).then(res => {
+      const url = `/api/kwords/getAllJSONByName_order?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`;
+      this.$api.get(url).then(res => {
         if (res.data) {
           let projectType = {};
           let kwName = [];

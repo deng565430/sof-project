@@ -251,15 +251,13 @@ export default {
     loadAll (district, kw, type) {
       var datas = [];
       var _this = this;
-      this.$ajax({
-        method: 'post',
-        url: '/api/beauty/getBeautyPlace',
-        data: {
-          'district': district,
-          'kw': kw,
-          'type': type
-        }
-      }).then(function (res) {
+      const url = '/api/beauty/getBeautyPlace';
+      const postData = {
+        'district': district,
+        'kw': kw,
+        'type': type
+      };
+      this.$api.post(url, postData).then(function (res) {
         for (var i = 0; i < res.data.data.length; i++) {
           var obj = {};
           obj.value = res.data.data[i];
@@ -465,10 +463,8 @@ export default {
       }
     },
     numtype () {
-      this.$ajax({
-        method: 'get',
-        url: '/api/beauty/getBeautyType'
-      }).then((res) => {
+      const url = '/api/beauty/getBeautyType';
+      this.$api.get(url).then((res) => {
         if (res.status === 200) {
           console.log(res);
         }
@@ -544,11 +540,8 @@ export default {
         'note': fun
       };
       var _this = this;
-      this.$ajax({
-        method: 'post',
-        url: '/api/beauty/addBeautyCampaign',
-        data: data
-      }).then((res) => {
+      const url = '/api/beauty/addBeautyCampaign';
+      this.$api.post(url, data).then((res) => {
         if (res.status === 200) {
           _this.$emit('childrenEventIsShow');
         }
@@ -594,11 +587,8 @@ export default {
         'datatype': a,
         'parts': b
       };
-      this.$ajax({
-        method: 'post',
-        url: '/api/beauty/getBeautyData',
-        data: data
-      }).then((res) => {
+      const url = '/api/beauty/getBeautyData';
+      this.$api.post(url, data).then((res) => {
         if (res.status === 200) {
           this.showxiang = true;
           this.show2 = false;

@@ -172,10 +172,8 @@ export default {
     },
     console () {
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefById?id=' + this.id
-      }).then(function (res) {
+      const url = '/api/brief/getBriefById?id=' + this.id;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           var obj = {};
           obj.cname = res.data.data.customName;
@@ -197,10 +195,8 @@ export default {
       var _this = this;
       var data = [];
       var datas = [];
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getTypeDistrict'
-      }).then(function (res) {
+      const url = '/api/campaign/getTypeDistrict';
+      this.$api.get(url).then(function (res) {
         for (var i = 0; i < res.data.data.district.length; i++) {
           var obj = {};
           obj.value = res.data.data.district[i];
@@ -241,10 +237,8 @@ export default {
     loadAll () {
       var datas = [];
       var _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getProjectName'
-      }).then(function (res) {
+      const url = '/api/campaign/getProjectName';
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           for (var i = 0; i < res.data.length; i++) {
             var obj = {};
@@ -282,10 +276,8 @@ export default {
     onloda2 () {
       var datas = [];
       var _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getProjectName'
-      }).then(function (res) {
+      const url = '/api/campaign/getProjectName';
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           for (let i = 0; i < res.data.length; i++) {
             var objs = {};
@@ -301,10 +293,8 @@ export default {
       var _this = this;
       var data = [];
       var datas = [];
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getTypeDistrict'
-      }).then(function (res) {
+      const url = '/api/campaign/getTypeDistrict';
+      this.$api.get(url).then(function (res) {
         for (var i = 0; i < res.data.data.district.length; i++) {
           var obj = {};
           obj = res.data.data.district[i];
@@ -364,11 +354,8 @@ export default {
         'zTitle': zTitle
       };
       var _this = this;
-      this.$ajax({
-        method: 'post',
-        url: '/api/campaign/addCampaignRegularly',
-        data: data
-      }).then(function (res) {
+      const url = '/api/campaign/addCampaignRegularly';
+      this.$api.post(url, data).then(function (res) {
         if (res.status === 200) {
           _this.show = true;
           _this.show2 = false;
@@ -422,11 +409,8 @@ export default {
         'type': this.wtype
       };
       var _this = this;
-      this.$ajax({
-        method: 'post',
-        url: '/api/campaign/ToView2',
-        data: data
-      }).then(function (res) {
+      const url = '/api/campaign/ToView2';
+      this.$api.post(url, data).then(function (res) {
         if (res.status === 200) {
           _this.show = true;
           _this.show2 = false;

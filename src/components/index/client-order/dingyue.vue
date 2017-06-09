@@ -130,10 +130,8 @@ export default {
       var data = [];
       var datas = [];
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=1&start=0&length=' + _this.pageSize
-      }).then(function (res) {
+      const url = '/api/brief/getBriefListByStatus?status=1&start=0&length=' + _this.pageSize;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
@@ -163,10 +161,8 @@ export default {
       var data = [];
       var datas = [];
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=1&start=' + currentPage + '&length=' + pageSize
-      }).then(function (res) {
+      const url = '/api/brief/getBriefListByStatus?status=1&start=' + currentPage + '&length=' + pageSize;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};

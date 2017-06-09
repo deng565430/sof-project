@@ -3,16 +3,18 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import axios from 'axios';
 import ElementUI from 'element-ui';
+import Router from 'vue-router';
 import './assets/css/reset.css';
 import 'element-ui/lib/theme-default/index.css';
 import store from './store/index';
 import { MessageBox } from 'element-ui';
+import api from './config/api';
+Vue.prototype.$api = api;
 //element-ui使用
 Vue.use(ElementUI);
 
-Vue.prototype.$ajax = axios;
+Vue.use(Router);
 
 Vue.config.productionTip = false;
 

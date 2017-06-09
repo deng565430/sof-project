@@ -74,10 +74,8 @@ export default {
     console () {
       let _this = this;
       var id = decodeURI(window.location.href.split('=')[1]).replace(/\s/g, '');
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefById?id=' + id
-      }).then(function (res) {
+      const url = '/api/brief/getBriefById?id=' + id;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           var obj = {};
           console.log(res.data.data);
@@ -105,11 +103,8 @@ export default {
       };
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$ajax({
-            method: 'post',
-            url: '/api/brief/updateBrief',
-            data: b
-          }).then(function (res) {
+          const url = '/api/brief/updateBrief';
+          this.$api.post(url, b).then(function (res) {
             if (res.status === 200) {
               console.log(res);
               window.location.href = 'http://localhost:8080/#/client/dinging ';

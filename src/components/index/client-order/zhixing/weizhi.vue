@@ -141,10 +141,7 @@ export default {
     lists (id, url) {
       this.show = [];
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: url
-      }).then(function (res) {
+      this.$api.get(url).then(function (res) {
         if (res.status === 200 && res.data.recordsFiltered > 0) {
           console.log(res.data.data);
           for (let i = 0; i < res.data.data.length; i++) {
@@ -191,10 +188,8 @@ export default {
     childrenEventIsShow (val) {
       this.show = [];
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getAllCampaign?status=0&start=0&length=10&industryId=2'
-      }).then(function (res) {
+      const url = '/api/campaign/getAllCampaign?status=0&start=0&length=10&industryId=2';
+      this.$api.get(url).then(function (res) {
         if (res.status === 200 && res.data.recordsFiltered > 0) {
           console.log(res.data.data);
           for (let i = 0; i < res.data.data.length; i++) {
@@ -223,10 +218,8 @@ export default {
       var data = [];
       var datas = [];
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getAllCampaign?status=0&industryId=' + this.industryId + '&start=0&length=' + _this.pageSize
-      }).then(function (res) {
+      const url = '/api/campaign/getAllCampaign?status=0&industryId=' + this.industryId + '&start=0&length=' + _this.pageSize;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           console.log(res);
           for (let i = 0; i < res.data.data.length; i++) {
@@ -255,10 +248,8 @@ export default {
       var data = [];
       var datas = [];
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getAllCampaign?status=0&industryId=1&start=' + currentPage + '&length=' + _this.pageSize
-      }).then(function (res) {
+      const url = '/api/campaign/getAllCampaign?status=0&industryId=1&start=' + currentPage + '&length=' + _this.pageSize;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           console.log(res);
           for (let i = 0; i < res.data.data.length; i++) {
@@ -299,7 +290,8 @@ export default {
       this.rowid = row.id;
     },
     handleUp (index, row) {
-      window.location.href = 'http://localhost:8080/#/client/Campaignchange?id= ' + row.id;
+      const url = '/client/Campaignchange?id= ' + row.id;
+      window.location.href = this.$api.url(url);
     },
     handleSelect () {}
   }

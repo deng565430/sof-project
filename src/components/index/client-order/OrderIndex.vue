@@ -51,10 +51,8 @@ export default {
     loading () {
       var _this = this;
       var data = [];
-      this.$ajax({
-        method: 'get',
-        url: '/api/industry/getindustryList'
-      }).then(function (res) {
+      const url = '/api/industry/getindustryList';
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           console.log(res.data.data);
           for (var i = 0; i < res.data.data.length; i++) {

@@ -92,11 +92,8 @@ export default {
       };
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$ajax({
-            method: 'post',
-            url: '/api/brief/addbrief',
-            data: b
-          }).then(function (res) {
+          const url = '/api/brief/addbrief';
+          this.$api.post(url, b).then(function (res) {
             if (res.status === 200) {
               console.log(res);
               _this.$emit('listinchild');

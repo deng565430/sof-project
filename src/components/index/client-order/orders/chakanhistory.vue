@@ -65,10 +65,8 @@ export default {
     },
     console () {
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefById?id=' + this.id
-      }).then(function (res) {
+      const url = '/api/brief/getBriefById?id=' + this.id;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           var obj = {};
           console.log(res.data.data);
@@ -96,11 +94,8 @@ export default {
       };
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$ajax({
-            method: 'post',
-            url: '/api/brief/updateBrief',
-            data: b
-          }).then(function (res) {
+          const url = '/api/brief/updateBrief';
+          this.$api.post(url, b).then(function (res) {
             if (res.status === 200) {
               console.log(res);
               _this.$emit('lischeng');

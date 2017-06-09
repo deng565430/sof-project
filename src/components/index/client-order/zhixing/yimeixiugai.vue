@@ -197,11 +197,8 @@ export default {
         'note': note
       };
       var _this = this;
-      this.$ajax({
-        method: 'post',
-        url: '/api/beauty/updateBeautyCampaign',
-        data: data
-      }).then((res) => {
+      const url = '/api/beauty/updateBeautyCampaign';
+      this.$api.post(url, data).then((res) => {
         if (res.status === 200) {
           _this.show3 = false;
           _this.$emit('childrenEventIsShow', [_this.show3]);
@@ -224,11 +221,8 @@ export default {
         'option': false,
         'type': type
       };
-      this.$ajax({
-        method: 'post',
-        url: '/api/beauty/getBeautyData',
-        data: data
-      }).then(function (res) {
+      const url = '/api/beauty/getBeautyData';
+      this.$api.post(url, data).then(function (res) {
         if (res.status === 200) {
           _this.loading = false;
           console.log(res.data.data.ind);

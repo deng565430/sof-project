@@ -130,10 +130,8 @@ export default {
       var data = [];
       var datas = [];
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=2&start=0&length=' + _this.pageSize
-      }).then(function (res) {
+      const url = `/api/brief/getBriefListByStatus?status=2&start=0&length=${_this.pageSize}`;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
@@ -163,10 +161,8 @@ export default {
       var data = [];
       var datas = [];
       let _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=2&start=' + currentPage + '&length=' + pageSize
-      }).then(function (res) {
+      const url = '/api/brief/getBriefListByStatus?status=2&start=' + currentPage + '&length=' + pageSize;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           for (let i = 0; i < res.data.data.length; i++) {
             var obj = {};
@@ -206,10 +202,8 @@ export default {
       var data = [];
       console.log(this.projectName.project_name);
       var flag = this.projectName.project_name;
-      this.$ajax({
-        method: 'get',
-        url: '/api/brief/getBriefListByStatus?status=2&start=0&length=' + _this.pageSize + '&kw_flag=' + 1 + '&kw=' + flag
-      }).then(function (res) {
+      const url = '/api/brief/getBriefListByStatus?status=2&start=0&length=' + _this.pageSize + '&kw_flag=' + 1 + '&kw=' + flag;
+      this.$api.get(url).then(function (res) {
         console.log(res);
         if (res.status === 200) {
           for (let i = 0; i < res.data.data.length; i++) {

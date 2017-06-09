@@ -18,7 +18,6 @@ import AllIndustry from './../../allIndustry/AllIndustry';
 import PhoneList from './phoneList/phoneList';
 import PhoneResult from './phoneResult/phoneResult';
 import Quality from './QualityAnalysis/QualityAnalysis';
-
 export default {
   components: {
     LeftMenu,
@@ -39,8 +38,7 @@ export default {
       quality: false
     };
   },
-  created () {
-  },
+  created () {},
   methods: {
     childEventIsShow (data) {
       switch (data) {
