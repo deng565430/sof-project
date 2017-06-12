@@ -128,8 +128,8 @@ export default {
       this.addSalesmanValue = data.salesmanValue ? data.salesmanValue.value : '';
       this.addSalesmanLabel = data.salesmanValue ? data.salesmanValue.label : '';
       this.addPhoneInput = data.phoneInput;
-      const innerWiteh = window.innerWidth;
       this.addTime = `${data.minbatch}%20-%20${data.maxbatch}`;
+      const innerWiteh = window.innerWidth;
       this.ContrastTableStyle = {width: (innerWiteh - 500) / 2 + 'px', marginTop: '30px'};
       this.getAllJSONByName(this.role, this.addPhoneInput, this.addSalesmanValue, this.addSectionValue, this.addTime, this.addSalesmanLabel, this.comparePhonalyzr, true);
       this.getProductorList(this.addSectionValue, this.addPhoneInput, this.addSalesmanValue, this.addTime, 1, 10, this.addContrastTableData, this.addRecordsTotal);
@@ -161,7 +161,7 @@ export default {
             negativeData.push(v.negative);
             neutralData.push(v.neutral);
           }
-          const titleText = salesmanLabel === '' ? (depart === '' ? '所有部门' : depart) : salesmanLabel;
+          const titleText = salesmanLabel === '' ? (depart === '' ? (phone !== '' ? phone + '号码' : '所有部门') : depart) : salesmanLabel;
           projectType = {
             noDataLoadingOption: {
               text: '暂无数据',

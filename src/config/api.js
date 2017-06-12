@@ -1,5 +1,5 @@
 import axios from 'axios';
-const root =  'http://114.215.209.180:8080'; // http://114.215.209.180:8080
+const root =  ''; // http://114.215.209.180:8080
 
 export default {
     get: function(url) {

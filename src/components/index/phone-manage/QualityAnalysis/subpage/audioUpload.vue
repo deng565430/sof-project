@@ -18,6 +18,7 @@
         action="/api/audior/uploadAudior"
         :on-error="iferr"
         :on-success="ifsuccess"
+        :before-upload="beforeUpload"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取上传的音频文件</el-button>
         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
@@ -50,8 +51,16 @@ export default {
     iferr (file) {
       this.$alert(file.msg, '提示信息');
     },
+    beforeUpload (file) {
+      if (file.name.split('.')[file.name.split('.').length - 1] !== 'tar' && file.name.split('.')[file.name.split('.').length - 1] !== 'gz') {
+        this.$alert('上传文件类型错误', '提示信息');
+        return false;
+      }
+    },
     ifsuccess (file) {
-      this.$alert(file.msg, '提示信息');
+      if (file) {
+        this.$alert(file.msg, '提示信息');
+      }
     }
     /* request (file) {
       const form = new FormData();

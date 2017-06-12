@@ -112,7 +112,9 @@ const router = new Router({
     path: '/analysis',
     name: 'analysis',
     component: Analysis
-  }]
+  }],
+  // mode: 'history',
+  strict: process.env.NODE_ENV !== 'production'
 });
 
 router.beforeEach((to, from, next) => {
