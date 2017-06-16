@@ -1,6 +1,6 @@
 <template>
 <div style="padding-right: 20px">
-  <el-table :data="contrastTableData" stripe border style="width: 100%;">
+  <el-table :data="contrastTableData" stripe border align="center" height="450" style="width: 100%;">
     <el-table-column fixed prop="username" label="业务员" align="left" width="150">
     </el-table-column>
     <el-table-column prop="call_time" label="拨打时间" align="left" width="200">

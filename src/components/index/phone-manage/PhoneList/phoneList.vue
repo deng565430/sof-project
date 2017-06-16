@@ -145,11 +145,7 @@ export default {
   },
   methods: {
     getProject (url, list, val) {
-      this.$ajax({
-        method: 'post',
-        url: url,
-        data: list
-      }).then((res) => {
+      this.$api.post(url, list).then((res) => {
         if (res.data && res.data.data && res.data.data.length > 0) {
           let list = res.data.data;
           for (var i = 0; i < list.length; i++) {
@@ -164,11 +160,7 @@ export default {
     getData (url, list, val) {
       this.pageShow = false;
       let that = this;
-      this.$ajax({
-        method: 'post',
-        url: url,
-        data: list
-      }).then((res) => {
+      this.$api.post(url, list).then((res) => {
         if (res.data && res.data.data && res.data.data.length > 0) {
           let list = res.data.data;
           let v = '';
@@ -202,15 +194,13 @@ export default {
       this.recordsFiltered = 0;
       let that = this;
       this.listShow = true;
-      this.$ajax({
-        method: 'post',
-        url: '/api/tel/getTelCountByCondition',
-        data: {
-          project: project,
-          minbatch: minbatch,
-          maxbatch: maxbatch
-        }
-      }).then(function (res) {
+      const postData = {
+        project: project,
+        maxbatch: maxbatch,
+        minbatch: minbatch
+      };
+      const url = '/api/tel/getTelCountByCondition';
+      this.$api.post(url, postData).then(function (res) {
         if (res.data.data) {
           var v = '';
           for (v of res.data.data) {
@@ -272,7 +262,7 @@ export default {
       }
       project = encodeURIComponent(JSON.stringify(project));
       let url = `/api/tel/exportTel?project=${project}`;
-      window.location.href = url;
+      window.location.href = this.$api.url(url);
       /* for (let i in project) {
         (function (i) {
           setTimeout(function () {
@@ -300,14 +290,12 @@ export default {
         return;
       }
       rows.type = '';
-      this.$ajax({
-        method: 'post',
-        url: '/api/tel/getTypeCountByCondition',
-        data: {
-          project: rows.project,
-          maxbatch: rows.batch
-        }
-      }).then((res) => {
+      const url = '/api/tel/getTypeCountByCondition';
+      const postData = {
+        project: rows.project,
+        maxbatch: rows.batch
+      };
+      this.$api.post(url, postData).then((res) => {
         let v = '';
         for (v of res.data.data) {
           rows.type += `${v.type} , `;

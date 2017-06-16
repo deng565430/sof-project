@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div v-loading="loading" element-loading-text="拼命加载中" :id="id" :style="chartStyle ? chartStyle : {width: '1400px', height: '500px'}"></div>
+  <div v-loading="loading" element-loading-text="拼命加载中" :id="id" :style="chartStyle ? chartStyle : {width: '900px', height: '500px'}"></div>
 </div>
 </template>
 

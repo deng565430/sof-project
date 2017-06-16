@@ -33,6 +33,10 @@ const Changecampaign = r => require.ensure([], () => r(require('../components/in
 const Zhichange = r => require.ensure([], () => r(require('../components/index/client-order/zhixing/zhichange')), 'zhichange');
 const Yimeicampaign = r => require.ensure([], () => r(require('../components/index/client-order/zhixing/yimeicampaign')), 'yimeicampaign');
 
+
+/*const Index = r => require.ensure([], () => r(require('@/components/index/index')), 'index');
+const ClientOrder = r => require.ensure([], () => r(require('@/components/index/client-order/body')), 'body');*/
+
 Vue.use(Router);
 
 const router = new Router({
@@ -112,9 +116,7 @@ const router = new Router({
     path: '/analysis',
     name: 'analysis',
     component: Analysis
-  }],
-  // mode: 'history',
-  strict: process.env.NODE_ENV !== 'production'
+  }]
 });
 
 router.beforeEach((to, from, next) => {

@@ -84,10 +84,7 @@ export default {
   },
   methods: {
     getDate (url, salesmanOptions, dataSalesmanOptions, sectionOptions, dataSectionOptions) {
-      this.$ajax({
-        method: 'get',
-        url: url
-      }).then(res => {
+      this.$api.get(url).then(res => {
         if (res.data && res.data.data) {
           const data = res.data.data;
           const section = [];
@@ -131,8 +128,8 @@ export default {
       this.addSalesmanValue = data.salesmanValue ? data.salesmanValue.value : '';
       this.addSalesmanLabel = data.salesmanValue ? data.salesmanValue.label : '';
       this.addPhoneInput = data.phoneInput;
-      const innerWiteh = window.innerWidth;
       this.addTime = `${data.minbatch}%20-%20${data.maxbatch}`;
+      const innerWiteh = window.innerWidth;
       this.ContrastTableStyle = {width: (innerWiteh - 500) / 2 + 'px', marginTop: '30px'};
       this.getAllJSONByName(this.role, this.addPhoneInput, this.addSalesmanValue, this.addSectionValue, this.addTime, this.addSalesmanLabel, this.comparePhonalyzr, true);
       this.getProductorList(this.addSectionValue, this.addPhoneInput, this.addSalesmanValue, this.addTime, 1, 10, this.addContrastTableData, this.addRecordsTotal);
@@ -140,11 +137,9 @@ export default {
     },
     getAllJSONByName (role, phone, searchValue, depart, dataTime, salesmanLabel, projectTypes, flag) {
       const _this = this;
+      const url = `/api/kwords/getAllJSONByName?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`;
       let projectType = {};
-      this.$ajax({
-        method: 'get',
-        url: `/api/kwords/getAllJSONByName?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`
-      }).then(res => {
+      this.$api.get(url).then(res => {
         if (res.data) {
           if (res.data.code === 1) {
             _this.$alert(res.data.msg + ', 暂时没有数据', '提示消息');
@@ -166,7 +161,7 @@ export default {
             negativeData.push(v.negative);
             neutralData.push(v.neutral);
           }
-          const titleText = salesmanLabel === '' ? (depart === '' ? '所有部门' : depart) : salesmanLabel;
+          const titleText = salesmanLabel === '' ? (depart === '' ? (phone !== '' ? phone + '号码' : '所有部门') : depart) : salesmanLabel;
           projectType = {
             noDataLoadingOption: {
               text: '暂无数据',
@@ -279,10 +274,8 @@ export default {
       });
     },
     getProductorList (depart, phone, searchValue, dataTime, start, length, contrastTableData, recordsTotal) {
-      this.$ajax({
-        method: 'get',
-        url: `/api/audior/getProductorList?depart=${depart}&phone=${phone}&num=${searchValue}&start=${start}&length=${length}&data_time=${dataTime}`
-      }).then(res => {
+      const url = `/api/audior/getProductorList?depart=${depart}&phone=${phone}&num=${searchValue}&start=${start}&length=${length}&data_time=${dataTime}`;
+      this.$api.get(url).then(res => {
         console.log(res.data);
         if (res.data) {
           recordsTotal.push(res.data.recordsTotal);
@@ -338,6 +331,6 @@ export default {
   left: -50px
 .contrastTableStyle
   display: flex
-  margin-bottom: 20px
+  margin-bottom: 90px
   width: 1000px
 </style>

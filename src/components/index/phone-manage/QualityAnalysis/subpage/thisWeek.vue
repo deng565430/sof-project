@@ -52,10 +52,7 @@ export default {
   },
   methods: {
     getData (url, flag, data) {
-      this.$ajax({
-        method: 'get',
-        url: url
-      }).then((res) => {
+      this.$api.get(url).then((res) => {
         if (res.data && res.data.data) {
           const datas = res.data.data;
           if (flag) {
@@ -194,4 +191,5 @@ export default {
        width: 10%
 .weekCharts
   display: flex
+  padding-bottom: 90px
 </style>

@@ -75,10 +75,8 @@ export default {
     },
     console2 () {
       var _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/campaign/getCampaignInfo?id=' + this.id
-      }).then(function (res) {
+      const url = '/api/campaign/getCampaignInfo?id=' + this.id;
+      this.$api.get(url).then(function (res) {
         if (res.status === 200) {
           console.log(res);
           _this.areatype = res.data.data.districts;

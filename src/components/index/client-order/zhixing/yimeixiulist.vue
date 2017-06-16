@@ -85,10 +85,8 @@ export default {
     ], 10),
     numtype () {
       var _this = this;
-      this.$ajax({
-        method: 'get',
-        url: '/api/beauty/getBeautyType'
-      }).then((res) => {
+      const url = '/api/beauty/getBeautyType';
+      this.$api.get(url).then((res) => {
         if (res.status === 200) {
           for (var key in res.data.data.parts) {
             // console.log('属性：' + key + ',值:' + res.data.data.parts[key]);

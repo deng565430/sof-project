@@ -13,11 +13,7 @@ module.exports = {
     app: './src/main.js'
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      "windows.jQuery": "jquery"
-    })
+    new webpack.ProvidePlugin({})
   ],
   output: {
     path: config.build.assetsRoot,
@@ -31,8 +27,7 @@ module.exports = {
       '@': resolve('src'),
       'src': path.resolve(__dirname, '../src'),
       'assets': path.resolve(__dirname, '../src/assets'),
-      'components': path.resolve(__dirname, '../src/components'),
-      jquery: "jquery/src/jquery"
+      'components': path.resolve(__dirname, '../src/components')
     }
   },
   module: {

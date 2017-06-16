@@ -42,11 +42,7 @@ export default {
   },
   methods: {
     getProject (url, list, val) {
-      this.$ajax({
-        method: 'post',
-        url: url,
-        data: list
-      }).then((res) => {
+      this.$api.post(url, list).then((res) => {
         if (res.data && res.data.data && res.data.data.length > 0) {
           let list = res.data.data;
           for (var i = 0; i < list.length; i++) {
@@ -59,15 +55,13 @@ export default {
       });
     },
     getTelByPB (project, minbatch, maxbatch) {
-      this.$ajax({
-        method: 'post',
-        url: '/api/rate/getTelByPB',
-        data: {
-          project: project,
-          maxbatch: maxbatch,
-          minbatch: minbatch
-        }
-      }).then((res) => {
+      const postData = {
+        project: project,
+        maxbatch: maxbatch,
+        minbatch: minbatch
+      };
+      const url = '/api/rate/getTelByPB';
+      this.$api.post(url, postData).then((res) => {
         if (res.data && res.data.data.length > 0) {
           let v = '';
           let xAxisData = [];

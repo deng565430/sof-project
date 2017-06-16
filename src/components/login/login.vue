@@ -75,14 +75,12 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$store.state.isLogin = true;
-          this.$ajax({
-            method: 'post',
-            url: '/api/user/login',
-            data: {
-              name: this.ruleForm2.user,
-              pwd: this.ruleForm2.pass
-            }
-          }).then(function (res) {
+          const url = '/api/user/login';
+          const postData = {
+            name: this.ruleForm2.user,
+            pwd: this.ruleForm2.pass
+          };
+          this.$api.post(url, postData).then(function (res) {
             if (!res.data.data) {
               alert('返回错误');
               return false;

@@ -54,11 +54,8 @@
         datas.start = 0;
         datas.length = 50;
         console.log(datas);
-        this.$ajax({
-          method: 'post',
-          url: '/api/tel/getTelByCondition',
-          data: datas
-        }).then(function (res) {
+        const url = '/api/tel/getTelByCondition';
+        this.$api.post(url, datas).then(function (res) {
           console.log(res.data);
           if (res.data && res.data.data && res.data.data.length > 0) {
             let list = res.data.data;
