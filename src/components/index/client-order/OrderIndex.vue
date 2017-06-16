@@ -2,8 +2,7 @@
   <div id="">
     <div class="selectarea" v-if='selects'>
       <div class="title"><span>选择行业</span></div>
-      <ul class="select"><!-- 
-          <li ><router-link to="/client/estateOrder">房地产</router-link></li> -->
+      <ul class="select">
           <li @click="hangye" v-for='itme in value' :id='itme.id'  >{{itme.val}}</li>
       </ul>
     </div>

@@ -21,7 +21,7 @@
 <script>
 import LeftMenu from './../../leftMenu/LeftMenu';
 import Dinging from './dinging';
-import OrderIndex from './OrderIndex';
+import OrderIndex from './xuqiudan/neworder';
 import Dingyue from './dingyue';
 import Historyding from './historyding';
 
