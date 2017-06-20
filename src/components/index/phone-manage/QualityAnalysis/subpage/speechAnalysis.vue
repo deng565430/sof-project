@@ -119,18 +119,17 @@ export default {
       this.addContrastShow = false;
     },
     getAllJSONByNameOrder (role, phone, searchValue, depart, dataTime, salesmanLabel, projectTypes, flag) {
-      const _this = this;
+      const self = this;
       const url = `/api/kwords/getAllJSONByName_order?role=${role}&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`;
       this.$api.get(url).then(res => {
         if (res.data) {
           let projectType = {};
           let kwName = [];
-          console.log(kwName);
           if (res.data.code === 1) {
-            _this.$alert(res.data.msg + ', 暂时没有数据', '提示消息');
+            self.$alert(res.data.msg + ', 暂时没有数据', '提示消息');
             if (flag) {
-              _this.isShow = true;
-              _this.addContrastShow = false;
+              self.isShow = true;
+              self.addContrastShow = false;
             }
             return;
           }
@@ -138,7 +137,8 @@ export default {
           for (let v of data) {
             kwName.push(v.order_num);
           }
-          const legendData = ['面积', '客户态度', '位置', '价格', '项目及反馈'];
+          const legendData = depart === '移民部' ? ['通话检测', '移民方向', '移民政策', '移民分类', '移民目的'] : ['面积', '客户态度', '位置', '价格', '项目及反馈'];
+          const legendDataVal = ['area', 'attitude', 'position', 'price', 'proj_props'];
           let seriesData = [];
           for (let i in legendData) {
             let obj = {};
@@ -151,33 +151,36 @@ export default {
                 position: 'insideRight'
               }
             };
-            obj.data = (function () {
+            obj.data = (function (i) {
               let objData = [];
-              switch (i) {
-                case 0:
-                  return names('area');
-                case 1:
-                  return names('attitude');
-                case 2:
-                  return names('position');
-                case 3:
-                  return names('price');
-                default:
-                  return names('proj_props');
+              for (let j of data) {
+                let num = j.area + j.attitude + j.position + j.price + j.proj_props;
+                objData.push(((j[legendDataVal[i]] / num) * 100).toFixed(2));
               }
-
-              function names (name) {
-                for (let j of data) {
-                  objData.push(j[name]);
-                }
-                return objData;
-              }
-            })();
+              return objData;
+            })(i);
             seriesData.push(obj);
           }
           projectType = {
             tooltip: {
-              trigger: 'axis'
+              trigger: 'axis'/* ,
+              formatter: function (params) {
+                let data = [];
+                for (let v of params) {
+                  let obj = {};
+                  obj.seriesName = v.seriesName || '';
+                  obj.value = v.value + '%' || 0;
+                  data.push(obj);
+                }
+                return `
+                  ${params[0].axisValue || ''}</br>
+                  ${data[0].seriesName || ''}: ${data[0].value}</br>
+                  ${data[1].seriesName || ''}: ${data[1].value}</br>
+                  ${data[2].seriesName || ''}: ${data[2].value}</br>
+                  ${data[3].seriesName || ''}: ${data[3].value}</br>
+                  ${data[4].seriesName || ''}: ${data[4].value}
+                `;
+              } */
             },
             legend: {
               data: legendData

@@ -21,7 +21,7 @@
     <div class="bottom">
         <div class="block">
           <span class="demonstration">业务员:</span>
-          <el-select v-model="salesmanValue" @change="change" placeholder="请选择">
+          <el-select v-model="salesmanValue"  placeholder="请选择">
             <el-option
               v-for="item in optionData"
               :key="item.value"

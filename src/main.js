@@ -10,6 +10,7 @@ import 'element-ui/lib/theme-default/index.css';
 import store from './store/index';
 import { MessageBox } from 'element-ui';
 import api from './config/api';
+
 Vue.prototype.$api = api;
 //element-ui使用
 Vue.use(ElementUI);
