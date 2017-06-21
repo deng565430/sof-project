@@ -37,10 +37,10 @@ export default {
 </script>
 
 <style lang="css" scoped>
-#leftMenu{
+/* #leftMenu{
   width: 10%;
   height: 100%
-}
+} */
 .el-menu--dark{
   
 }

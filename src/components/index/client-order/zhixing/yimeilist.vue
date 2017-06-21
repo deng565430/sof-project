@@ -39,7 +39,8 @@
               <!-- <el-button type="text" size="small" @click="handleUp(scope.$index, scope.row)" >上传</el-button> -->
                 <el-upload
                   class="upload-demo"
-                  action="http://192.168.1.133/api/CampaignUpload/fileupload"
+                  action="http://192.168.1.109/api/CampaignUpload/fileupload"
+                  :data="upload"
                   :file-list="fileList"
                   :before-upload="beforeUpload">
                   <el-button size="small" type="primary">点击上传</el-button><!-- 
@@ -69,6 +70,7 @@ export default {
   name: 'fangchanlist',
   data () {
     return {
+      upload: {},
       fileList: [],
       tableData: this.show.show,
       currentPage: 0,
@@ -112,6 +114,10 @@ export default {
     },
     beforeUpload (file) {
       console.log(file);
+      var data = {
+        'brieid': '60'
+      };
+      this.upload = data;
     },
     handleEdit2 (index, row) {
       this.numtype();

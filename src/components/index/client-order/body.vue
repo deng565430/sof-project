@@ -1,6 +1,6 @@
 <template>
 <div id="orderOne">
-  <com-LeftMenu :dataValue="data" :childIsShow="childIsShow" @changechild="changechild"></com-LeftMenu>
+  <com-LeftMenu id="leftMenu" :dataValue="data" :childIsShow="childIsShow" @changechild="changechild"></com-LeftMenu>
   <div id="contain">
     <OrderIndex v-if="OrderIndex"></OrderIndex>
     <Dinging v-if="show"></Dinging>
@@ -20,8 +20,8 @@
 
 <script>
 import LeftMenu from './../../leftMenu/LeftMenu';
-import Dinging from './dinging';
-import OrderIndex from './OrderIndex';
+import Dinging from './xuqiudan/daishenhe';
+import OrderIndex from './xuqiudan/neworder';
 import Dingyue from './dingyue';
 import Historyding from './historyding';
 
@@ -45,7 +45,7 @@ export default {
   data () {
     return {
       data: [
-        {'value': '需求单', 'name': {'url': '', 'val': '新建需求单'}, 'ing': {'url': '', 'val': '未开始'}, 'now': {'url': '', 'val': '进行中'}, 'hoistory': {'url': '', 'val': '已完成'}},
+        {'value': '需求单', 'name': {'url': '', 'val': '新建需求单'}, 'ing': {'url': '', 'val': '待审核'}, 'now': {'url': '', 'val': '待执行'}, 'hoistory': {'url': '', 'val': '执行中'}},
         {'value': '执行单', 'name': {'url': '', 'val': '新执行单'}, 'ing': {'url': '', 'val': '未执行的'}, 'now': {'url': '', 'val': '正在执行的'}, 'hoistory': {'url': '', 'val': '历史执行单'}}
       ],
       show: false,
@@ -72,7 +72,7 @@ export default {
           this.Historycampaign = false;
           this.Campaigning = false;
           break;
-        case '未开始':
+        case '待审核':
           this.show = true;
           this.OrderIndex = false;
           this.Dingyue = false;
@@ -82,7 +82,7 @@ export default {
           this.Historycampaign = false;
           this.Campaigning = false;
           break;
-        case '进行中':
+        case '待执行':
           this.Dingyue = true;
           this.OrderIndex = false;
           this.show = false;
@@ -92,7 +92,7 @@ export default {
           this.Historycampaign = false;
           this.Campaigning = false;
           break;
-        case '已完成':
+        case '执行中':
           this.Historyding = true;
           this.OrderIndex = false;
           this.show = false;
@@ -155,9 +155,12 @@ export default {
 	display: flex;
 }
 #contain{
-	width: 90%;
+	width: 85%;
 	height: 100%;
   padding: 20px;
   box-sizing:border-box;
+}
+#leftMenu{
+  width: 200px;
 }
 </style>

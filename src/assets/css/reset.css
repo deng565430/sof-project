@@ -139,7 +139,7 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
 .el-collapse-item__content{
     padding:0px !important;
 }
-.el-checkbox-button.is-checked .el-checkbox-button__inner{
+/*.el-checkbox-button.is-checked .el-checkbox-button__inner{
   background:#fff !important;
   color: #20a0ff !important;
 }
@@ -163,7 +163,7 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
 }
 .el-radio-button__inner{
     border: 0px !important
-}
+}*/
 
 
 .el-table__header{
