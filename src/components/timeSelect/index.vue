@@ -14,12 +14,15 @@
 
 <script>
 export default {
-
+  props: ['dates'],
   name: 'TimeSelect',
 
   data () {
     return {
       pickerOptions: {
+        disabledDate (time) {
+          return time.getTime() < Date.now() - 8.64e7;
+        },
         shortcuts: [{
           text: '最近一周',
           onClick (picker) {
@@ -46,14 +49,18 @@ export default {
           }
         }]
       },
-      dataValue: ''
+      dataValue: this.dates ? this.dates : ''
     };
   },
   created () {},
   methods: {
     remoteMethod () {
+      if (!this.dataValue) {
+        return;
+      };
       let minbatch = this.format('yyyy-MM-dd', new Date(this.dataValue[0]));
       let maxbatch = this.format('yyyy-MM-dd', new Date(this.dataValue[1]));
+      console.log(minbatch, maxbatch);
       this.$emit('dataEvent', {minbatch: minbatch, maxbatch: maxbatch});
     },
     format (fmt, time) {

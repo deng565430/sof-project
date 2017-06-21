@@ -4,18 +4,23 @@
 	    :data="table"
 	    border
 	    style="width:100%;margin-bottom:20px"
-    	max-height="250"
+    	max-height="350"
 	    :default-sort = "{prop: 'date', order: 'descending'}"
-	    >
+	    > 
+	    	<el-table-column
+		      fixed
+		      prop="order_num"
+		      label="需求单编号"
+		      width="180">
+		    </el-table-column>
 		    <el-table-column
 		      prop="project_name"
-		      fixed
 		      label="项目名称"
 		      width="180">
 		    </el-table-column>
 		    <el-table-column
-		      prop="order_num"
-		      label="需求单编号"
+		      prop="demand_side"
+		      label="需求公司"
 		      width="180">
 		    </el-table-column>
 		    <el-table-column

@@ -1,7 +1,7 @@
 <template>
   <div @click="" id="">
     <!-- 表单内容 -->
-    <el-form v-loading.body="loading" element-loading-text="拼命加载中" class="xuqiuform" :label-position="labelPosition" :rules="rules" ref="form"   :model="form" label-width="100px">
+    <el-form v-loading.body="loading" element-loading-text="拼命加载中" class="xuqiuform" :label-position="labelPosition" :rules="rules" ref="form"   :model="form" label-width="110px">
         <!-- 行业选择 区域选择 -->
         <el-row :gutter="20" style="border-bottom:1px solid #f3f3f3">
           <el-col :span="6">
@@ -20,7 +20,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="制单人" prop="zbname">
-              <el-input v-model="form.zbname" placeholder="请输入制单人"></el-input>
+              <el-input v-model="form.zbname" :disabled="true" placeholder="请输入制单人"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -53,16 +53,18 @@
         <!-- 所需电话量 -->
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="所需电话量" prop="phonenum">
+            <el-form-item label="所需电话量/天" prop="phonenum">
               <el-input v-model="form.phonenum" placeholder=""></el-input>
+              
             </el-form-item>
          </el-col>
         </el-row>
         <!-- 所需周期 -->
         <el-row :gutter="20">
           <el-col :span="16">
-            <el-form-item label="所需周期" required>
-              <el-col :span="8" style="padding-left:0px;padding-right:0px">
+            <el-form-item label="所需周期"  required>
+              <Time  :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Time>
+              <!-- <el-col :span="8" style="padding-left:0px;padding-right:0px">
                 <el-form-item prop="stratime" >
                   <el-date-picker type="date" placeholder="选择日期" v-model="form.stratime" :picker-options="form.pickerOptions1" style="width: 100%;"></el-date-picker>
                 </el-form-item>
@@ -72,7 +74,7 @@
                 <el-form-item prop="endtime">
                   <el-date-picker type="date" placeholder="选择日期" v-model="form.endtime" :picker-options="form.pickerOptions1" style="width: 100%;"></el-date-picker>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -107,14 +109,14 @@
           <p><span>制单时间:</span><span>{{queren.create_time}}</span></p>
         </div>
         <ul class="tanchu">
-          <li><span>所属行业</span><span>{{queren.industryId}}</span></li>
-          <li><span>所属区域</span><span>{{queren.area}}</span></li>
-          <li><span>项目名称</span><span>{{queren.phone_demand}}</span></li>
-          <li><span>策略类型</span><span>{{queren.strategy}}</span></li>
-          <li><span>需求公司</span><span>{{queren.demand_side}}</span></li>
-          <li><span>所需电话量</span><span>{{queren.phone_demand}}</span></li>
-          <li><span>所需周期</span><span>{{queren.start_date}}-{{queren.end_date}}</span></li>
-          <li><span>项目描述</span><span>{{queren.project_description}}</span></li>
+          <li><div>所属行业</div><div>{{industryId1}}</div></li>
+          <li><div>所属区域</div><div>{{area1}}</div></li>
+          <li><div>项目名称</div><div>{{queren.phone_demand}}</div></li>
+          <li><div>策略类型</div><div>{{strategy1}}</div></li>
+          <li><div>需求公司</div><div>{{queren.demand_side}}</div></li>
+          <li><div>所需电话量/天</div><div>{{queren.phone_demand}}</div></li>
+          <li><div>所需周期</div><div>{{queren.start_date}}-{{queren.end_date}}</div></li>
+          <li><div>项目描述</div><div>{{queren.project_description}}</div></li>
         </ul>
       </div>
        <span slot="footer" class="dialog-footer">
@@ -129,11 +131,17 @@
 </template>
 
 <script>
+import Time from '../../../timeSelect/index';
 export default {
+  components: {
+    Time
+  },
   data () {
     return {
       labelPosition: 'right',
       form: {
+        data: '',
+        dates: [],
         region: '',
         regions: [],
         area: '',
@@ -189,12 +197,12 @@ export default {
           { required: true, message: '请输入需求数量', trigger: 'blur' },
           { min: 1, message: '请输入需求数量', trigger: 'blur' }
         ],
-        stratime: [
+        data: [
           { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
         ],
-        endtime: [
+        /* endtime: [
           { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-        ],
+        ], */
         miaoshu: [
           { required: true, message: '请输入项目描述', trigger: 'blur' }
         ],
@@ -207,13 +215,24 @@ export default {
       },
       dialogVisible: false,
       loading: false,
-      queren: {}
+      queren: {},
+      city: [],
+      industry: [],
+      strategy: [],
+      city1: '',
+      industry1: '',
+      strategy1: ''
     };
   },
   created () {
     this.getbriefinfo();// 获取需求单信息
+    this.form.zbname = this.$store.state.userName;
   },
   methods: {
+    dataEvent (val) {
+      this.form.stratime = val.minbatch;
+      this.form.endtime = val.maxbatch;
+    },
     // 提交需求单
     onSubmit (formName) {
       var b = {
@@ -235,13 +254,22 @@ export default {
           this.$api.post(url, b).then((res) => {
             this.loading = false;
             this.queren = res.data.data;
-            this.$confirm(res.data.msg, '提示', {
-              confirmButtonText: '确定',
-              showCancelButton: false,
-              type: 'success'
-            }).then(() => {
-              this.dialogVisible = true;
-            });
+            for (var i = 0; i < this.city.length; i++) {
+              if (res.data.data.area === this.city[i].code) {
+                this.area1 = this.city[i].name;
+              }
+            };
+            for (var s = 0; s < this.industry.length; s++) {
+              if (res.data.data.industryId === this.industry[s].code) {
+                this.industryId1 = this.industry[s].name;
+              }
+            };
+            for (var n = 0; n < this.strategy.length; n++) {
+              if (res.data.data.strategy === this.strategy[n].code) {
+                this.strategy1 = this.strategy[n].name;
+              }
+            };
+            this.dialogVisible = true;
           });
         } else {
           console.log('error submit!!');
@@ -251,8 +279,17 @@ export default {
     },
     // 确认需求单
     xqqr (formName) {
+      console.log(this.form.data);
       this.dialogVisible = false;
-      this.$refs[formName].resetFields();
+      // this.form.data = ''; // 清空数据
+      this.$refs[formName].resetFields(); // 清空数据
+      this.$confirm('恭喜你添加成功!', '提示', {
+        confirmButtonText: '确定',
+        showCancelButton: false,
+        type: 'success'
+      }).then(() => {
+        this.$emit('tiaozhuan');
+      });
     },
     // 重置
     resetForm (formName) {
@@ -262,8 +299,10 @@ export default {
     getbriefinfo () {
       var url = '/api/brief/getBriefSelect';
       this.$api.get(url).then((res) => {
-        console.log(res.data.code);
         if (res.data.code === 0) {
+          this.city = res.data.data.city;
+          this.industry = res.data.data.industry;
+          this.strategy = res.data.data.strategy;
           this.form.regions = res.data.data.industry;
           this.form.areas = res.data.data.city;
           this.form.types = res.data.data.strategy;
@@ -299,23 +338,26 @@ export default {
   border: 1px solid #ccc
 }
 .tanchu li{
-  line-height: 30px;
-  height: 30px;
+  /*line-height: 30px;*/
+  min-height: 30px;
   border-bottom: 1px solid #ccc;
+  display: flex;
 }
 .tanchu li:last-child{
   border-bottom:0;
 }
-.tanchu li span:first-child{
+.tanchu li div:first-child{
   color: #333;
   line-height: 30px;
-  height: 30px;
+  height: 100%;
   width:100px;
   background: #eee;
-  display: inline-block;
+  /*display: inline-block;*/
   text-align: center;
 }
-.tanchu li span:nth-child(2){
+.tanchu li div:nth-child(2){
   padding-left: 8px;
+  word-wrap: break-word;
+  overflow: hidden;
 }
 </style>

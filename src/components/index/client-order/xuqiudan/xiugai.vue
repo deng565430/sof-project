@@ -6,21 +6,21 @@
         <el-row :gutter="20" style="border-bottom:1px solid #f3f3f3">
           <el-col :span="6">
             <el-form-item label="行业选择" prop="region">
-              <el-select v-model="form.region" placeholder="请选择行业">
+              <el-select :disabled="true" v-model="form.region" placeholder="请选择行业">
                 <el-option v-for="i in form.regions" :label="i.name" :value="i.code"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="区域选择" prop="area">
-              <el-select v-model="form.area" placeholder="请选择区域">
+              <el-select :disabled="true" v-model="form.area" placeholder="请选择区域">
                 <el-option v-for="i in form.areas" :label="i.name" :value="i.code"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="制单人" prop="zbname">
-              <el-input v-model="form.zbname" placeholder="请输入制单人"></el-input>
+              <el-input  :disabled="true" v-model="form.zbname" placeholder="请输入制单人"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -28,7 +28,7 @@
         <el-row :gutter="20" style="margin-top:20px;border-bottom:1px solid #f3f3f3">
           <el-col :span="8">
             <el-form-item label="项目名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入项目名称"></el-input>
+              <el-input :disabled="true" v-model="form.name" placeholder="请输入项目名称"></el-input>
             </el-form-item>
          </el-col>
         </el-row>
@@ -36,7 +36,7 @@
         <el-row :gutter="20" style="margin-top:20px;border-bottom:1px solid #f3f3f3">
           <el-col :span="24">
              <el-form-item label="策略类型" prop="type">
-              <el-radio-group v-model="form.type">
+              <el-radio-group  :disabled="true" v-model="form.type">
                 <el-radio-button v-for="i in form.types" :label="i.code" :name="i.name">{{i.name}}</el-radio-button>
               </el-radio-group>
             </el-form-item>
@@ -45,8 +45,8 @@
         <!-- 需求公司 -->
         <el-row :gutter="20" style="margin-top:20px">
           <el-col :span="8">
-            <el-form-item label="需求公司" prop="compan">
-              <el-input v-model="form.compan" placeholder=""></el-input>
+            <el-form-item  :disabled="true" label="需求公司" prop="compan">
+              <el-input :disabled="true" v-model="form.compan" placeholder=""></el-input>
             </el-form-item>
          </el-col>
         </el-row>
@@ -54,7 +54,7 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="所需电话量" prop="phonenum">
-              <el-input v-model="form.phonenum" placeholder=""></el-input>
+              <el-input  v-model="form.phonenum" placeholder=""></el-input>
             </el-form-item>
          </el-col>
         </el-row>
@@ -62,25 +62,15 @@
         <el-row :gutter="20">
           <el-col :span="16">
             <el-form-item label="所需周期" required>
-              <el-col :span="8" style="padding-left:0px;padding-right:0px">
-                <el-form-item prop="stratime" >
-                  <el-date-picker type="date" placeholder="选择日期" v-model="form.stratime"  :picker-options="form.pickerOptions1" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-              </el-col>
-              <el-col class="line" :span="1">-</el-col>
-              <el-col :span="8" style="padding-left:0px;padding-right:0px">
-                <el-form-item prop="endtime">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="form.endtime" :picker-options="form.pickerOptions1" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-              </el-col>
-            </el-form-item>
-          </el-col>
-        </el-row>
+              <Time :disabled="true" :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Time>
+            </el-form-item >
+          </el-col >
+        </el-row >
         <!-- 项目描述 -->
         <el-row :gutter="20">
           <el-col :span="16">
             <el-form-item label="项目描述" prop="miaoshu">
-              <el-input type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
+              <el-input  type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
             </el-form-item>
          </el-col>
         </el-row>
@@ -89,6 +79,7 @@
           <el-button type="primary" @click="onSubmit('form')">提交</el-button>
           <!-- <el-button>取消</el-button> -->
           <el-button @click="resetForm('form')">重置</el-button>
+          <el-button @click="fanhui">返回</el-button>
         </el-form-item>
     </el-form>
 
@@ -127,8 +118,13 @@
 </template>
 
 <script>
+import Time from '../../../timeSelect/index';
+
 export default {
   props: ['xiugai'],
+  components: {
+    Time
+  },
   data () {
     return {
       c: {},
@@ -146,30 +142,10 @@ export default {
         compan: '',
         phonenum: '',
         miaoshu: '',
+        data: '',
+        dates: [],
         stratime: '',
-        endtime: '',
-        pickerOptions1: {
-          shortcuts: [{
-            text: '今天',
-            onClick (picker) {
-              picker.$emit('pick', new Date());
-            }
-          }, {
-            text: '昨天',
-            onClick (picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit('pick', date);
-            }
-          }, {
-            text: '一周前',
-            onClick (picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', date);
-            }
-          }]
-        }
+        endtime: ''
       },
       rules: {
         region: [
@@ -189,12 +165,6 @@ export default {
         phonenum: [
           { required: true, message: '请输入需求数量', trigger: 'blur' },
           { min: 1, message: '请输入需求数量', trigger: 'blur' }
-        ],
-        stratime: [
-          { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-        ],
-        endtime: [
-          { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
         ],
         miaoshu: [
           { required: true, message: '请输入项目描述', trigger: 'blur' }
@@ -225,19 +195,24 @@ export default {
       this.form.phonenum = this.c.phone_demand;
       this.form.stratime = this.c.start_date;
       this.form.endtime = this.c.end_date;
+      this.form.dates.push(this.c.start_date, this.c.end_date);
       this.form.miaoshu = this.c.project_description;
       this.form.id = this.c.id;
+      console.log(this.form.dates);
     }
   },
   created () {
     this.getbriefinfo();// 获取需求单信息
-    const date = new Date();
-    date.setTime(date.getTime() - 3600 * 1000 * 24);
-    console.log(date);
-    date.setTime(date.getTime());
-    console.log(new Date());
   },
   methods: {
+    // 返回
+    fanhui () {
+      this.$emit('isshow2');
+    },
+    dataEvent (val) {
+      this.form.stratime = val.minbatch;
+      this.form.endtime = val.maxbatch;
+    },
     // 提交需求单
     onSubmit (formName) {
       var b = {
@@ -266,6 +241,7 @@ export default {
               type: 'success'
             }).then(() => {
               // this.dialogVisible = true;
+              this.$emit('isshow');
             });
           });
         } else {
