@@ -1,15 +1,16 @@
 <template>
 <div>
-  分析报告
-  <router-view></router-view>
+  <HotMap />
 </div>
 </template>
 
 <script>
+import HotMap from '../HotMap';
 export default {
-
-  name: 'analysis',
-
+  name: 'index',
+  components: {
+    HotMap
+  },
   data () {
     return {
 

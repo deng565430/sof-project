@@ -30,14 +30,7 @@ const state = {
         endtime: ''
     },
     yimeicampaignmsg: '',
-    commitIs: false,
-    data: [{
-        name: '餐厅'
-    }, {
-        name: '酒店'
-    }, {
-        name: '饭馆'
-    }]
+    commitIs: false
 };
 
 export default state;

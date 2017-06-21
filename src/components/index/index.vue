@@ -7,13 +7,7 @@
 <script>
 export default {
   data () {
-    return {
-      value6: '',
-      value7: '',
-      restaurants: [],
-      state1: '',
-      fileList: ''
-    };
+    return {};
   },
   created () {},
   computed: {},

@@ -17,9 +17,6 @@ export default {
     };
   },
   mounted () {
-    require('echarts/lib/chart/bar');
-    require('echarts/lib/component/tooltip');
-    require('echarts/lib/component/title');
     this.$nextTick(() => {
       this.charts(this.id, this.projectType);
     });
@@ -35,10 +32,14 @@ export default {
   created () {},
   methods: {
     charts (id, data) {
+      const self = this;
       if (!id || !data) {
         return;
       }
       this.chart = echarts.init(document.getElementById(id));
+      this.chart.on('click', function (param) {
+        self.$emit('clickEvent', param);
+      });
       this.chart.setOption(data);
     }
   },

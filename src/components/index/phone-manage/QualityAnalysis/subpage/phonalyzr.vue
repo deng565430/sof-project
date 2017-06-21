@@ -3,8 +3,11 @@
   <div id="dataSearch">
     <DataSearch :salesmanOptions="salesmanOptions" :sectionOptions="sectionOptions" @childEvent="childEvent"/>
   </div>
+  <div v-if="isShowPhonalyzrChild" id="phonalyzrChild" @click="clickPhonalyzrChild">
+   <PhonalyzrChild :phonalyzrChild="phonalyzrChild" :phonalyzrChildCharts="phonalyzrChildCharts[0]"></PhonalyzrChild>
+ </div>
   <div class="weekCharts">
-   <Charts :id="id" :projectType="projectType[0]" :chartStyle="chartStyle"></Charts>
+   <Charts :id="id" :projectType="projectType[0]" :chartStyle="chartStyle" @clickEvent="clickEvent"></Charts>
    <div v-if="isShow" class="isShow"> 
       <div>
         <el-button type="text" style="line-height: 300px" @click="addContrast">+ 添加对比项目</el-button>
@@ -14,7 +17,7 @@
       </div>
    </div> 
    <div v-else>
-    <Charts :id="comparePhonalyzrId" :projectType="comparePhonalyzr[0]" :chartStyle="chartStyle"></Charts>
+    <Charts :id="comparePhonalyzrId" :projectType="comparePhonalyzr[0]" :chartStyle="chartStyle" @clickEvent="compareClickEvent"></Charts>
      <div style="text-align: left">
         <el-button type="danger" style="line-height: 10px;" @click="rmContrast">取消选择</el-button>
       </div>
@@ -36,14 +39,15 @@ import DataSearch from '../../DataSearch/DataSearch';
 import DataSearchContrast from '../../DataSearch/DataSearchContrast';
 import Charts from '../../Charts/charts';
 import ContrastTable from '../../contrastTable/contrastTable';
+import PhonalyzrChild from './PhonalyzrChild/PhonalyzrChild';
 export default {
-
   name: 'phonalyzr',
   components: {
     DataSearch,
     Charts,
     ContrastTable,
-    DataSearchContrast
+    DataSearchContrast,
+    PhonalyzrChild
   },
   data () {
     return {
@@ -74,7 +78,10 @@ export default {
       time: '',
       addTime: '',
       addContrastShow: false,
-      ContrastTableStyle: {width: '1000px', marginTop: '30px'}
+      ContrastTableStyle: {width: '1000px', marginTop: '30px'},
+      phonalyzrChild: [],
+      phonalyzrChildCharts: [],
+      isShowPhonalyzrChild: false
     };
   },
   created () {
@@ -276,7 +283,6 @@ export default {
     getProductorList (depart, phone, searchValue, dataTime, start, length, contrastTableData, recordsTotal) {
       const url = `/api/audior/getProductorList?depart=${depart}&phone=${phone}&num=${searchValue}&start=${start}&length=${length}&data_time=${dataTime}`;
       this.$api.get(url).then(res => {
-        console.log(res.data);
         if (res.data) {
           recordsTotal.push(res.data.recordsTotal);
           const data = res.data.data;
@@ -309,6 +315,81 @@ export default {
       this.isShow = true;
       this.addContrastShow = false;
       this.ContrastTableStyle = {marginTop: '30px', width: '1000px'};
+    },
+    clickEventPopup (data, phone, depart, searchValue, dataTime) {
+      const self = this;
+      self.phonalyzrChild = [];
+      self.phonalyzrChildCharts = [];
+      console.log(data);
+      const dimension = data.name;
+      const parentType = data.seriesName;
+      let kwName = [];
+      let kwValue = [];
+      const url = `/api/kwords/getDashboardData?dimension=${dimension}&parent_type=${parentType}&role=0&phone=${phone}&search[value]=${searchValue}&depart=${depart}&data_time=${dataTime}`;
+      self.$api.get(url).then(res => {
+        console.log(res);
+        if (res.data) {
+          for (let v of res.data.data.ranking) {
+            kwName.push(v.name);
+            kwValue.push(v.value);
+            let data = {};
+            data.name = v.name;
+            data.value = v.value;
+            self.phonalyzrChild.push(data);
+          }
+        }
+      });
+      const options = {
+        title: {
+          x: 'center',
+          text: `专项排名top5(${parentType})`,
+          textStyle: {
+            'fontSize': '14'
+          }
+        },
+        color: ['orange'],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        grid: {
+          top: '5%',
+          left: '1%',
+          right: '1%',
+          bottom: '15%',
+          containLabel: true
+        },
+        xAxis: [{
+          axisLabel: {
+            rotate: 30,
+            interval: 0
+          },
+          data: kwName
+        }],
+        yAxis: [{
+          type: 'value'
+        }],
+        series: [{
+          silent: true,
+          type: 'bar',
+          data: kwValue
+        }]
+      };
+      self.phonalyzrChildCharts.push(options);
+      self.isShowPhonalyzrChild = true;
+    },
+    clickPhonalyzrChild (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.isShowPhonalyzrChild = false;
+    },
+    clickEvent (data) {
+      this.clickEventPopup(data, this.phoneInput, this.sectionValue, this.salesmanValue, this.time);
+    },
+    compareClickEvent (data) {
+      this.clickEventPopup(data, this.addPhoneInput, this.addSectionValue, this.addSalesmanValue, this.addTime);
     }
   }
 };
@@ -333,4 +414,16 @@ export default {
   display: flex
   margin-bottom: 90px
   width: 1000px
+#phonalyzrChild
+  position: fixed
+  top:0
+  left:0
+  right: 0
+  bottom: 0
+  width: 100%  
+  height: 100%
+  z-index: 10010
+  background: rgba(0, 0, 0, 0.4)
+  overflow-y:scroll;  
+  overflow-x:hidden; 
 </style>

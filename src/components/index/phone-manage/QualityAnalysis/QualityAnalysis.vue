@@ -7,12 +7,12 @@
            <ThisWeek />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="通话分析" name="second">
+        <el-tab-pane label="话题分析" name="second">
           <div>
             <Phonalyzr />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="语音分析" name="third">
+        <el-tab-pane label="时序分析" name="third">
          <div>
             <SpeechAnalysis />
           </div>

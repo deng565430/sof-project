@@ -33,6 +33,9 @@ const Changecampaign = r => require.ensure([], () => r(require('../components/in
 const Zhichange = r => require.ensure([], () => r(require('../components/index/client-order/zhixing/zhichange')), 'zhichange');
 const Yimeicampaign = r => require.ensure([], () => r(require('../components/index/client-order/zhixing/yimeicampaign')), 'yimeicampaign');
 
+
+const Report = r => require.ensure([], () => r(require('../components/index/analysis/ReportList')), 'reportlist');
+
 Vue.use(Router);
 
 const router = new Router({
@@ -108,10 +111,14 @@ const router = new Router({
     path: '/management',
     name: 'management',
     component: ClientManagement
-  }, {
+  },{
     path: '/analysis',
     name: 'analysis',
-    component: Analysis
+    component: Analysis,
+    children: [{
+      path: 'report',
+      component: Report
+    }]
   }],
   // mode: 'history',
   strict: process.env.NODE_ENV !== 'production'
