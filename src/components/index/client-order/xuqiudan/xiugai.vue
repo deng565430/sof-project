@@ -1,7 +1,7 @@
 <template>
   <div @click="" id="">
     <!-- 表单内容 -->
-    <el-form v-loading.body="loading" element-loading-text="拼命加载中" class="xuqiuform" :label-position="labelPosition" :rules="rules" ref="form"   :model="form" label-width="100px">
+   <el-form v-loading.body="loading" element-loading-text="拼命加载中" class="xuqiuform" :label-position="labelPosition" :rules="rules"  ref="form" :id='form.id' :c="xiugai"  :model="form" label-width="100px">
         <!-- 行业选择 区域选择 -->
         <el-row :gutter="20" style="border-bottom:1px solid #f3f3f3">
           <el-col :span="6">
@@ -64,7 +64,7 @@
             <el-form-item label="所需周期" required>
               <el-col :span="8" style="padding-left:0px;padding-right:0px">
                 <el-form-item prop="stratime" >
-                  <el-date-picker type="date" placeholder="选择日期" v-model="form.stratime" :picker-options="form.pickerOptions1" style="width: 100%;"></el-date-picker>
+                  <el-date-picker type="date" placeholder="选择日期" v-model="form.stratime"  :picker-options="form.pickerOptions1" style="width: 100%;"></el-date-picker>
                 </el-form-item>
               </el-col>
               <el-col class="line" :span="1">-</el-col>
@@ -123,17 +123,18 @@
         </span>
       
     </el-dialog>
-
-    
   </div>
 </template>
 
 <script>
 export default {
+  props: ['xiugai'],
   data () {
     return {
+      c: {},
       labelPosition: 'right',
       form: {
+        id: '',
         region: '',
         regions: [],
         area: '',
@@ -210,8 +211,31 @@ export default {
       queren: {}
     };
   },
+  watch: {
+    xiugai (val) {
+      this.c = val;// 新增xiugai的watch，监听变更并同步到c上
+      console.log(this.c);
+      this.form.region = this.c.industryId;
+      this.form.region = this.c.industryId;
+      this.form.area = this.c.area;
+      this.form.zbname = this.c.tabulator;
+      this.form.name = this.c.project_name;
+      this.form.type = this.c.strategy;
+      this.form.compan = this.c.demand_side;
+      this.form.phonenum = this.c.phone_demand;
+      this.form.stratime = this.c.start_date;
+      this.form.endtime = this.c.end_date;
+      this.form.miaoshu = this.c.project_description;
+      this.form.id = this.c.id;
+    }
+  },
   created () {
     this.getbriefinfo();// 获取需求单信息
+    const date = new Date();
+    date.setTime(date.getTime() - 3600 * 1000 * 24);
+    console.log(date);
+    date.setTime(date.getTime());
+    console.log(new Date());
   },
   methods: {
     // 提交需求单
@@ -224,23 +248,24 @@ export default {
         'strategy': this.form.type,
         'demand_side': this.form.compan,
         'phone_demand': this.form.phonenum,
-        'start_date': new Date(this.form.stratime).toLocaleDateString(),
-        'end_date': new Date(this.form.endtime).toLocaleDateString(),
-        'project_description': this.form.miaoshu
+        'start_date': this.form.stratime, // new Date(this.form.stratime).toLocaleDateString()
+        'end_date': this.form.endtime, // new Date(this.form.endtime).toLocaleDateString()
+        'project_description': this.form.miaoshu,
+        'id': this.form.id
       };
-      var url = '/api/brief/addbrief';
+      var url = '/api/brief/updateBrief';
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
           this.$api.post(url, b).then((res) => {
             this.loading = false;
-            this.queren = res.data.data;
+            // this.queren = res.data.data;
             this.$confirm(res.data.msg, '提示', {
               confirmButtonText: '确定',
               showCancelButton: false,
               type: 'success'
             }).then(() => {
-              this.dialogVisible = true;
+              // this.dialogVisible = true;
             });
           });
         } else {
@@ -262,7 +287,6 @@ export default {
     getbriefinfo () {
       var url = '/api/brief/getBriefSelect';
       this.$api.get(url).then((res) => {
-        console.log(res.data.code);
         if (res.data.code === 0) {
           this.form.regions = res.data.data.industry;
           this.form.areas = res.data.data.city;

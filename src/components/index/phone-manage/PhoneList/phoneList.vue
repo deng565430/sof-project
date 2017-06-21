@@ -21,6 +21,7 @@
               <el-table
                :data="props.row.types"
                border
+               fixed
                style="width: 60%;">
                <el-table-column
                  prop="type"
