@@ -177,3 +177,6 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
 }*/
 
 .anchorBL{display:none;}
+.el-loading-mask {
+  z-index: 999 !important;
+}

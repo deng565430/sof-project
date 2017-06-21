@@ -16,12 +16,7 @@
         <div>
           <div class="block">
             <span class="demonstration projectName">批次:</span>
-            <el-date-picker
-              v-model="starTimeValue"
-              type="daterange"
-              placeholder="选择日期范围"
-              :picker-options="pickerOptions2">
-            </el-date-picker>
+            <TimeSelect @dataEvent="dataEvent"/>
           </div>
         </div>
         <div>
@@ -33,47 +28,26 @@
             </div>
           </div>
         </div>
+        
   </div>
 </template>
 
 <script>
+import TimeSelect from '../../../timeSelect';
 export default {
 
   name: ' ',
-
+  components: {
+    TimeSelect
+  },
   data () {
     return {
-      pickerOptions2: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近一个月',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      },
       timeValue: '',
       projectOption: this.projectOptions.projectOptions,
       projectValue: '',
-      starTimeValue: ''
+      starTimeValue: '',
+      minbatch: '',
+      maxbatch: ''
     };
   },
   mounted () {
@@ -84,37 +58,15 @@ export default {
     search () {
       this.recordsFiltered = 0;
       let project = this.projectValue;
-      let minbatch = this.format('yyyy-MM-dd', new Date(this.starTimeValue[0]));
-      let maxbatch = this.format('yyyy-MM-dd', new Date(this.starTimeValue[1]));
-      if (this.starTimeValue == null || this.starTimeValue === '') {
-        this.$alert('请选择时间范围', '提示信息');
-        return;
-      }
       let data = {};
       data.project = project;
-      data.minbatch = minbatch;
-      data.maxbatch = maxbatch;
+      data.minbatch = this.minbatch;
+      data.maxbatch = this.maxbatch;
       this.$emit('listenToChildEvent', [data]);
     },
-    format (fmt, time) {
-      var o = {
-        'M+': time.getMonth() + 1,
-        'd+': time.getDate(),
-        'h+': time.getHours(),
-        'm+': time.getMinutes(),
-        's+': time.getSeconds(),
-        'q+': Math.floor((time.getMonth() + 3) / 3),
-        'S': time.getMilliseconds()
-      };
-      if (/(y+)/.test(fmt)) {
-        fmt = fmt.replace(RegExp.$1, (time.getFullYear() + '').substr(4 - RegExp.$1.length));
-      }
-      for (var k in o) {
-        if (new RegExp('(' + k + ')').test(fmt)) {
-          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
-        }
-      }
-      return fmt;
+    dataEvent (data) {
+      this.maxbatch = data.maxbatch;
+      this.minbatch = data.minbatch;
     }
   },
   props: ['searchIsShow', 'projectOptions'],
@@ -145,4 +97,6 @@ export default {
     #btnWidth
       vertical-align: top
       width: 120px
+  .block
+    display:flex    
 </style>
