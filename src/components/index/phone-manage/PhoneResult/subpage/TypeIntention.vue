@@ -11,7 +11,7 @@
 
 <script>
 import Search from '../../ConditionSearch/search';
-import Charts from '../../Charts/charts';
+import Charts from '../../../../Charts';
 export default {
 
   name: 'ProjectIntention',

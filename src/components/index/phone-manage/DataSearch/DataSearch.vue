@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import TimeSelect from '../TimeSelect/TimeSelect';
+import TimeSelect from '../../../TimeSelect';
 export default {
 
   name: 'DataSearch',

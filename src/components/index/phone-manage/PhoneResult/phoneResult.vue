@@ -4,17 +4,17 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="项目分析" name="first">
           <div>
-            <ProjectIntention></ProjectIntention>
+            <ProjectIntention/>
           </div>
         </el-tab-pane>
         <el-tab-pane label="电话类型分析" name="second">
           <div>
-            <ProjectType></ProjectType>
+            <ProjectType/>
           </div>
         </el-tab-pane>
         <el-tab-pane label="电话类型分析" name="third" v-if="isShow">
          <div>
-            <TypeIntention></TypeIntention>
+            <TypeIntention/>
           </div>
         </el-tab-pane>
       </el-tabs>

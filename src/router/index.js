@@ -7,8 +7,8 @@ const AllIndustry = r => require.ensure([], () => r(require('../components/allIn
 
 
 const ClientOrder = r => require.ensure([], () => r(require('../components/index/client-order/body')), 'alientOrder');
-const PhoneManage = r => require.ensure([], () => r(require('../components/index/phone-manage/body')), 'phoneManage');
-const Analysis = r => require.ensure([], () => r(require('../components/index/analysis/body')), 'analysis');
+const PhoneManage = r => require.ensure([], () => r(require('../components/index/phone-manage')), 'phoneManage');
+const Analysis = r => require.ensure([], () => r(require('../components/index/analysis')), 'analysis');
 const ClientManagement = r => require.ensure([], () => r(require('../components/index/client-management/body')), 'clientManagement');
 
 
@@ -35,6 +35,7 @@ const Yimeicampaign = r => require.ensure([], () => r(require('../components/ind
 
 
 const Report = r => require.ensure([], () => r(require('../components/index/analysis/ReportList')), 'reportlist');
+const AddProjectList = r => require.ensure([], () => r(require('../components/index/analysis/AddProjectList')), 'addprojectlist');
 
 Vue.use(Router);
 
@@ -116,7 +117,10 @@ const router = new Router({
     name: 'analysis',
     component: Analysis,
     children: [{
-      path: 'report',
+      path: 'addprojectlist',
+      component: AddProjectList
+    }, {
+      path: 'report/:id',
       component: Report
     }]
   }],
@@ -127,6 +131,9 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.path == '/') {
     next('/index')
+  }
+  if (to.path == '/analysis') {
+    next('/analysis/addprojectlist')
   }
   next()
 })

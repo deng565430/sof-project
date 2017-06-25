@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import Charts from '../../Charts/charts';
+import Charts from '../../../../Charts';
 export default {
 
   name: 'thisWeek',
