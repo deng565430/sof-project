@@ -122,10 +122,12 @@ export default {
     return {
       id: this.$route.params.id,
       activeNames: '',
-      scrolled: false
+      scrolled: false,
+      num: 1
     };
   },
   mounted () {
+    this.getData();
     window.addEventListener('scroll', this.handleScroll);
   },
   ready () {
@@ -137,19 +139,28 @@ export default {
       }
       console.log(arr.length);
     },
+    getData () {
+      this.$api.get('')
+      .then(res => {
+        console.log(res);
+      });
+    },
     handleScroll () {
       const scrollY = window.scrollY;
       const innerHeight = window.innerHeight;
-      // const num = 0;
       let timeoutId;
       this.scrolled = scrollY > 0;
+      const self = this;
       function callback () {
-        console.log(innerHeight - scrollY);
+        if (innerHeight * self.num - scrollY < 100) {
+          console.log(innerHeight - scrollY);
+          self.num++;
+        }
       }
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      timeoutId = setTimeout(callback, 150);
+      timeoutId = setTimeout(callback, 50);
     }
   }
 };

@@ -4,7 +4,8 @@
     :placeholder="placeholder"
     icon="search"
     v-model="searchIpt"
-    :on-icon-click="handleIconClick">
+    :on-icon-click="handleIconClick"
+    @keyup.enter.native="handleInputConfirm">
     </el-input>
 
 </template>
@@ -21,6 +22,9 @@ export default {
   },
   methods: {
     handleIconClick () {
+      this.$emit('searchValue', this.searchIpt);
+    },
+    handleInputConfirm () {
       this.$emit('searchValue', this.searchIpt);
     },
     trim (str) {

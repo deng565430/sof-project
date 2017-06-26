@@ -4,9 +4,9 @@
       v-model="dataValue"
       type="daterange"
       align="left"
-      format="yy-MM-dd"
       @change="remoteMethod"
       placeholder="选择日期范围"
+      :editable="false"
       :picker-options="pickerOptions">
     </el-date-picker>
 </div>
@@ -20,9 +20,6 @@ export default {
   data () {
     return {
       pickerOptions: {
-        disabledDate (time) {
-          return time.getTime() < Date.now() - 8.64e7;
-        },
         shortcuts: [{
           text: '最近一周',
           onClick (picker) {
@@ -60,7 +57,6 @@ export default {
       };
       let minbatch = this.format('yyyy-MM-dd', new Date(this.dataValue[0]));
       let maxbatch = this.format('yyyy-MM-dd', new Date(this.dataValue[1]));
-      console.log(minbatch, maxbatch);
       this.$emit('dataEvent', {minbatch: minbatch, maxbatch: maxbatch});
     },
     format (fmt, time) {
