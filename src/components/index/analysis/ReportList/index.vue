@@ -19,7 +19,7 @@
        <div class="r-bazaar-title">
          <h3>总关注趋势</h3>
          <div class="r-bazaar-charts">
-           <Charts :id="'r-bazaar-charts'" :chartStyle="{height: '400px'}" />
+           <TopAll />
          </div>
          <el-collapse v-model="activeNames" @change="handleChange" class="r-bazzaar-collapse" style="">
           <el-collapse-item title="更多市场关注趋势" name="1" style="color: #fff">
@@ -112,18 +112,21 @@
 <script>
 import Charts from '../../../Charts';
 import HotMap from '../HotMap';
+import TopAll from '../TopAll';
 export default {
   name: 'index',
   components: {
     HotMap,
-    Charts
+    Charts,
+    TopAll
   },
   data () {
     return {
       id: this.$route.params.id,
       activeNames: '',
       scrolled: false,
-      num: 1
+      num: 1,
+      rBazaarCharts: []
     };
   },
   mounted () {
@@ -153,7 +156,10 @@ export default {
       const self = this;
       function callback () {
         if (innerHeight * self.num - scrollY < 100) {
-          console.log(innerHeight - scrollY);
+          const num = Number(innerHeight - scrollY);
+          if (num > 0) {
+            console.log(num);
+          }
           self.num++;
         }
       }
@@ -168,7 +174,7 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
 #report-all
-  width: 950px
+  width: 1000px
   margin: 30px auto
   #report-title
     display: flex

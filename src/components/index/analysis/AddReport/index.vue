@@ -6,10 +6,9 @@
     </el-badge>
   </div>
     <div style="text-align: left;" >
-      <el-button type="danger" @click="dialogVisible = true">添加订阅</el-button>
+      <el-button type="danger" @click="addProject">添加订阅</el-button>
     </div>
     <el-dialog
-      style="width: 150%;left: -25%"
       title="添加订阅"
       :visible.sync="dialogVisible"
       size="tiny"
@@ -27,7 +26,7 @@
           </el-select>  
          </div>
          <div style="margin-left: 10px">
-         订阅开始时间：
+         </i>订阅开始时间：
           <TimeSelectOnce @dataEvent="dataEvent"/>
          </div>
       </div>
@@ -71,12 +70,14 @@
           </div>
           <div class="project-list">
             <h3>楼盘列表： <el-button type="danger" @click="cancelRadio" size="small"> 重新选择</el-button></h3>
-            <el-radio-group v-model="radio">
-              <el-radio-button v-for="(item, index) in radioShow" :key="index" :label="item.name"></el-radio-button>
-            </el-radio-group>
+            <div class="project-list-clild">
+              <el-radio-group v-model="radio">
+                <el-radio-button style="padding: 2px;" v-for="(item, index) in radioShow" :key="index" :label="item.tagname"></el-radio-button>
+              </el-radio-group>
+            </div>
           </div>
           <span slot="footer" class="dialog-footer">
-            <el-button type="success" @click="isShowSearch = false">下一步</el-button>
+            <el-button type="success" @click="nextPostProject">下一步</el-button>
           </span>
         </div>
         <div v-if="!isShowSearch">
@@ -153,32 +154,8 @@ export default {
       isShowSearch: true,
       activeName: 'first',
       radio: '',
-      radioList: [{
-        name: '上海',
-        id: '1'
-      }, {
-        name: '广州',
-        id: '2'
-      }, {
-        name: '深圳',
-        id: '3'
-      }, {
-        name: '北京',
-        id: '4'
-      }],
-      radioShow: [{
-        name: '上海',
-        id: '1'
-      }, {
-        name: '广州',
-        id: '2'
-      }, {
-        name: '深圳',
-        id: '3'
-      }, {
-        name: '北京',
-        id: '4'
-      }]
+      radioList: [],
+      radioShow: []
     };
   },
   mounted () {
@@ -186,9 +163,31 @@ export default {
   },
   methods: {
     getProjectData () {
-      this.$api.get('http://richest007.com:9001/apis/getTags?indcode=fangc-xf').then(res => {
+      this.$api.get('/api/apis/getTags?indcode=fangc-xf')
+      .then(res => {
+        console.log(res);
+        if (res.data) {
+          const data = res.data;
+          this.radioList = data;
+          this.radioShow = data;
+        }
+      });
+    },
+    nextPostProject () {
+      let data;
+      this.radioShow.filter(item => {
+        if (item.tagname === this.radio) {
+          data = item;
+        }
+      });
+      this.$api.post('/api/apis/getJingp', data)
+      .then(res => {
         console.log(res);
       });
+      this.isShowSearch = false;
+    },
+    addProject () {
+      this.dialogVisible = true;
     },
     handleClose (done) {
       this.$confirm('确认关闭？')
@@ -231,7 +230,7 @@ export default {
       }
       this.radioShow = [];
       this.radioList.filter(item => {
-        if (item.name.indexOf(data) > -1) {
+        if (item.tagname.indexOf(data) > -1) {
           return this.radioShow.push(item);
         }
       });
@@ -269,6 +268,11 @@ export default {
     height: 70px
   .project-list
     text-align: left
+    .project-list-clild
+      height: 270px
+      overflow:auto
+      span
+        border: none
     h3
       height: 40px
       text-align: 40px

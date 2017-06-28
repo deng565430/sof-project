@@ -25,6 +25,6 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
 #analysis
-  width: 900px
+  width: 1000px
   margin: 0 auto
 </style>

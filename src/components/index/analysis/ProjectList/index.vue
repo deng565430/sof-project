@@ -11,7 +11,7 @@
       <h3 style="text-align: right; color: #4272e3; line-height: 30px">{{item.title}}</h3>
       <div class="project-list-clild" v-for="desc in item.desc">
         <div>
-          <span>订阅开始日期： {{desc.start}}</span>
+          <span><i class="el-icon-time" style="color: #8dd1e2;"></i> 订阅开始日期： {{desc.start}}</span>
           <span>订阅时长： {{desc.duration}}</span>
           <span>订阅截至日期： {{desc.end}}</span>
         </div>
@@ -36,10 +36,10 @@
           </div>
           <div  class="project-list-right">
             <div>
-              <p>本期报告 <span> {{desc.nowReport}}</span></p>
-              <p>下期报告 <span> {{desc.nextReport}}</span></p>
+              <p>本期报告 <span>{{desc.nowReport}}<i :class="desc.nowReport === '已完成' ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i></span> </p>
+              <p>下期报告 <span>{{desc.nextReport}}<i :class="desc.nextReport === '已完成' ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i></span></p>
             </div>
-            <div class="show-btn" @click="showReportList">
+            <div class="show-btn">
               <router-link :to="'/analysis/report/'+ desc.id"><el-button type="primary" >查看订阅 ></el-button></router-link>
             </div>
           </div>
@@ -60,13 +60,17 @@ export default {
   },
   data () {
     return {
+      dot: 0,
+      dotTop: 0,
+      rl: 0,
+      rlTop: 0,
       list: [
         {
           title: '国贸天悦佘山住宅',
-          id: 10,
           desc: [
             {
               start: '2015/05/03',
+              id: 10,
               duration: '1年',
               end: '2016/05/02',
               industry: '房产 - 新房',
@@ -79,6 +83,7 @@ export default {
             {
               start: '2015/05/03',
               duration: '1年',
+              id: 11,
               end: '2016/05/02',
               industry: '房产 - 新房',
               type: '上海楼盘',
@@ -91,10 +96,10 @@ export default {
         },
         {
           title: '天山国际',
-          id: 11,
           desc: [
             {
               start: '2015/05/03',
+              id: 12,
               duration: '1年',
               end: '2016/05/02',
               industry: '房产 - 新房',
@@ -157,6 +162,9 @@ export default {
       ]
     };
   },
+  mounted () {
+    this.getAllList();
+  },
   methods: {
     searchValue (data) {
       this.project = [];
@@ -166,7 +174,26 @@ export default {
         };
       });
     },
-    showReportList () {
+    getAllList () {
+      this.$api.get('/api/apis/report?id=2')
+      .then(res => {
+        console.log(res);
+        if (res.data.code === 0) {
+          this.dot = res.data.data.dot;
+          this.dotTop = res.data.data.dotTop;
+          this.rl = res.data.data.rl;
+          this.rlTop = res.data.data.rlTop;
+          const data = res.data.data.reportList;
+          const arr = [];
+          for (let v of data) {
+            let obj = {};
+            obj.title = v.name;
+            obj.desc = v.dimUserSubscribeListDtos;
+            arr.push(obj);
+          }
+          // this.project = arr;
+        }
+      });
     }
   }
 };
@@ -174,13 +201,12 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
 #searchIpt
-  width: 400px
-  margin: 0 auto
+  width: 500px
   position: relative
   top: -35px
-  right: -250px
+  right: -500px
 #projectList
-  width: 900px
+  width: 1000px
   margin: 0 auto
   text-align: left
   .border
@@ -229,7 +255,7 @@ export default {
       display: flex
       .project-list-left
         display: flex
-        width: 800px
+        width: 700px
         div
           width: 25%
           padding-top: 20px
@@ -244,7 +270,7 @@ export default {
         display: flex
         >div:first-child
           padding-top: 30px
-          width: 150px
+          width: 220px
           p
             font-size: 14px
             line-height: 20px
