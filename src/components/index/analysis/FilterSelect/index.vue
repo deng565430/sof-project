@@ -2,13 +2,12 @@
 <el-transfer
     style="text-align: left"
     filterable
-    :titles="['所有的项目','选择的项目']"
+    :titles="['所有竞品',` 可选竞品： ${10 - value.length}`]"
     :filter-method="filterMethod"
-    filter-placeholder="请输入城市拼音"
-    :footer-format="{ noChecked: '共 ${total} 项', hasChecked: '已选 ${checked}/${total} 项' }"
-    v-model="value2"
+    filter-placeholder="输入项目名称"
+    v-model="value"
     @change="changeSelect"
-    :data="data2">
+    :data="data">
   </el-transfer>
 </template>
 
@@ -16,36 +15,51 @@
 export default {
 
   name: 'index',
-
+  props: ['filterSelectData'],
   data () {
-    const generateData2 = _ => {
-      const data = [];
-      const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都', '11', '22', '33', '44'];
-      const pinyin = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都', '11', '22', '33', '44'];
-      cities.forEach((city, index) => {
-        data.push({
-          label: city,
-          key: index,
-          pinyin: pinyin[index]
-        });
-      });
-      return data;
-    };
     return {
-      data2: generateData2(),
-      value2: [],
+      data: [],
+      value: [],
       filterMethod (query, item) {
-        return item.pinyin.indexOf(query) > -1;
-      }
+        return item.jingp.indexOf(query) > -1;
+      },
+      valueLength: 0
     };
+  },
+  watch: {
+    'filterSelectData': {
+      handler: function (val, oldValue) {
+        this.generateData(val);
+      },
+      deep: true
+    }
+  },
+  mounted () {
+    this.generateData(this.filterSelectData);
   },
   methods: {
     changeSelect (data) {
-      if (data.length > 9) {
+      if (data.length < 11) {
+        this.valueLength = data.length;
+      } else {
         this.$alert('选择数量过多');
-        data.length = 9;
+        data.length = this.valueLength;
       }
-      console.log(data);
+      this.$emit('childProjectSelect', data);
+    },
+    generateData (val) {
+      const data = [];
+      val.forEach((item, index) => {
+        data.push({
+          label: item.tagname,
+          key: {
+            name: item.tagname,
+            value: ''
+          },
+          jingp: this.filterSelectData[index].tagname
+        });
+      });
+      this.data = data;
     }
   }
 };

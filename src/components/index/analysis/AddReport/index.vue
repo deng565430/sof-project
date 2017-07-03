@@ -13,7 +13,7 @@
       :visible.sync="dialogVisible"
       size="tiny"
       :before-close="handleClose">
-      <div class="addType">
+      <div class="add-type">
          <div>
          <span class="sel-span">选择区域：</span>
           <el-select v-model="optionsValue" placeholder="请选择">
@@ -26,11 +26,11 @@
           </el-select>  
          </div>
          <div style="margin-left: 10px">
-         </i>订阅开始时间：
+         订阅开始时间：
           <TimeSelectOnce @dataEvent="dataEvent"/>
          </div>
       </div>
-      <div class="addType">
+      <div class="add-type add-type-bottom">
          <div>
          <span class="sel-span">报告类型：</span>
           <el-select v-model="projectValue" placeholder="请选择">
@@ -52,15 +52,18 @@
             <el-option
               v-for="item in timeOptions"
               :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :label="item.value"
+              :value="item.label">
             </el-option>
           </el-select>  
-
-          <el-checkbox-group v-if="showCheckList" v-model="checkList" style="margin-left: 10px">
+          <div v-if="showCheckList" style="margin-left: 10px">
+            <el-radio class="radio" v-model="checkRadio" label="周报">周报</el-radio>
+            <el-radio class="radio" v-model="checkRadio" label="月报">月报</el-radio>
+          </div>
+          <!-- <el-checkbox-group v-if="showCheckList" v-model="checkList" style="margin-left: 10px">
             <el-checkbox label="周报"></el-checkbox>
             <el-checkbox label="月报"></el-checkbox>
-          </el-checkbox-group>
+          </el-checkbox-group> -->
          </div>
       </div>
       <div id="addProject">
@@ -70,24 +73,32 @@
           </div>
           <div class="project-list">
             <h3>楼盘列表： <el-button type="danger" @click="cancelRadio" size="small"> 重新选择</el-button></h3>
-            <div class="project-list-clild">
-              <el-radio-group v-model="radio">
+            <div class="project-list-clild" v-if="radioShow.length">
+              <el-radio-group v-model="radio" @change="radioGropChange">
                 <el-radio-button style="padding: 2px;" v-for="(item, index) in radioShow" :key="index" :label="item.tagname"></el-radio-button>
               </el-radio-group>
             </div>
+            <div v-else style="text-align:center">
+              暂无楼盘列表
+            </div>
           </div>
           <span slot="footer" class="dialog-footer">
-            <el-button type="success" @click="nextPostProject">下一步</el-button>
+            <el-button type="success" :disabled="flag" @click="nextPostProject">下一步</el-button>
           </span>
         </div>
         <div v-if="!isShowSearch">
           <div class="project-select">
             <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
               <el-tab-pane label="默认项目" name="first" style="text-alignc:center;">
-                
+                <ul v-if="defaultData.length" class="project-defalut">
+                  <li v-for="(item, index) in defaultData" :key="index">{{item.name}}</li>
+                </ul>
+                <div v-else>
+                  暂无默认选择项目
+                </div>
               </el-tab-pane>
               <el-tab-pane label="所需选择项目" name="second">
-                <FilterSelect />
+                <FilterSelect :filterSelectData="filterSelectData" @childProjectSelect="childProjectSelect"/>
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -132,35 +143,39 @@ export default {
         label: '实时'
       }, {
         value: '一个月',
-        label: '一个月'
+        label: '1'
       }, {
         value: '三个月',
-        label: '三个月'
+        label: '3'
       }, {
         value: '半年',
-        label: '半年'
+        label: '6'
       }, {
         value: '一年',
-        label: '一年'
+        label: '12'
       }],
       timeValue: '实时',
       optionsValue: '上海',
       projectValue: '楼盘分析',
       checked: false,
       isShow: false,
-      checkList: ['月报'],
+      checkRadio: '月报',
       showCheckList: false,
       searchInput: '',
       isShowSearch: true,
       activeName: 'first',
       radio: '',
       radioList: [],
-      radioShow: []
+      radioShow: [],
+      flag: true,
+      defaultData: [],
+      filterSelectData: [],
+      filterData: '',
+      childfilterData: [],
+      startTime: ''
     };
   },
-  mounted () {
-    this.getProjectData();
-  },
+  mounted () {},
   methods: {
     getProjectData () {
       this.$api.get('/api/apis/getTags?indcode=fangc-xf')
@@ -173,21 +188,39 @@ export default {
         }
       });
     },
+    radioGropChange () {
+      this.flag = false;
+    },
     nextPostProject () {
-      let data;
+      this.defaultData = [];
+      this.filterData = '';
       this.radioShow.filter(item => {
         if (item.tagname === this.radio) {
-          data = item;
+          this.filterData = item;
         }
       });
-      this.$api.post('/api/apis/getJingp', data)
+      if (this.filterData === '') {
+        this.$alert('请选择项目', '提示信息');
+        return;
+      }
+      this.$api.post('/api/apis/getJingp', this.filterData)
       .then(res => {
-        console.log(res);
+        this.defaultData = res.data.data;
+      });
+      this.$api.post('/api/apis/getAllloupan', this.filterData)
+      .then(res => {
+        this.filterSelectData = res.data.data;
       });
       this.isShowSearch = false;
+      this.activeName = 'first';
     },
     addProject () {
       this.dialogVisible = true;
+      this.isShowSearch = true;
+      if (this.radioList.length > 0) {
+        return;
+      }
+      this.getProjectData();
     },
     handleClose (done) {
       this.$confirm('确认关闭？')
@@ -215,13 +248,40 @@ export default {
       console.log(this.searchInput);
     },
     confirm () {
-      alert('确定');
+      if (this.startTime === '') {
+        this.$alert('请选择订阅开始时间');
+        return;
+      }
+      if (!this.checked) {
+        this.$alert('请选择订阅周期');
+        return;
+      }
+      const data = {
+        region: this.optionsValue,
+        startTime: this.startTime,
+        type: this.projectValue,
+        duration: this.timeValue,
+        week: this.timeValue === '实时' ? '实时' : this.checkRadio,
+        jingp: this.childfilterData,
+        dimension: []
+      };
+      const self = this;
+      this.$api.post('/api/apis/subscribe/0', data)
+      .then(res => {
+        console.log(res);
+        if (res.data) {
+          self.$alert(res.data.msg, '提示信息');
+          self.dialogVisible = false;
+        }
+      });
     },
     dataEvent (data) {
-      console.log(data);
+      this.startTime = data;
     },
-    handleClick (v) {
-      console.log(v);
+    handleClick () {
+    },
+    childProjectSelect (data) {
+      this.childfilterData = data;
     },
     searchValue (data) {
       if (data === '') {
@@ -237,6 +297,9 @@ export default {
     },
     cancelRadio () {
       this.radio = '';
+      setTimeout(() => {
+        this.flag = true;
+      }, 100);
     }
   }
 };
@@ -250,14 +313,17 @@ export default {
   margin: 10px 0
   padding: 15px 10px
   background: #f4f4f4
-.addType
+.add-type
   display: flex
   height: 50px
-  border-bottom: 1px solid #ccc
-  margin-bottom: 10px
+  box-shadow: border-box
+  margin-bottom: 20px
+  border-bottom: 1px solid #fff
   >div
     line-height: 2.5
     display: flex
+.add-type-bottom
+  border-bottom: 1px solid #ccc
 #addProject
   width: 100%
   height: 400px
@@ -279,9 +345,16 @@ export default {
       font-size: 17px
       font-weight: 900
   .project-select
-    margin: 0 auto    
+    margin: 0 auto
+    .project-defalut
+      height: 300px
+      overflow: auto
+      li
+        height: 40px
+        line-height: 30px
+        border-bottom: 1px solid #ccc
 .dialog-footer
   position: absolute
   right: 20px
-  bottom: 20px
+  bottom: 10px
 </style>

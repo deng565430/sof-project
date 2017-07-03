@@ -4,6 +4,7 @@
     :placeholder="placeholder"
     icon="search"
     v-model="searchIpt"
+    @focus="focus"
     :on-icon-click="handleIconClick"
     @keyup.enter.native="handleInputConfirm">
     </el-input>
@@ -26,6 +27,9 @@ export default {
     },
     handleInputConfirm () {
       this.$emit('searchValue', this.searchIpt);
+    },
+    focus () {
+      this.searchIpt = '';
     },
     trim (str) {
       return str.replace(/(^\s*)|(\s*$)/g, '');

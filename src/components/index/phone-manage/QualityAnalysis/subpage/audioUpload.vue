@@ -52,7 +52,8 @@ export default {
       this.$alert(file.msg, '提示信息');
     },
     beforeUpload (file) {
-      if (file.name.split('.')[file.name.split('.').length - 1] !== 'tar' && file.name.split('.')[file.name.split('.').length - 1] !== 'gz') {
+      const str = file.name.split('.');
+      if (str[str.length - 1] !== 'tar' && str[str.length - 1] !== 'gz') {
         this.$alert('上传文件类型错误', '提示信息');
         return false;
       }
