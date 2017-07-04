@@ -8,30 +8,31 @@
        <el-tag class="borderData">订阅列表</el-tag>
      </div>
     <div v-for="item in project">
-      <h3 style="text-align: right; color: #4272e3; line-height: 30px">{{item.title}}</h3>
-      <div class="project-list-clild" v-for="desc in item.desc">
+      <h3 style="text-align: right; color: #4272e3; line-height: 50px; font-size: 20px">{{item.name}}</h3>
+      <div class="project-list-clild" v-for="desc in item.dimUserSubscribeListDtos">
         <div>
-          <span><i class="el-icon-time" style="color: #8dd1e2;"></i> 订阅开始日期： {{desc.start}}</span>
-          <span>订阅时长： {{desc.duration}}</span>
-          <span>订阅截至日期： {{desc.end}}</span>
+          <span><i class="el-icon-time" style="color: #8dd1e2;"></i> 订阅开始日期： {{desc.date}}</span>
+          <span>订阅时长： {{desc.duration}}个月</span>
+          <span><i class="el-icon-document" style="color: #8dd1e2;"></i> 订阅截止日期： {{desc.targetDate}}</span>
+          <span><i class="el-icon-document" style="color: #8dd1e2;"></i> {{desc.rtype === 'week' ?  '周报' : '月报'}}</span>
         </div>
         <div>
           <div class="project-list-left">
             <div>
               <p class="list-color">行业</p>
-              <p>{{desc.industry}}</p>
+              <p>{{desc.indname}}</p>
             </div>
             <div>
               <p class="list-color">类型</p>
-              <p>{{desc.type}}</p>
+              <p>{{desc.typename}}</p>
             </div>
             <div>
               <p class="list-color">标签</p>
-              <p>{{desc.tag}}</p>
+              <p>{{desc.tagname}}</p>
             </div>
             <div>
               <p class="list-color">订阅类型</p>
-              <p>{{desc.dingyueType}}</p>
+              <p>{{desc.subscribeType}}</p>
             </div>
           </div>
           <div  class="project-list-right">
@@ -64,102 +65,8 @@ export default {
       dotTop: 0,
       rl: 0,
       rlTop: 0,
-      list: [
-        {
-          title: '国贸天悦佘山住宅',
-          desc: [
-            {
-              start: '2015/05/03',
-              id: 10,
-              duration: '1年',
-              end: '2016/05/02',
-              industry: '房产 - 新房',
-              type: '上海楼盘',
-              tag: '南山雨果 - 住宅',
-              dingyueType: '楼盘分析',
-              nowReport: '已完成',
-              nextReport: '未完成'
-            },
-            {
-              start: '2015/05/03',
-              duration: '1年',
-              id: 11,
-              end: '2016/05/02',
-              industry: '房产 - 新房',
-              type: '上海楼盘',
-              tag: '南山雨果 - 住宅',
-              dingyueType: '楼盘分析',
-              nowReport: '已完成',
-              nextReport: '未完成'
-            }
-          ]
-        },
-        {
-          title: '天山国际',
-          desc: [
-            {
-              start: '2015/05/03',
-              id: 12,
-              duration: '1年',
-              end: '2016/05/02',
-              industry: '房产 - 新房',
-              type: '上海楼盘',
-              tag: '南山雨果 - 住宅',
-              dingyueType: '楼盘分析',
-              nowReport: '已完成',
-              nextReport: '未完成'
-            }
-          ]
-        }
-      ],
-      project: [
-        {
-          title: '国贸天悦佘山住宅',
-          desc: [
-            {
-              start: '2015/05/03',
-              id: 10,
-              duration: '1年',
-              end: '2016/05/02',
-              industry: '房产 - 新房',
-              type: '上海楼盘',
-              tag: '南山雨果 - 住宅',
-              dingyueType: '楼盘分析',
-              nowReport: '已完成',
-              nextReport: '未完成'
-            },
-            {
-              start: '2015/05/03',
-              duration: '1年',
-              id: 11,
-              end: '2016/05/02',
-              industry: '房产 - 新房',
-              type: '上海楼盘',
-              tag: '南山雨果 - 住宅',
-              dingyueType: '楼盘分析',
-              nowReport: '已完成',
-              nextReport: '未完成'
-            }
-          ]
-        },
-        {
-          title: '天山国际',
-          desc: [
-            {
-              start: '2015/05/03',
-              id: 12,
-              duration: '1年',
-              end: '2016/05/02',
-              industry: '房产 - 新房',
-              type: '上海楼盘',
-              tag: '南山雨果 - 住宅',
-              dingyueType: '楼盘分析',
-              nowReport: '已完成',
-              nextReport: '未完成'
-            }
-          ]
-        }
-      ]
+      list: [],
+      project: []
     };
   },
   mounted () {
@@ -169,7 +76,7 @@ export default {
     searchValue (data) {
       this.project = [];
       this.list.filter(item => {
-        if (item.title.indexOf(data) !== -1) {
+        if (item.name.indexOf(data) !== -1) {
           return this.project.push(item);
         };
       });
@@ -184,16 +91,30 @@ export default {
           this.rl = res.data.data.rl;
           this.rlTop = res.data.data.rlTop;
           const data = res.data.data.reportList;
-          const arr = [];
-          for (let v of data) {
-            let obj = {};
-            obj.title = v.name;
-            obj.desc = v.dimUserSubscribeListDtos;
-            arr.push(obj);
-          }
-          // this.project = arr;
+          this.list = data;
+          this.project = data;
         }
       });
+    },
+    format (fmt, time) {
+      var o = {
+        'M+': time.getMonth() + 1,
+        'd+': time.getDate(),
+        'h+': time.getHours(),
+        'm+': time.getMinutes(),
+        's+': time.getSeconds(),
+        'q+': Math.floor((time.getMonth() + 3) / 3),
+        'S': time.getMilliseconds()
+      };
+      if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (time.getFullYear() + '').substr(4 - RegExp.$1.length));
+      }
+      for (var k in o) {
+        if (new RegExp('(' + k + ')').test(fmt)) {
+          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
+        }
+      }
+      return fmt;
     }
   }
 };
@@ -245,7 +166,7 @@ export default {
       span
         display: inline-block
         width: 220px
-        font-size: 15px
+        font-size: 13px
         text-align: center
         line-height: 40px
     >div:last-child
@@ -262,6 +183,7 @@ export default {
         p
           text-align: center
           line-height: 30px
+          color: black
         .list-color
           color: #6b6b6b
       .project-list-right

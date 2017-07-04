@@ -75,7 +75,7 @@
             <h3>楼盘列表： <el-button type="danger" @click="cancelRadio" size="small"> 重新选择</el-button></h3>
             <div class="project-list-clild" v-if="radioShow.length">
               <el-radio-group v-model="radio" @change="radioGropChange">
-                <el-radio-button style="padding: 2px;" v-for="(item, index) in radioShow" :key="index" :label="item.tagname"></el-radio-button>
+                <el-radio-button style="padding: 2px;" v-for="(item, index) in radioShow" :key="index"  :label="item">{{item.tagname}}</el-radio-button>
               </el-radio-group>
             </div>
             <div v-else style="text-align:center">
@@ -192,22 +192,15 @@ export default {
       this.flag = false;
     },
     nextPostProject () {
-      this.defaultData = [];
-      this.filterData = '';
-      this.radioShow.filter(item => {
-        if (item.tagname === this.radio) {
-          this.filterData = item;
-        }
-      });
-      if (this.filterData === '') {
-        this.$alert('请选择项目', '提示信息');
+      if (!this.radio) {
+        this.$alert('请选择楼盘', '提示信息');
         return;
       }
-      this.$api.post('/api/apis/getJingp', this.filterData)
+      this.$api.post('/api/apis/getJingp', this.radio)
       .then(res => {
         this.defaultData = res.data.data;
       });
-      this.$api.post('/api/apis/getAllloupan', this.filterData)
+      this.$api.post('/api/apis/getAllloupan', this.radio)
       .then(res => {
         this.filterSelectData = res.data.data;
       });
@@ -263,7 +256,8 @@ export default {
         duration: this.timeValue,
         week: this.timeValue === '实时' ? '实时' : this.checkRadio,
         jingp: this.childfilterData,
-        dimension: []
+        dimension: [],
+        rdto: this.radio
       };
       const self = this;
       this.$api.post('/api/apis/subscribe/0', data)
@@ -274,6 +268,9 @@ export default {
           self.dialogVisible = false;
         }
       });
+      setTimeout(() => {
+        this.childfilterData = [];
+      }, 20);
     },
     dataEvent (data) {
       this.startTime = data;
@@ -296,6 +293,7 @@ export default {
       });
     },
     cancelRadio () {
+      console.log(this.radio);
       this.radio = '';
       setTimeout(() => {
         this.flag = true;
@@ -345,6 +343,7 @@ export default {
       font-size: 17px
       font-weight: 900
   .project-select
+    width: 490px
     margin: 0 auto
     .project-defalut
       height: 300px
