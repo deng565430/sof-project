@@ -188,3 +188,10 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
   padding: 20px;
   box-sizing:border-box;
 }
+.el-badge__content.is-fixed{
+   top: 30px !important;
+   right: -10px !important;
+}
+.el-badge__content{
+  border: 0 !important ;
+}

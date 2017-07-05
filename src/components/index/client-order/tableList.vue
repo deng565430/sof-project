@@ -57,6 +57,8 @@
 		         <el-button v-if="shanchuque == isshanchum" type="text" size="small"  @click.native.prevent="deleteRow(scope.$index, table)" >删除</el-button>
 		         <el-button 
 	     v-if="chakan == chakanm" type="text" size="small"  @click="chakanxiqngiqng" >查看</el-button>
+	     		<el-button 
+	     v-if="zhiixngbtn == zhiixngbtnm" type="text" size="small"  @click.native.prevent="zhiixng(scope.$index, table)" >执行</el-button>
 		      </template> 
 		    </el-table-column>
 	  </el-table>
@@ -66,13 +68,15 @@
 
 <script>
 export default {
-  props: ['table', 'isshanchum', 'chakanm', 'xiugaibtns'],
+  props: ['table', 'isshanchum', 'chakanm', 'xiugaibtns', 'zhiixngbtnm'],
   data () {
     return {
       shanchuque: 0,
       isshanchum: this.isshanchum,
       rowid: '',
       chakan: 3,
+      zhiixngbtn: 4,
+      zhiixngbtnm: this.zhiixngbtnm,
       xiugaibtn: [0, 1, 2],
       chakanm: this.chakanm,
       id: this.table.id
@@ -87,6 +91,9 @@ export default {
     },
     xiugaibtns (val) {
       // console.log(val);
+    },
+    zhiixng (val) {
+      // console.log(val);
     }
     /* shachuzhiling (val) {
       console.log(this.shachuzhiling);
@@ -97,6 +104,10 @@ export default {
     // console.log(this.shachuzhiling);
   },
   methods: {
+    // 跳转执行
+    zhiixng (index, rows) {
+      console.log(rows[index].id);
+    },
     // 跳转到查看
     chakanxiqngiqng (val) {
       console.log(this.table[0].id);

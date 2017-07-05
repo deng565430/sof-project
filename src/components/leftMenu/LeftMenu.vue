@@ -3,13 +3,17 @@
     <el-menu mode="vertical" :default-active="index" class="el-menu-vertical-demo" style="width: 200px" @select="handleSelect"   theme="dark" >
         <el-menu-item-group title="" v-for="value in dataValue">
             <el-menu-item :index="value.all.val">
-               {{value.all.val}}
+             {{value.all.val}}
             </el-menu-item>
             <el-menu-item :index="value.name.val">
-                {{value.name.val}}
+              <el-badge :value="1" class="item">
+               {{value.name.val}}
+              </el-badge>
             </el-menu-item>
             <el-menu-item :index="value.ing.val">
-                {{value.ing.val}}
+              <el-badge :value="1" class="item">
+               {{value.ing.val}}
+              </el-badge>
             </el-menu-item>
             <el-menu-item :index="value.now.val">
                 {{value.now.val}}

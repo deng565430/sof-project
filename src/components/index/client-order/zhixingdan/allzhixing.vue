@@ -2,10 +2,11 @@
 	<div :tab2="tabs2">
 		<el-tabs type="border-card" v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick">
   		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs">
-            <el-tabs  v-model="activeName2" v-if="tabsisshow"  @tab-click="handleClick">
+            <el-tabs  v-model="activeName2" v-if="tabsisshow"  @tab-click="handleClick2">
                 <el-tab-pane v-for="s in hangye" :label="s.name" :name="s.code" >
+                    <Search @search="search" @qingchu="qingchu"></Search>
                     <!-- table -->
-                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table"  ></TableList>
+                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhiixngbtnm="zhiixngbtnm" ></TableList>
                     <!-- 分页 -->
                     <el-pagination
                       @size-change="handleSizeChange"
@@ -18,7 +19,6 @@
                     </el-pagination>
                 </el-tab-pane>
             </el-tabs>
-          <!-- <Search @search="search" @qingchu="qingchu"></Search> -->
           <!-- :shachuzhiling="shachuzhiling" -->
   		  </el-tab-pane>
 		</el-tabs>
@@ -29,6 +29,7 @@
 
 <script>
 import TableList from './../tableList';
+import Search from './../xuqiudan/search';
 /* import Xiugai from './xiugai';
 import Search from './search'; */
 
@@ -37,7 +38,8 @@ const hangye = [{'name': '所有', 'code': '1'}];
 export default {
   props: ['tabs2'],
   components: {
-    TableList
+    TableList,
+    Search
     /* Xiugai,
     Search */
   },
@@ -56,7 +58,9 @@ export default {
       tabName: '',
       loading2: true,
       tabs3: this.tabs2,
-      hangye: hangye
+      hangye: hangye,
+      zhiixngbtnm: 4,
+      hanyetab: ''
       // isshanchum: this.tabs2,
       // chakanm: this.tabs2,
       // xiugaibtns: this.tabs2,
@@ -82,11 +86,12 @@ export default {
   },
   created () {
     this.tabName = 1;
+    this.hanyetab = 1;
     console.log(this.tabs3);
     // this.getTable(this.tabs3, 0, 10, '', '', ''); // 获取列表
     this.getcelue();// 获取策略类型
     this.getHangyeList();// 获取行业
-    this.getNewList('0', '0', '10', '', '', ''); // 获取新建  所有
+    this.getNewList('', '0', '10', '', '', ''); // 获取新建  所有
   },
   methods: {
     // 获取行业
@@ -134,11 +139,12 @@ export default {
     },
     // 搜索查询
     search (val, val2) {
-      this.getTable(this.tabs3, this.currentPage4 - 1, this.pageSize, this.tabName, val, val2);
+      console.log(val, val2);
+      this.getNewList(this.hanyetab, 0, 10, '', val, val2);
     },
     // 清除查询
-    qingchu () {
-      this.getTable(this.tabs3, this.currentPage4 - 1, this.pageSize, this.tabName, '', '');
+    qingchu (val) {
+      this.getNewList(this.hanyetab, 0, 10, '', val, '');
     },
     // 修改提交
     isshow () {
@@ -199,26 +205,34 @@ export default {
       // console.log(`每页 ${val} 条`);
       this.currentPage4 = 1;
       this.pageSize = val;
-      console.log(this.tabName);
-      // if (this.tabName === 1) {
-      //   this.getTable(this.tabs3, 0, val, '', '', '');
-      // } else {
-      //   this.getTable(this.tabs3, 0, val, this.tabName, '', '');
-      // };
-      // if (this.tabs3 === 0) {
-      //   this.getNewList();
-      // }
+      console.log(this.tabName, this.hanyetab);
+      if (this.tabName === 1 && this.hanyetab === 1) {
+        this.getNewList('', '0', val, '', '', '');
+      } else if (this.tabName !== 1 && this.hanyetab === 1) {
+        this.getNewList('', '0', val, this.tabName, '', '');
+      } else if (this.tabName !== 1 && this.hanyetab !== 1) {
+        this.getNewList(this.hanyetab, '0', val, this.tabName, '', '');
+      } else if (this.tabName === 1 && this.hanyetab !== 1) {
+        this.getNewList('', '0', val, this.tabName, '', '');
+      }
     },
     // 第几页
     handleCurrentChange (val) {
       this.currentPage4 = val;
-      if (this.tabName === 1) {
-        this.getTable(this.tabs3, val - 1, 10, '', '', '');
-      } else {
-        this.getTable(this.tabs3, val - 1, 10, this.tabName, '', '');
-      };
-      // console.log(`当前页: ${val}`);
-      // this.getTable(this.tabs3, val - 1, 10, this.tabName, '', '');
+      this.pageSize = 10;
+      if (this.tabName === 1 && this.hanyetab === 1) {
+        console.log(1);
+        this.getNewList('', val - 1, 10, '', '', '');
+      } else if (this.tabName !== 1 && this.hanyetab === 1) {
+        console.log(2);
+        this.getNewList('', val - 1, 10, this.tabName, '', '');
+      } else if (this.tabName !== 1 && this.hanyetab !== 1) {
+        console.log(3);
+        this.getNewList(this.hanyetab, val - 1, 10, this.tabName, '', '');
+      } else if (this.tabName === 1 && this.hanyetab !== 1) {
+        console.log(4);
+        this.getNewList('', val - 1, 10, this.tabName, '', '');
+      }
     },
     // 获取详情
     getXgai (Id) {
@@ -233,7 +247,7 @@ export default {
       this.Xiugais = true;
       this.getXgai(val);
     },
-    // 切换列表
+    // 切换策略列表
     handleClick (tab, event) {
       // console.log(tab, event);
       this.pageSize = 10;
@@ -245,6 +259,18 @@ export default {
         this.getTable(this.tabs3, 0, 10, '', '', '');
       } else {
         this.getTable(this.tabs3, 0, 10, tab.name, '', '');
+      };
+    },
+    // 切换行业列表
+    handleClick2 (tab, event) {
+      console.log(tab.name);
+      this.pageSize = 10;
+      this.currentPage4 = 1;
+      this.hanyetab = tab.name;
+      if (tab.name === '1') {
+        this.getNewList('', '0', '10', '', '', '');
+      } else {
+        this.getNewList(tab.name, 0, 10, '', '', '');
       };
     }
   }

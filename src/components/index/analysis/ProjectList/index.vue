@@ -8,7 +8,7 @@
        <el-tag class="borderData">订阅列表</el-tag>
      </div>
     <div v-for="item in project">
-      <h3 style="text-align: right; color: #4272e3; line-height: 50px; font-size: 20px">{{item.name}}</h3>
+      <h3 style="text-align: right; color: #4272e3; line-height: 50px; font-size: 20px;background:#f3f3f3">{{item.name}}</h3>
       <div class="project-list-clild" v-for="desc in item.dimUserSubscribeListDtos">
         <div>
           <span><i class="el-icon-time" style="color: #8dd1e2;"></i> 订阅开始日期： {{desc.date}}</span>
@@ -37,8 +37,8 @@
           </div>
           <div  class="project-list-right">
             <div>
-              <p>本期报告 <span>{{desc.nowReport}}<i :class="desc.nowReport === '已完成' ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i></span> </p>
-              <p>下期报告 <span>{{desc.nextReport}}<i :class="desc.nextReport === '已完成' ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i></span></p>
+              <p>本期报告 <span v-html="desc.thisCycle === true ? '已完成' : '未完成'"></span><i :class="desc.thisCycle === true ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i> </p>
+              <p>下期报告 <span v-html="desc.nextCycle === true ? '已完成' : '未完成'"></span><i :class="desc.nextCycle === true ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i></p>
             </div>
             <div class="show-btn">
               <router-link :to="'/analysis/report/'+ desc.id"><el-button type="primary" >查看订阅 ></el-button></router-link>

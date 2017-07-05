@@ -46,8 +46,8 @@ export default {
   methods: {
     qingchu () {
       this.formInline.com = '';
-      this.value = '';
-      this.$emit('qingchu');
+      // this.value = '';
+      this.$emit('qingchu', this.value);
     },
     onfocus () {
       if (this.value === '') {
@@ -60,7 +60,7 @@ export default {
         return;
       }
       this.$emit('search', this.value, this.formInline.com);
-      this.formInline.com = '';
+      // this.formInline.com = '';
     }
   }
 };

@@ -179,6 +179,7 @@ export default {
         case '未执行的':
           this.Gailan = false;
           this.Xinjian = false;
+          this.tabs2 = 1;
           // this.Weizhi = true;
           this.OrderIndex = false;
           this.show = false;
@@ -191,6 +192,7 @@ export default {
         case '正在执行的':
           this.Gailan = false;
           this.Xinjian = false;
+          this.tabs2 = 2;
           // this.Campaigning = true;
           this.OrderIndex = false;
           this.show = false;
@@ -203,6 +205,7 @@ export default {
         case '历史执行单':
           this.Gailan = false;
           this.Xinjian = false;
+          this.tabs2 = 3;
           // this.Historycampaign = true;
           this.OrderIndex = false;
           this.show = false;
