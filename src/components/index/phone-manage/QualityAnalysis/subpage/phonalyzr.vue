@@ -37,7 +37,7 @@
 <script>
 import DataSearch from '../../DataSearch/DataSearch';
 import DataSearchContrast from '../../DataSearch/DataSearchContrast';
-import Charts from '../../Charts/charts';
+import Charts from '../../../../Charts';
 import ContrastTable from '../../contrastTable/contrastTable';
 import PhonalyzrChild from './PhonalyzrChild/PhonalyzrChild';
 export default {

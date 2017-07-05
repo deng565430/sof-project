@@ -25,7 +25,7 @@
 
 <script>
 import DataSearch from '../../DataSearch/DataSearch';
-import Charts from '../../Charts/charts';
+import Charts from '../../../../Charts';
 import DataSearchContrast from '../../DataSearch/DataSearchContrast';
 export default {
 

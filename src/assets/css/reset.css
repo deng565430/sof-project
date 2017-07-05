@@ -90,10 +90,12 @@ body {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
-    display: none
+  display: none
 }
 
-
+.el-dialog--tiny{
+  width: 900px !important;
+}
 
 #areas .el-checkbox-button__inner{
   border:0px;

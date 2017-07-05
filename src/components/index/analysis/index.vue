@@ -1,6 +1,5 @@
 <template>
 <div>
-  分析报告
   <router-view></router-view>
 </div>
 </template>
@@ -9,14 +8,16 @@
 export default {
 
   name: 'analysis',
-
   data () {
     return {
-
+      analysis: true
     };
   }
 };
 </script>
 
-<style lang="css" scoped>
+<style lang="stylus" rel="stylesheet/stylus">
+#analysis
+  width: 900px
+  margin: 0 auto
 </style>
