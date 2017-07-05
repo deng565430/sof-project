@@ -180,3 +180,9 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
 .el-loading-mask {
   z-index: 999 !important;
 }
+#contain{
+  width: 85%;
+  height: 100%;
+  padding: 20px;
+  box-sizing:border-box;
+}

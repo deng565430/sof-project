@@ -53,8 +53,10 @@
 		      width="100"
 		      >
 		      <template scope="scope">
-		        <el-button type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
-		        <!-- <el-button type="text" size="small"  @click.native.prevent="deleteRow(scope.$index, table)">删除</el-button>-->
+		        <el-button v-if="xiugaibtns in xiugaibtn" type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
+		         <el-button v-if="shanchuque == isshanchum" type="text" size="small"  @click.native.prevent="deleteRow(scope.$index, table)" >删除</el-button>
+		         <el-button 
+	     v-if="chakan == chakanm" type="text" size="small"  @click="chakanxiqngiqng" >查看</el-button>
 		      </template> 
 		    </el-table-column>
 	  </el-table>
@@ -64,20 +66,64 @@
 
 <script>
 export default {
-  props: ['table'],
+  props: ['table', 'isshanchum', 'chakanm', 'xiugaibtns'],
   data () {
-    return {};
+    return {
+      shanchuque: 0,
+      isshanchum: this.isshanchum,
+      rowid: '',
+      chakan: 3,
+      xiugaibtn: [0, 1, 2],
+      chakanm: this.chakanm,
+      id: this.table.id
+    };
+  },
+  watch: {
+    isshanchum (val) {
+      // console.log(val);
+    },
+    chakanm (val) {
+      // console.log(this.table);
+    },
+    xiugaibtns (val) {
+      // console.log(val);
+    }
+    /* shachuzhiling (val) {
+      console.log(this.shachuzhiling);
+    } */
+  },
+  created () {
+    // console.log(this.chakanm);
+    // console.log(this.shachuzhiling);
   },
   methods: {
+    // 跳转到查看
+    chakanxiqngiqng (val) {
+      console.log(this.table[0].id);
+      this.$emit('services-chakan', this.table[0].id);
+    },
     handleClick (index, rows) {
       console.log(rows[index].id);
       this.$emit('services-change', rows[index].id);
-    }
+    },
     // 删除行
-    /* deleteRow (index, rows) {
+    deleteRow (index, rows) {
       console.log(rows[index].id);
-      this.$alert('确认要删除此条?');
-    } */
+      this.rowid = rows[index].id;
+      this.$emit('services-shanchu', rows[index].id);
+      this.$confirm('此操作将永久删此条, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$emit('services-qurrenshanchu', rows[index].id);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    }
   }
 };
 </script>

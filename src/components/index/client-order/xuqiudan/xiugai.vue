@@ -35,8 +35,8 @@
         <!-- 策略类型 -->
         <el-row :gutter="20" style="margin-top:20px;border-bottom:1px solid #f3f3f3">
           <el-col :span="24">
-             <el-form-item label="策略类型" prop="type">
-              <el-radio-group  :disabled="true" v-model="form.type">
+             <el-form-item label="需求单类型" prop="type">
+              <el-radio-group   v-model="form.type"> <!-- :disabled="true" -->
                 <el-radio-button v-for="i in form.types" :label="i.code" :name="i.name">{{i.name}}</el-radio-button>
               </el-radio-group>
             </el-form-item>
@@ -45,7 +45,7 @@
         <!-- 需求公司 -->
         <el-row :gutter="20" style="margin-top:20px">
           <el-col :span="8">
-            <el-form-item  :disabled="true" label="需求公司" prop="compan">
+            <el-form-item  :disabled="!(chakanxiangs in chakanxiang2)" label="需求公司" prop="compan">
               <el-input :disabled="true" v-model="form.compan" placeholder=""></el-input>
             </el-form-item>
          </el-col>
@@ -53,8 +53,8 @@
         <!-- 所需电话量 -->
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="所需电话量" prop="phonenum">
-              <el-input  v-model="form.phonenum" placeholder=""></el-input>
+            <el-form-item  label="所需电话量" prop="phonenum">
+              <el-input :disabled="!(chakanxiangs in chakanxiang2)" v-model="form.phonenum" placeholder=""></el-input>
             </el-form-item>
          </el-col>
         </el-row>
@@ -62,7 +62,7 @@
         <el-row :gutter="20">
           <el-col :span="16">
             <el-form-item label="所需周期" required>
-              <Time :disabled="true" :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Time>
+              <Time  :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Time>
             </el-form-item >
           </el-col >
         </el-row >
@@ -70,15 +70,15 @@
         <el-row :gutter="20">
           <el-col :span="16">
             <el-form-item label="项目描述" prop="miaoshu">
-              <el-input  type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
+              <el-input :disabled="!(chakanxiangs in chakanxiang2)"  type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
             </el-form-item>
          </el-col>
         </el-row>
         <!-- 操作 -->
         <el-form-item>
-          <el-button type="primary" @click="onSubmit('form')">提交</el-button>
+          <el-button v-if="chakanxiangs in chakanxiang2" type="primary" @click="onSubmit('form')">提交</el-button>
           <!-- <el-button>取消</el-button> -->
-          <el-button @click="resetForm('form')">重置</el-button>
+          <el-button v-if="chakanxiangs in chakanxiang2" @click="resetForm('form')">重置</el-button>
           <el-button @click="fanhui">返回</el-button>
         </el-form-item>
     </el-form>
@@ -121,12 +121,15 @@
 import Time from '../../../timeSelect/index';
 
 export default {
-  props: ['xiugai'],
+  props: ['xiugai', 'chakanxiang'],
   components: {
     Time
   },
   data () {
     return {
+      isdisabled: true,
+      chakanxiang2: [0, 1, 2],
+      chakanxiangs: this.chakanxiang,
       c: {},
       labelPosition: 'right',
       form: {
@@ -182,9 +185,13 @@ export default {
     };
   },
   watch: {
+    chakanxiang (val) {
+      console.log(val);
+      console.log(this.chakanxiangs);
+    },
     xiugai (val) {
       this.c = val;// 新增xiugai的watch，监听变更并同步到c上
-      console.log(this.c);
+      // console.log(this.c);
       this.form.region = this.c.industryId;
       this.form.region = this.c.industryId;
       this.form.area = this.c.area;
@@ -198,11 +205,12 @@ export default {
       this.form.dates.push(this.c.start_date, this.c.end_date);
       this.form.miaoshu = this.c.project_description;
       this.form.id = this.c.id;
-      console.log(this.form.dates);
+      // console.log(this.form.dates);
     }
   },
   created () {
     this.getbriefinfo();// 获取需求单信息
+    console.log(this.chakanxiangs);
   },
   methods: {
     // 返回

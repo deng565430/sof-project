@@ -1,45 +1,50 @@
 <template>
 	<div :tab2="tabs2">
-		<el-tabs  v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick"><!-- type="border-card" -->
-		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs">
-
-        <Search @search="search" @qingchu="qingchu"></Search>
-        <!-- table -->
-		  	<TableList :xiugaibtns='xiugaibtns'  :isshanchum="isshanchum" :chakanm="chakanm" v-loading="loading2" element-loading-text="加载中" :table="table"  @services-change="servicesChange" @services-shanchu="servicesShanchu"   :shanchusuccess="shanchusuccess" @services-qurrenshanchu="servicesQurrenshanchu"  @services-chakan="servicesChakan" ></TableList><!-- :shachuzhiling="shachuzhiling" -->
-        
-        <!-- 分页 -->
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage4"
-          :page-sizes="[10, 20, 50]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
-        </el-pagination>
-		  </el-tab-pane>
+		<el-tabs type="border-card" v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick">
+  		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs">
+            <el-tabs  v-model="activeName2" v-if="tabsisshow"  @tab-click="handleClick">
+                <el-tab-pane v-for="s in hangye" :label="s.name" :name="s.code" >
+                    <!-- table -->
+                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table"  ></TableList>
+                    <!-- 分页 -->
+                    <el-pagination
+                      @size-change="handleSizeChange"
+                      @current-change="handleCurrentChange"
+                      :current-page="currentPage4"
+                      :page-sizes="[10, 20, 50]"
+                      :page-size="pageSize"
+                      layout="total, sizes, prev, pager, next, jumper"
+                      :total="total">
+                    </el-pagination>
+                </el-tab-pane>
+            </el-tabs>
+          <!-- <Search @search="search" @qingchu="qingchu"></Search> -->
+          <!-- :shachuzhiling="shachuzhiling" -->
+  		  </el-tab-pane>
 		</el-tabs>
     <!-- 修改需求单 -->
-    <Xiugai v-if="Xiugais" :chakanxiang="chakanxiang" :xiugai="xiugai" @isshow='isshow' @isshow2="isshow2"></Xiugai>
+    <!-- <Xiugai v-if="Xiugais" :chakanxiang="chakanxiang" :xiugai="xiugai" @isshow='isshow' @isshow2="isshow2"></Xiugai> -->
 	</div>
 </template>
 
 <script>
 import TableList from './../tableList';
-import Xiugai from './xiugai';
-import Search from './search';
+/* import Xiugai from './xiugai';
+import Search from './search'; */
 
 const tab = [{'name': '所有', 'code': '1'}];
+const hangye = [{'name': '所有', 'code': '1'}];
 export default {
   props: ['tabs2'],
   components: {
-    TableList,
-    Xiugai,
-    Search
+    TableList
+    /* Xiugai,
+    Search */
   },
   data () {
     return {
       activeName: '1',
+      activeName2: '1',
       tabs: tab,
       table: [],
       currentPage4: 1,
@@ -51,22 +56,23 @@ export default {
       tabName: '',
       loading2: true,
       tabs3: this.tabs2,
-      isshanchum: this.tabs2,
-      chakanm: this.tabs2,
-      xiugaibtns: this.tabs2,
-      shanchuque: true,
-      shanchusuccess: '',
-      chakanxiang: this.tabs2
+      hangye: hangye
+      // isshanchum: this.tabs2,
+      // chakanm: this.tabs2,
+      // xiugaibtns: this.tabs2,
+      // shanchuque: true,
+      // shanchusuccess: '',
+      // chakanxiang: this.tabs2
     };
   },
   watch: {
     tabs2 (val) {
       this.tabs3 = val;
-      this.isshanchum = this.tabs3;
-      this.chakanm = this.tabs3;
-      this.xiugaibtns = this.tabs3;
-      this.chakanxiang = this.tabs3;
-      console.log(this.chakanxiang);
+      // this.isshanchum = this.tabs3;
+      // this.chakanm = this.tabs3;
+      // this.xiugaibtns = this.tabs3;
+      // this.chakanxiang = this.tabs3;
+      // console.log(this.chakanxiang);
       this.activeName = '1';
       this.tabName = 1;
       this.currentPage4 = 1;
@@ -77,10 +83,22 @@ export default {
   created () {
     this.tabName = 1;
     console.log(this.tabs3);
-    this.getTable(this.tabs3, 0, 10, '', '', ''); // 获取列表
+    // this.getTable(this.tabs3, 0, 10, '', '', ''); // 获取列表
     this.getcelue();// 获取策略类型
+    this.getHangyeList();// 获取行业
+    this.getNewList('0', '0', '10', '', '', ''); // 获取新建  所有
   },
   methods: {
+    // 获取行业
+    getHangyeList () {
+      var url = '/api/brief/getBriefSelect';
+      this.$api.get(url).then((res) => {
+        if (res.data.code === 0) {
+          var all = this.hangye.concat(res.data.data.industry);
+          this.hangye = all;
+        }
+      });
+    },
     // 查看行
     servicesChakan (val) {
       console.log(val);
@@ -140,6 +158,26 @@ export default {
         this.tabs = all;
       });
     },
+    // 获取新建列表
+    getNewList (industryId, start, pagesize, strategy, kwflag, kw) {
+      var url = '/api/campaign/getNewCampaign?industryId=' + industryId + '&start=' + start + '&length=' + pagesize + '&strategy=' + strategy + '&kw_flag=' + kwflag + '&kw=' + kw;
+      this.$api.get(url).then((res) => {
+        console.log(res.data.data);
+        if (res.status === 200) {
+          if (res.data.code === 1) {
+            this.loading2 = false;
+            this.$alert('未登录!');
+          } else if (res.data.code === 0) {
+            this.loading2 = false;
+            this.table = res.data.data;
+            this.total = res.data.recordsFiltered;
+          }
+        } else {
+          this.loading2 = false;
+          this.$alert('获取数据失败!');
+        }
+      });
+    },
     // 获取列表
     getTable (status, start, pagesize, strategy, kwflag, kw) {
       this.loading2 = true;
@@ -161,11 +199,15 @@ export default {
       // console.log(`每页 ${val} 条`);
       this.currentPage4 = 1;
       this.pageSize = val;
-      if (this.tabName === 1) {
-        this.getTable(this.tabs3, 0, val, '', '', '');
-      } else {
-        this.getTable(this.tabs3, 0, val, this.tabName, '', '');
-      };
+      console.log(this.tabName);
+      // if (this.tabName === 1) {
+      //   this.getTable(this.tabs3, 0, val, '', '', '');
+      // } else {
+      //   this.getTable(this.tabs3, 0, val, this.tabName, '', '');
+      // };
+      // if (this.tabs3 === 0) {
+      //   this.getNewList();
+      // }
     },
     // 第几页
     handleCurrentChange (val) {
@@ -197,6 +239,7 @@ export default {
       this.pageSize = 10;
       this.currentPage4 = 1;
       this.tabName = tab.name;
+      console.log(this.tabName);
       if (tab.name === '1') {
         this.tabName = '';
         this.getTable(this.tabs3, 0, 10, '', '', '');

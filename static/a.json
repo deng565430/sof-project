@@ -1,0 +1,11 @@
+{
+    "code": "0",
+    "data": [
+      {"class2":{"code":"a","name":"a"},"class3":[{"code":"a1","count":0,"ars":[{"name":"aaaa"},{"name":"bbbbbb"}],"name":"a1"},{"code":"a2","count":0,"ars":[{"name":"aaaa"}],"name":"a2"},{"code":"a3","count":0,"ars":[{"name":"aaaa"}],"name":"a3"}]},
+      {"class2":{"code":"b","name":"b"},"class3":[{"code":"b1","count":0,"ars":[{"name":"aaaa"}],"name":"b1"},{"code":"b2","count":0,"ars":[{"name":"aaaa"}],"name":"b2"},{"code":"b3","count":0,"ars":[{"name":"aaaa"}],"name":"b3"}]},
+      {"class2":{"code":"c","name":"c"},"class3":[{"code":"c1","count":0,"ars":[{"name":"aaaa"}],"name":"c1"},{"code":"c2","count":0,"ars":[{"name":"aaaa"}],"name":"c2"},{"code":"c3","count":0,"ars":[{"name":"aaaa"}],"name":"c3"}]},
+      {"class2":{"code":"d","name":"d"},"class3":[{"code":"d1","count":0,"ars":[{"name":"aaaa"}],"name":"d1"},{"code":"d2","count":0,"ars":[{"name":"aaaa"}],"name":"d2"},{"code":"d3","count":0,"ars":[{"name":"aaaa"}],"name":"d3"}]},
+      {"class2":{"code":"e","name":"e"},"class3":[{"code":"e1","count":0,"ars":[{"name":"aaaa"}],"name":"e1"},{"code":"e2","count":0,"ars":[{"name":"aaaa"}],"name":"e2"},{"code":"e3","count":0,"ars":[{"name":"aaaa"}],"name":"e3"}]}
+    ],
+    "msg": "成功"
+}

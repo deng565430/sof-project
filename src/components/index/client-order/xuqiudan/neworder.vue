@@ -35,7 +35,7 @@
         <!-- 策略类型 -->
         <el-row :gutter="20" style="margin-top:20px;border-bottom:1px solid #f3f3f3">
           <el-col :span="24">
-             <el-form-item label="策略类型" prop="type">
+             <el-form-item label="需求单类型" prop="type">
               <el-radio-group v-model="form.type">
                 <el-radio-button v-for="i in form.types" :label="i.code" :name="i.name">{{i.name}}</el-radio-button>
               </el-radio-group>

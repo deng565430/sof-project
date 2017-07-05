@@ -29,7 +29,7 @@ export default {
   data () {
     return {
       data: [
-        {'value': '电销系统', 'name': {'url': '', 'val': '电话清单'}, 'ing': {'url': '', 'val': '电话效果分析'}, 'now': {'url': '', 'val': '电话质量分析'}, 'hoistory': {'url': '', 'val': '已完成'}}
+        {'value': '电销系统', 'name': {'url': '', 'val': '电话清单'}, 'ing': {'url': '', 'val': '电话效果分析'}, 'now': {'url': '', 'val': '电话质量分析'}, 'hoistory': {'url': '', 'val': '已完成'}, 'hoistory2': {'url': '', 'val': ''}, 'all': {'url': '', 'val': ''}}
       ],
       flag: false,
       childIsShow: false,

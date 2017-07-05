@@ -1,5 +1,5 @@
 <template>
-  <el-button type="text"></el-button>
+  <el-button type="text" ></el-button>
 </template>
 
 <script>

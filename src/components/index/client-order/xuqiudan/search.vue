@@ -40,6 +40,9 @@ export default {
       value: ''
     };
   },
+  created () {
+    this.value = this.options[0].value;
+  },
   methods: {
     qingchu () {
       this.formInline.com = '';

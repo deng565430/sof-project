@@ -2,6 +2,9 @@
   <div id='leftMenu'>
     <el-menu mode="vertical" :default-active="index" class="el-menu-vertical-demo" style="width: 200px" @select="handleSelect"   theme="dark" >
         <el-menu-item-group title="" v-for="value in dataValue">
+            <el-menu-item :index="value.all.val">
+               {{value.all.val}}
+            </el-menu-item>
             <el-menu-item :index="value.name.val">
                 {{value.name.val}}
             </el-menu-item>
@@ -14,6 +17,9 @@
             <el-menu-item :index="value.hoistory.val">
                {{value.hoistory.val}}
             </el-menu-item>
+            <el-menu-item :index="value.hoistory2.val">
+               {{value.hoistory2.val}}
+            </el-menu-item>
         </el-menu-item-group>
     </el-menu>
   </div>
@@ -23,7 +29,7 @@
 export default {
   data () {
     return {
-      index: this.dataValue[0].name.val
+      index: this.dataValue[0].all.val
     };
   },
   methods: {
