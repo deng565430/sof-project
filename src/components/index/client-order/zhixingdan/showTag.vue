@@ -20,9 +20,9 @@
                       </div>
                       <div class="third-item" :class="thirdFlag === thirdVal.father.name ? topItemIsShow : topItemIsHide">
                         <ul class="fourth-tab" v-if="thirdVal.child">
-                          <li v-for="(fourthVal, fourthIndex) in thirdVal.child">
-                            <div  class="fourth-list" :class="[fourthFlag === fourthVal.name ? hover : hoverOut, fourthVal.active ? 'active' : '']" @mouseover="fourthHovers(fourthVal, fourthIndex)" @click="fourthClick(fourthVal, fourthIndex, val, secondVal, thirdVal)">
-                              <span>{{fourthVal.name}}</span>
+                          <li v-for="(fourthVal, fourthIndex) in thirdVal.child" >
+                            <div  class="fourth-list" ref="fourthActive" :class="[fourthFlag === fourthVal.name ? hover : hoverOut, (ifHideActive ? '' : fourthVal.active ? 'active' : '')]" @mouseover="fourthHovers(fourthVal, fourthIndex)" @click="fourthClick($event, fourthVal, fourthIndex, val, secondVal, thirdVal)">
+                              {{fourthVal.name}}
                             </div>
                           </li>
                         </ul>
@@ -36,7 +36,7 @@
         </li>
       </ul>
       <div v-if="!loading">
-        {{childShowTag}}
+       请选择项目
       </div>
     </div>
 </div>
@@ -47,8 +47,8 @@ export default {
   name: 'shwoTag',
   data () {
     return {
-      topFlag: '业务分类',
-      loading: true,
+      topFlag: '',
+      loading: !this.flag,
       secondFlag: '',
       thirdFlag: '',
       fourthFlag: '',
@@ -58,25 +58,28 @@ export default {
       hover: 'hover',
       hoverOut: 'hover-out',
       topItemIsShow: 'top-item-is-show',
-      topItemIsHide: 'top-item-is-hide'
+      topItemIsHide: 'top-item-is-hide',
+      lastVal: '',
+      topVal: '',
+      secondVal: '',
+      thirdVal: ''
     };
   },
   created () {
-    this.$nextTick(() => {
-      if (this.flag) {
-        this.reset();
-      };
-    });
+    this._reset();
+    // 初始化 判断进来的参数是选择还是展示
     if (this.childShowTag) {
       const name = this.childShowTag.name.split('->');
       if (name[3]) {
-        console.log(this.tabTitle);
-        this.filter(name);
+        this._filter(name);
       }
-      console.log(name);
-      this.topClickFlag = name[0] ? this.trim(name[0]) : '';
-      this.secondClickFlag = name[1] ? this.trim(name[1]) : '';
-      this.thirdClickFlag = name[2] ? this.trim(name[2]) : '';
+      // 展示对应的元素
+      this.topClickFlag = name[0] ? this._trim(name[0]) : '';
+      this.secondClickFlag = name[1] ? this._trim(name[1]) : '';
+      this.thirdClickFlag = name[2] ? this._trim(name[2]) : '';
+      this.topFlag = name[0] ? this._trim(name[0]) : '';
+      this.secondFlag = name[1] ? this._trim(name[1]) : '';
+      this.thirdFlag = name[2] ? this._trim(name[2]) : '';
     }
   },
   methods: {
@@ -94,65 +97,119 @@ export default {
       this.fourthFlag = val.name;
     },
     topClick (val, index) {
+      // 判断是否传入flag
       if (this.flag) {
+        // 判断跟上次点击是否一致
+        if (this.topVal !== val.code) {
+          this.secondClickFlag = '';
+          this.thirdClickFlag = '';
+          // 重置样式并格式化
+          this._delStyle();
+        }
+        const num = 1;
+        const checked = true;
+        // 对点击元素做取反操作 并且对应传递给父组件
         if (this.topClickFlag === val.name) {
           this.topClickFlag = '';
-          return;
+          this.secondClickFlag = '';
+          this.thirdClickFlag = '';
+          this._delStyle();
+          this.$emit('clickActive', {val, index, num, checked: !checked});
         } else {
           this.topClickFlag = val.name;
+          this.$emit('clickActive', {val, index, num, checked});
         }
+        // 保存此次点击参数
+        this.topVal = val.code;
       }
-      const num = 1;
-      this.$emit('clickActive', {val, index, num});
     },
     secondClick (val, index, lastVal) {
       if (this.flag) {
+        this.topClickFlag = lastVal.name;
+        if (this.secondVal !== val.father.code) {
+          this.thirdClickFlag = '';
+          this._delStyle();
+        }
+        const num = 2;
+        const checked = true;
         if (this.secondClickFlag === val.father.name) {
           this.secondClickFlag = '';
-          return;
+          this.thirdClickFlag = '';
+          this._delStyle();
+          this.$emit('clickActive', {val, index, lastVal, num, checked: !checked});
         } else {
           this.secondClickFlag = val.father.name;
+          this.$emit('clickActive', {val, index, lastVal, num, checked});
         }
+        this.secondVal = val.father.code;
       }
-      const num = 2;
-      this.$emit('clickActive', {val, index, lastVal, num});
     },
     thirdClick (val, index, firstVal, lastVal) {
       if (this.flag) {
+        this.topClickFlag = firstVal.name;
+        this.secondClickFlag = lastVal.father.name;
+        if (this.thirdVal !== val.father.code) {
+          this._delStyle();
+        }
+        const num = 3;
+        const checked = true;
         if (this.thirdClickFlag === val.father.name) {
           this.thirdClickFlag = '';
+          this._delStyle();
+          this.$emit('clickActive', {val, index, firstVal, lastVal, num, checked: !checked});
           return;
         } else {
           this.thirdClickFlag = val.father.name;
+          this.$emit('clickActive', {val, index, firstVal, lastVal, num, checked});
         }
+        this.thirdVal = val.father.code;
       }
-      const num = 3;
-      this.$emit('clickActive', {val, index, firstVal, lastVal, num});
     },
-    fourthClick (val, index, firstVal, secondVal, lastVal) {
-      const num = 4;
-      this.$emit('clickActive', {val, index, firstVal, secondVal, lastVal, num});
+    fourthClick (e, val, index, firstVal, secondVal, lastVal) {
+      if (this.flag) {
+        this.topClickFlag = firstVal.name;
+        this.secondClickFlag = secondVal.father.name;
+        this.thirdClickFlag = lastVal.father.name;
+        const num = 4;
+        const checked = true;
+        // 如果之前没有保存code 则保存当前code
+        if (this.lastVal === '') {
+          this.lastVal = lastVal.father.code;
+        }
+        // 判断之前保存的code是否和现在保存的相等 清空选择
+        if (lastVal.father.code !== this.lastVal) {
+          this._delStyle();
+        }
+        // dom操作  改变样式
+        if (!e.target.style.background) {
+          e.target.style.background = '#20a0ff';
+          e.target.style.border = '1px solid #20a0ff';
+          e.target.style.color = 'white';
+        } else {
+          e.target.style.background = '';
+          e.target.style.border = '';
+          e.target.style.color = '';
+        }
+        this.$emit('clickActive', {val, index, firstVal, secondVal, lastVal, num, checked});
+        this.lastVal = lastVal.father.code;
+      }
     },
-    trim (str) {
+    _trim (str) {
       return str.replace(/(^\s*)|(\s*$)/g, '');
     },
-    filter (str) {
+    // 过滤选择出父组件传递参数的选择状态
+    _filter (str) {
       this.tabTitle.filter(item => {
-        if (item.name === this.trim(str[0])) {
+        if (item.name === this._trim(str[0])) {
           item.child.filter(secondItem => {
-            if (secondItem.father.name === this.trim(str[1])) {
+            if (secondItem.father.name === this._trim(str[1])) {
               secondItem.child.filter(thirdItem => {
-                if (thirdItem.father.name === this.trim(str[2])) {
+                if (thirdItem.father.name === this._trim(str[2])) {
                   thirdItem.child.filter(forthItem => {
-                    // 需要重新修改
                     for (let i in str[3]) {
-                      if (str[3].split(',')[i] !== undefined && forthItem.name === this.trim(str[3].split(',')[i])) {
+                      if (str[3].split(',')[i] !== undefined && forthItem.name === this._trim(str[3].split(',')[i])) {
                         if (!forthItem.active) {
                           forthItem.active = 'active';
-                        }
-                      } else {
-                        if (forthItem.active) {
-                          delete forthItem.active;
                         }
                       }
                     }
@@ -165,7 +222,7 @@ export default {
       });
     },
     // 重置
-    reset () {
+    _reset () {
       this.tabTitle.filter(item => {
         if (item.child && item.child.length > 0) {
           item.child.filter(secondItem => {
@@ -187,9 +244,20 @@ export default {
           });
         }
       });
+    },
+    // 清除样式
+    _delStyle () {
+      this._reset();
+      for (let i in this.$refs.fourthActive) {
+        if (this.$refs.fourthActive[i].style.background) {
+          this.$refs.fourthActive[i].style.background = '';
+          this.$refs.fourthActive[i].style.border = '';
+          this.$refs.fourthActive[i].style.color = '';
+        }
+      }
     }
   },
-  props: ['tabTitle', 'childShowTag', 'flag']
+  props: ['tabTitle', 'childShowTag', 'flag', 'ifHideActive']
 };
 </script>
 
@@ -236,9 +304,9 @@ export default {
       position: absolute
       left: 0
   .top-last, .third-list, .second-last, .fourth-list
-    padding: 0 10px
     border: 1px solid #bfcbd9
     box-sizing: border-box
+    padding: 0 10px
     border-radius: 2px
   .hover-out
     color: black
@@ -251,5 +319,5 @@ export default {
     border: 1px solid #20a0ff
     color: white
   .hover
-    color: red
+    color: #ff0000
 </style>

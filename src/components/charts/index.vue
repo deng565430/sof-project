@@ -16,11 +16,7 @@ export default {
       loading: true
     };
   },
-  mounted () {
-    this.$nextTick(() => {
-      this.charts(this.id, this.projectType);
-    });
-  },
+  mounted () {},
   watch: {
     'projectType': {
       handler: function (val, oldValue) {
@@ -30,6 +26,12 @@ export default {
     }
   },
   created () {},
+  computed: {},
+  beforeUpdata () {
+    this.$nextTick(() => {
+      this.charts(this.id, this.projectType);
+    });
+  },
   methods: {
     charts (id, data) {
       const self = this;

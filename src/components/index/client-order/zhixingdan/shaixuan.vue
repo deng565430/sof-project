@@ -1,27 +1,29 @@
 <template>
 <div>
-  <el-dialog
-    title="请选择类型"
-    :visible.sync="dialogVisible"
-    size="tiny"
-    :before-close="hideClose">
+  <el-dialog title="已有项目" :visible.sync="dialogVisible" size="tiny" :close-on-press-escape="false" :before-close="handleClose">
     <div v-if="showTab">
-      <ShowTag :tabTitle="tabTitle" @clickActive="clickActive" :flag="true"></ShowTag>
+      <ShowTag :tabTitle="tabTitle" @clickActive="clickActive" :ifHideActive="true" :flag="true"></ShowTag>
+    </div>
+    <div style="height: 50px; overflow: auto">
+      <div v-if="showSelectDataAll.name" class="active-show-tag">
+        <span>已选择：</span><span style="color: blue;"> {{showSelectDataAll.name}} </span>
+      </div>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancel">取 消</el-button>
-      <el-button type="primary" @click="selectDataList">确 定</el-button>
+      <el-button type="primary" :disabled="showSelectDataAll.name == null" @click="selectDataList">确 定</el-button>
     </span>
   </el-dialog>
+
     <div class="show-tag">
       <div>
         <el-tag
-          v-for="tag in showSelectData"
+          v-for="(tag, index) in showSelectData"
           :key="tag.name"
           :closable="true"
-          :type="'success'"
+          :type="'danger'"
           hit
-          @close.stop="handleClose(tag)"
+          @close.stop="removeClose(tag)"
           @click.native="showTag(tag)"
         >
         {{tag.name}}
@@ -34,33 +36,35 @@
     
 
 <el-dialog
-  title="提示"
+  title="已选择项目"
   :visible.sync="showDialogVisible"
   size="tiny"
-  :before-close="hideClose">
+  :close-on-press-escape="false"
+  :before-close="handleClose">
   <div v-if="showSelectTag">
+    <div style="height: 50px; overflow: auto;margin-bottom: 10px">
+      <div class="active-show-tag">
+        <span>已选择：</span><span style="color: blue;"> {{activeShowTag.name}} </span>
+      </div>
+    </div>
     <ShowTag :tabTitle="tabTitle" :childShowTag="childShowTag"></ShowTag>
   </div>
   <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="confirm">确 定</el-button>
   </span>
 </el-dialog>
-    <div>
-      <el-button type="primary" @click="submit">提交</el-button>
+    <div style="text-align: left; padding-top: 20px">
+      <el-button type="primary" :disabled="showSelectData.length <= 0" @click="submit">提交</el-button>
     </div>
 </div>
 </template>
 
 <script>
-import CheckBox from './checkBox';
-import ShowDataList from './showDataList';
 import ShowTag from './showTag';
 export default {
 
   name: 'shaixuan',
   components: {
-    CheckBox,
-    ShowDataList,
     ShowTag
   },
   data () {
@@ -75,7 +79,9 @@ export default {
       fourthArrName: [],
       fourthArrCode: [],
       loading: false,
-      childShowTag: ''
+      childShowTag: '',
+      activeShowTag: '',
+      lastVal: ''
     };
   },
   created () {
@@ -87,32 +93,32 @@ export default {
       this.$api.get('/api/campaign/getCampaignOption?page=0&prov=zj&city=hz&ind_code=i01&code=').then((res) => {
         const data = res.data.data;
         this.tabTitle = data;
+        for (let i in this.tabTitle) {
+          this.$api.get(`api/campaign/getCampaignOption2?page=1&ind_code=i01&prov=zj&city=hz&code=${this.tabTitle[i].code}`)
+          .then(res => {
+            if (res.data.data) {
+              const data = res.data.data;
+              if (!this.tabTitle[i].child) {
+                this.tabTitle[i].child = data;
+              }
+            }
+          });
+        }
       });
     },
     // 获取所有数据并更新数组
     addZhixing () {
       this.fourthArrName = [];
       this.fourthArrCode = [];
-      for (let i in this.tabTitle) {
-        this.$api.get(`api/campaign/getCampaignOption2?page=1&ind_code=i01&prov=zj&city=hz&code=${this.tabTitle[i].code}`)
-        .then(res => {
-          if (res.data.data) {
-            const data = res.data.data;
-            if (!this.tabTitle[i].child) {
-              this.tabTitle[i].child = data;
-            }
-          }
-        });
-      }
+      this.showSelectDataAll = {};
       setTimeout(() => {
         this.dialogVisible = true;
         this.showTab = true;
-      }, 20);
+      }, 200);
     },
     // 选择项目
     clickActive (data) {
-      console.log(data);
-      this._selectActive(data.val, data.num, data.lastVal, data.firstVal, data.secondVal);
+      this._selectActive(data.val, data.num, data.checked, data.lastVal, data.firstVal, data.secondVal);
     },
     // 提交
     submit () {
@@ -123,9 +129,9 @@ export default {
     },
     // 确定添加选择项目
     selectDataList () {
+      this.showTab = false;
       this.showSelectData.push(this.showSelectDataAll);
       this.dialogVisible = false;
-      this.showTab = false;
     },
     cancel () {
       this.showTab = false;
@@ -137,15 +143,16 @@ export default {
     },
     // 打开以选择项目
     showTag (tag) {
+      this.activeShowTag = tag;
       this.showSelectTag = true;
       this.childShowTag = tag;
       this.showDialogVisible = true;
       console.log(tag);
     },
-    handleClose (tag) {
+    removeClose (tag) {
       this.showSelectData.splice(this.showSelectData.indexOf(tag), 1);
     },
-    hideClose (done) {
+    handleClose (done) {
       this.$confirm('确认关闭？')
         .then(_ => {
           this.showTab = false;
@@ -154,122 +161,121 @@ export default {
         })
         .catch(_ => {});
     },
-    _selectActive (val, num, lastVal, firstVal, secondVal) {
-      switch (num) {
-        case 2:
-          let firstSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? lastVal.name + ' -> ' : ''} ${val.father.name}`;
-          let firstCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? lastVal.code + ' -> ' : ''} ${val.father.code}`;
-          const firstData = {
-            name: firstSel,
-            code: firstCode
-          };
-          this.showSelectDataAll = firstData;
-          break;
-        case 3:
-          let secondSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name + ' -> ' : '') : ''} ${val.father.name}`;
-          let secondCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code + ' -> ' : '') : ''} ${val.father.code}`;
-          const secondData = {
-            name: secondSel,
-            code: secondCode
-          };
-          this.showSelectDataAll = secondData;
-          break;
-        case 4:
-          if (!val['active']) {
-            val.active = 'active';
-          } else {
-            delete val.active;
-          }
-          let forthSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name + ' -> ' : '') : ''}`;
-          let forthCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code + ' -> ' : '') : ''}`;
-          this.fourthArrName.push(val.name);
-          this.fourthArrCode.push(val.code);
-          this.showSelectDataAll = {
-            name: `${forthSel} ${this.fourthArrName}`,
-            code: `${forthCode} ${this.fourthArrCode}`
-          };
-          break;
-        default:
-          let sel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name + ' -> ' : '') : ''} ${val.name}`;
-          let code = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code + ' -> ' : '') : ''} ${val.code}`;
-          const data = {
-            name: sel,
-            code: code
-          };
-          this.showSelectDataAll = data;
-          break;
+    // 对子组件传递的参数做过滤并且生成需要的属性
+    _selectActive (val, num, checked, lastVal, firstVal, secondVal) {
+      if (checked) {
+        switch (num) {
+          case 2:
+            this.fourthArrName = [];
+            this.fourthArrCode = [];
+            let firstSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? lastVal.name + ' -> ' : ''} ${val.father.name}`;
+            let firstCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? lastVal.code + ' -> ' : ''} ${val.father.code}`;
+            let firstData = {
+              name: firstSel,
+              code: firstCode
+            };
+            this.showSelectDataAll = firstData;
+            break;
+          case 3:
+            this.fourthArrName = [];
+            this.fourthArrCode = [];
+            let secondSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name + ' -> ' : '') : ''} ${val.father.name}`;
+            let secondCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code + ' -> ' : '') : ''} ${val.father.code}`;
+            let secondData = {
+              name: secondSel,
+              code: secondCode
+            };
+            this.showSelectDataAll = secondData;
+            break;
+          case 4:
+            if (!val['active']) {
+              val.active = 'active';
+            } else {
+              delete val.active;
+            }
+            if (lastVal.father.code !== this.lastVal.code) {
+              this.fourthArrName = [];
+              this.fourthArrCode = [];
+            }
+            this.lastVal = lastVal.father;
+            let forthSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name : '') : ''}`;
+            let forthCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code : '') : ''}`;
+            if (val.active) {
+              this.fourthArrName.push(val.name);
+              this.fourthArrCode.push(val.code);
+            } else {
+              this.remove(this.fourthArrName, val.name);
+              this.remove(this.fourthArrCode, val.code);
+              if (this.fourthArrName.length <= 0) {
+                this.showSelectDataAll = {};
+                return;
+              }
+            }
+            this.showSelectDataAll = {
+              name: `${forthSel} ${this.fourthArrName.length ? ' -> ' + this.fourthArrName : ''}`,
+              code: `${forthCode} ${this.fourthArrCode.length ? ' -> ' + this.fourthArrCode : ''}`
+            };
+            break;
+          default:
+            this.fourthArrName = [];
+            this.fourthArrCode = [];
+            let sel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name + ' -> ' : '') : ''} ${val.name}`;
+            let code = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code + ' -> ' : '') : ''} ${val.code}`;
+            let data = {
+              name: sel,
+              code: code
+            };
+            this.showSelectDataAll = data;
+            break;
+        }
+      } else {
+        this.fourthArrName = [];
+        this.fourthArrCode = [];
+        switch (num) {
+          case 2:
+            let firstSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? lastVal.name : ''}`;
+            let firstCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? lastVal.code : ''}`;
+            let firstData = {
+              name: firstSel,
+              code: firstCode
+            };
+            this.showSelectDataAll = firstData;
+            break;
+          case 3:
+            let secondSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name : '') : ''}`;
+            let secondCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code : '') : ''}`;
+            let secondData = {
+              name: secondSel,
+              code: secondCode
+            };
+            this.showSelectDataAll = secondData;
+            break;
+          default:
+            this.showSelectDataAll = {};
+            break;
+        }
       }
-      console.log(this.showSelectDataAll);
+    },
+    remove (str, val) {
+      for (let i in str) {
+        if (str[i] === val) {
+          str.splice(i, 1);
+        }
+      }
     }
   }
 };
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-.select
-  height: 400px
-  width: 860px
-.all-tab
-  display: flex
-  width: 860px
-  font-size: 15px
-  box-sizing: border-box
-  >li
-    height: 50px
-    line-height: 50px
-    box-sizing: border-box
-  .top-item
-    box-sizing: border-box
-    height: 320px
-    margin-top: 5px
-    overflow: auto
-    width: 860px
-    position: absolute
-    left: 20px
-    .second-tab
-      display: flex
-      flex-wrap: wrap
-      width: 850px
-    .third-tab
-      display: flex
-      flex-wrap: wrap
-    .fourth-tab
-      display: flex
-      flex-wrap: wrap
-    .second-item
-      box-sizing: border-box
-      width: 100%
-      position: absolute
-      left: 0
-    .third-item
-      width: 800px
-      box-sizing: border-box
-      overflow: auto
-      position: absolute
-      left: 0
-  .top-last, .third-list, .second-last, .fourth-list
-    padding: 0 10px
-    border: 1px solid #bfcbd9
-    box-sizing: border-box
-    border-radius: 2px
-  .hover-out
-    color: black
-  .top-item-is-hide
-    display: none
-  .top-item-is-show
-    display: block
-  .active
-    background: #20a0ff
-    border: 1px solid #20a0ff
-    color: white
-  .hover
-    color: red
 .show-tag
   border: 1px solid #ccc
   text-align: left
+  overflow: auto
   span
     display: block
     margin: 10px
+    font-size: 15px
   .add-data-list
     height: 100px
     border: 1px dashed #ccc
@@ -280,4 +286,13 @@ export default {
       display: inline-block
       width: 50px
       margin: 35px 15px
+.active-show-tag
+  color: red
+  text-align: left
+  span
+    display: inline-block
+    line-height: 20px
+  span:first-child
+    width: 70px
+    vertical-align: center
 </style>
