@@ -12,10 +12,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="区域选择" prop="area">
-              <el-select v-model="form.area" placeholder="请选择区域">
+            <el-form-item label="区域选择" >
+              <el-cascader
+                expand-trigger="hover"
+                :options="form.options"
+                v-model="form.selectedOptions2"
+                @change="handleChange">
+              </el-cascader>
+
+              <!-- <el-select v-model="form.area" placeholder="请选择区域">
                 <el-option v-for="i in form.areas" :label="i.name" :value="i.code"></el-option>
-              </el-select>
+              </el-select> -->
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -64,17 +71,6 @@
           <el-col :span="16">
             <el-form-item label="所需周期"  required>
               <Time  :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Time>
-              <!-- <el-col :span="8" style="padding-left:0px;padding-right:0px">
-                <el-form-item prop="stratime" >
-                  <el-date-picker type="date" placeholder="选择日期" v-model="form.stratime" :picker-options="form.pickerOptions1" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-              </el-col>
-              <el-col class="line" :span="1">-</el-col>
-              <el-col :span="8" style="padding-left:0px;padding-right:0px">
-                <el-form-item prop="endtime">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="form.endtime" :picker-options="form.pickerOptions1" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-              </el-col> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -144,6 +140,12 @@ export default {
         dates: [],
         region: '',
         regions: [],
+        options: [{
+          value: '',
+          label: '',
+          children: []
+        }],
+        selectedOptions2: [],
         area: '',
         areas: [],
         name: '',
@@ -182,7 +184,7 @@ export default {
         region: [
           { required: true, message: '请选择行业', trigger: 'change' }
         ],
-        area: [
+        selectedOptions2: [
           { required: true, message: '请选择区域', trigger: 'change' }
         ],
         name: [
@@ -220,7 +222,9 @@ export default {
       industry: [],
       strategy: [],
       city1: '',
+      area1: '',
       industry1: '',
+      industryId1: '',
       strategy1: ''
     };
   },
@@ -229,15 +233,26 @@ export default {
     this.form.zbname = this.$store.state.userName;
   },
   methods: {
+    // 区域选择
+    handleChange (value) {
+      console.log(value);
+    },
     dataEvent (val) {
       this.form.stratime = val.minbatch;
       this.form.endtime = val.maxbatch;
     },
     // 提交需求单
     onSubmit (formName) {
+      var city;
+      if (this.form.selectedOptions2.length < 2) {
+        city = '';
+      } else {
+        city = this.form.selectedOptions2[1];
+      };
       var b = {
         'industryId': this.form.region,
-        'area': this.form.area,
+        'area': this.form.selectedOptions2[0],
+        'city': city,
         'tabulator': this.form.zbname,
         'project_name': this.form.name,
         'strategy': this.form.type,
@@ -247,6 +262,7 @@ export default {
         'end_date': new Date(this.form.endtime).toLocaleDateString(),
         'project_description': this.form.miaoshu
       };
+      console.log(b);
       var url = '/api/brief/addbrief';
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -254,9 +270,18 @@ export default {
           this.$api.post(url, b).then((res) => {
             this.loading = false;
             this.queren = res.data.data;
-            for (var i = 0; i < this.city.length; i++) {
-              if (res.data.data.area === this.city[i].code) {
-                this.area1 = this.city[i].name;
+            console.log(this.form.options);
+            for (var i = 0; i < this.form.options.length; i++) {
+              if (res.data.data.area === this.form.options[i].value) {
+                if (res.data.data.city === '') {
+                  this.area1 = this.form.options[i].label;
+                } else {
+                  for (var q = 0; q < this.form.options[i].children.length; q++) {
+                    if (res.data.data.city === this.form.options[i].children[q].value) {
+                      this.area1 = this.form.options[i].label + '/' + this.form.options[i].children[q].label;
+                    }
+                  }
+                }
               }
             };
             for (var s = 0; s < this.industry.length; s++) {
@@ -269,7 +294,13 @@ export default {
                 this.strategy1 = this.strategy[n].name;
               }
             };
-            this.dialogVisible = true;
+            this.$confirm('恭喜你添加成功!', '提示', {
+              confirmButtonText: '确定',
+              showCancelButton: false,
+              type: 'success'
+            }).then(() => {
+              this.dialogVisible = true;
+            });
           });
         } else {
           console.log('error submit!!');
@@ -279,17 +310,13 @@ export default {
     },
     // 确认需求单
     xqqr (formName) {
-      console.log(this.form.data);
       this.dialogVisible = false;
       // this.form.data = ''; // 清空数据
       this.$refs[formName].resetFields(); // 清空数据
-      this.$confirm('恭喜你添加成功!', '提示', {
-        confirmButtonText: '确定',
-        showCancelButton: false,
-        type: 'success'
-      }).then(() => {
-        this.$emit('tiaozhuan');
-      });
+      this.$emit('tiaozhuan');
+      console.log(this.form.dates);
+      this.form.selectedOptions2 = [];
+      location.reload();
     },
     // 重置
     resetForm (formName) {
@@ -300,11 +327,31 @@ export default {
       var url = '/api/brief/getBriefSelect';
       this.$api.get(url).then((res) => {
         if (res.data.code === 0) {
-          this.city = res.data.data.city;
+          // this.options = res.data.data.city;
+          var data = [];
+          for (var i = 0; i < res.data.data.city.length; i++) {
+            var obj = {};
+            obj.children = [];
+            obj.value = res.data.data.city[i].prov.code;
+            obj.label = res.data.data.city[i].prov.name;
+            for (var s = 0; s < res.data.data.city[i].city.length; s++) {
+              var obj2 = {};
+              obj2.value = res.data.data.city[i].city[s].code;
+              obj2.label = res.data.data.city[i].city[s].name;
+              obj.children[s] = obj2;
+              if (obj.children[0].value === '') {
+                delete obj.children;
+              }
+              console.log(obj);
+            }
+            data[i] = obj;
+          }
+          this.form.options = data;
+          console.log(this.form.options);
           this.industry = res.data.data.industry;
           this.strategy = res.data.data.strategy;
           this.form.regions = res.data.data.industry;
-          this.form.areas = res.data.data.city;
+          // this.form.areas = res.data.data.city;
           this.form.types = res.data.data.strategy;
         }
       });

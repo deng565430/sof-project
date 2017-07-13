@@ -6,7 +6,7 @@
                 <el-tab-pane v-for="s in hangye" :label="s.name" :name="s.code" >
                     <Search @search="search" @qingchu="qingchu"></Search>
                     <!-- table -->
-                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhiixngbtnm="zhiixngbtnm" ></TableList>
+                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhiixngbtnm="zhiixngbtnm" @services-zhixing="servicesZhixing"></TableList>
                     <!-- 分页 -->
                     <el-pagination
                       @size-change="handleSizeChange"
@@ -19,17 +19,18 @@
                     </el-pagination>
                 </el-tab-pane>
             </el-tabs>
-          <!-- :shachuzhiling="shachuzhiling" -->
   		  </el-tab-pane>
 		</el-tabs>
     <!-- 修改需求单 -->
     <!-- <Xiugai v-if="Xiugais" :chakanxiang="chakanxiang" :xiugai="xiugai" @isshow='isshow' @isshow2="isshow2"></Xiugai> -->
+    <Xinjian v-if="Xinjian" @back="back"></Xinjian>
 	</div>
 </template>
 
 <script>
 import TableList from './../tableList';
 import Search from './../xuqiudan/search';
+import Xinjian from './xinjian';
 /* import Xiugai from './xiugai';
 import Search from './search'; */
 
@@ -39,7 +40,8 @@ export default {
   props: ['tabs2'],
   components: {
     TableList,
-    Search
+    Search,
+    Xinjian
     /* Xiugai,
     Search */
   },
@@ -60,23 +62,13 @@ export default {
       tabs3: this.tabs2,
       hangye: hangye,
       zhiixngbtnm: 4,
-      hanyetab: ''
-      // isshanchum: this.tabs2,
-      // chakanm: this.tabs2,
-      // xiugaibtns: this.tabs2,
-      // shanchuque: true,
-      // shanchusuccess: '',
-      // chakanxiang: this.tabs2
+      hanyetab: '',
+      Xinjian: false
     };
   },
   watch: {
     tabs2 (val) {
       this.tabs3 = val;
-      // this.isshanchum = this.tabs3;
-      // this.chakanm = this.tabs3;
-      // this.xiugaibtns = this.tabs3;
-      // this.chakanxiang = this.tabs3;
-      // console.log(this.chakanxiang);
       this.activeName = '1';
       this.tabName = 1;
       this.currentPage4 = 1;
@@ -87,7 +79,6 @@ export default {
   created () {
     this.tabName = 1;
     this.hanyetab = 1;
-    console.log(this.tabs3);
     // this.getTable(this.tabs3, 0, 10, '', '', ''); // 获取列表
     this.getcelue();// 获取策略类型
     this.getHangyeList();// 获取行业
@@ -114,6 +105,12 @@ export default {
     // 删除行
     servicesShanchu (val) {
       // console.log(val);
+    },
+    // 新建执行单 执行
+    servicesZhixing (val) {
+      console.log(val);
+      this.tabsisshow = false;
+      this.Xinjian = true;
     },
     // 确认删除窗
     servicesQurrenshanchu (val) {
@@ -272,6 +269,12 @@ export default {
       } else {
         this.getNewList(tab.name, 0, 10, '', '', '');
       };
+    },
+    // 返回
+    back (val) {
+      console.log(val);
+      this.Xinjian = false;
+      this.tabsisshow = true;
     }
   }
 };

@@ -107,6 +107,7 @@ export default {
     // 跳转执行
     zhiixng (index, rows) {
       console.log(rows[index].id);
+      this.$emit('services-zhixing', rows[index].id);
     },
     // 跳转到查看
     chakanxiqngiqng (val) {

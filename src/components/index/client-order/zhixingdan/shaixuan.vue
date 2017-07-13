@@ -1,5 +1,11 @@
 <template>
 <div>
+  <!-- 返回 -->
+  <div style="text-align:left;margin-bottom:30px">
+    <span  class="el-icon-arrow-left" style="font-size:14px;color:#20A0FF"></span>
+    <el-button type="text" @click="back">返回</el-button>
+  </div>
+
   <el-dialog title="已有项目" :visible.sync="dialogVisible" size="tiny" :close-on-press-escape="false" :before-close="handleClose">
     <div v-if="showTab">
       <ShowTag :tabTitle="tabTitle" @clickActive="clickActive" :ifHideActive="true" :flag="true"></ShowTag>
@@ -53,8 +59,20 @@
     <el-button type="primary" @click="confirm">确 定</el-button>
   </span>
 </el-dialog>
+
+
+    <el-form style="width:300px;margin-top:20px"  label-width="100px">
+      <el-form-item label="执行单名称">
+        <el-input v-model="zname" :disabled="title !== ''"></el-input>
+      </el-form-item>
+    </el-form>
+
+
     <div style="text-align: left; padding-top: 20px">
       <el-button type="primary" :disabled="showSelectData.length <= 0" @click="submit">提交</el-button>
+    </div>
+    <div style="text-align: left; padding-top: 20px">
+      <el-button type="primary" :disabled="showSelectData.length <= 0" @click="submit2">提交2</el-button>
     </div>
 </div>
 </template>
@@ -64,6 +82,7 @@ import ShowTag from './showTag';
 export default {
 
   name: 'shaixuan',
+  props: ['getcode', 'showselected', 'title'],
   components: {
     ShowTag
   },
@@ -81,16 +100,20 @@ export default {
       loading: false,
       childShowTag: '',
       activeShowTag: '',
-      lastVal: ''
+      lastVal: '',
+      zname: ''
     };
   },
   created () {
     // 获取展示数据
     this.getTab();
+    this.showSelectData = this.showselected;
+    this.zname = this.title;
+    console.log(this.zname);
   },
   methods: {
     getTab () {
-      this.$api.get('/api/campaign/getCampaignOption?page=0&prov=zj&city=hz&ind_code=i01&code=').then((res) => {
+      this.$api.get('/api/campaign/getCampaignOption?page=0&prov=zj&city=hz&ind_code=i01&code=' + this.getcode).then((res) => {
         const data = res.data.data;
         this.tabTitle = data;
         for (let i in this.tabTitle) {
@@ -127,6 +150,17 @@ export default {
         console.log(res);
       });
     },
+    // 提交
+    submit2 () {
+      this.$api.post('/api/campaign/getCampaignToView', this.showSelectData)
+      .then(res => {
+        console.log(res);
+        var obj = {};
+        obj.title = this.zname;
+        obj.tags = this.showSelectData;
+        this.$emit('fendan', obj);
+      });
+    },
     // 确定添加选择项目
     selectDataList () {
       this.showTab = false;
@@ -150,6 +184,7 @@ export default {
       console.log(tag);
     },
     removeClose (tag) {
+      console.log(tag);
       this.showSelectData.splice(this.showSelectData.indexOf(tag), 1);
     },
     handleClose (done) {
@@ -262,6 +297,9 @@ export default {
           str.splice(i, 1);
         }
       }
+    },
+    back () {
+      this.$emit('back', 'back');
     }
   }
 };
