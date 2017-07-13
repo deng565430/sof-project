@@ -40,6 +40,14 @@ export default {
   },
   created () {},
   methods: {
+    getAllData () {
+      this.$api.get(``)
+      .then(res => {
+        return new Promise((resolve, reject) => {
+          resolve(res);
+        });
+      });
+    },
     charts (id, data) {
       this.map = new BMap.Map(document.getElementById('hotCharts'), {});
       this.map.centerAndZoom(new BMap.Point(121.474488, 31.238034), 11);

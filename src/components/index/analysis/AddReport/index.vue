@@ -1,9 +1,7 @@
 <template>
   <div>
   <div id="allProject">
-    <el-badge :value="12" class="item">
       <el-button size="small">已有全部订阅</el-button>
-    </el-badge>
   </div>
     <div style="text-align: left;" >
       <el-button type="danger" @click="addProject">添加订阅</el-button>
@@ -74,7 +72,7 @@
           <div class="project-list">
             <h3>楼盘列表： <el-button type="danger" @click="cancelRadio" size="small"> 重新选择</el-button></h3>
             <div class="project-list-clild" v-if="radioShow.length">
-              <el-radio-group v-model="radio" @change="radioGropChange">
+              <el-radio-group v-model="radio">
                 <el-radio-button style="padding: 2px;" v-for="(item, index) in radioShow" :key="index"  :label="item">{{item.tagname}}</el-radio-button>
               </el-radio-group>
             </div>
@@ -83,7 +81,7 @@
             </div>
           </div>
           <span slot="footer" class="dialog-footer">
-            <el-button type="success" :disabled="flag" @click="nextPostProject">下一步</el-button>
+            <el-button type="success" :disabled="radio === ''" @click="nextPostProject">下一步</el-button>
           </span>
         </div>
         <div v-if="!isShowSearch">
@@ -167,7 +165,6 @@ export default {
       radio: '',
       radioList: [],
       radioShow: [],
-      flag: true,
       defaultData: [],
       filterSelectData: [],
       filterData: '',
@@ -188,10 +185,8 @@ export default {
         }
       });
     },
-    radioGropChange () {
-      this.flag = false;
-    },
     nextPostProject () {
+      console.log(this.filterSelectData.length);
       if (!this.radio) {
         this.$alert('请选择楼盘', '提示信息');
         return;
@@ -200,10 +195,12 @@ export default {
       .then(res => {
         this.defaultData = res.data.data;
       });
-      this.$api.post('/api/apis/getAllloupan', this.radio)
-      .then(res => {
-        this.filterSelectData = res.data.data;
-      });
+      if (this.filterSelectData.length === 0) {
+        this.$api.post('/api/apis/getAllloupan', this.radio)
+        .then(res => {
+          this.filterSelectData = res.data.data;
+        });
+      }
       this.isShowSearch = false;
       this.activeName = 'first';
     },
@@ -241,6 +238,7 @@ export default {
       console.log(this.searchInput);
     },
     confirm () {
+      console.log(this.childfilterData);
       if (this.startTime === '') {
         this.$alert('请选择订阅开始时间');
         return;
@@ -266,11 +264,10 @@ export default {
         if (res.data) {
           self.$alert(res.data.msg, '提示信息');
           self.dialogVisible = false;
+          self.childfilterData = [];
+          window.location.reload();
         }
       });
-      setTimeout(() => {
-        this.childfilterData = [];
-      }, 20);
     },
     dataEvent (data) {
       this.startTime = data;
@@ -293,11 +290,7 @@ export default {
       });
     },
     cancelRadio () {
-      console.log(this.radio);
       this.radio = '';
-      setTimeout(() => {
-        this.flag = true;
-      }, 100);
     }
   }
 };
