@@ -239,8 +239,8 @@ export default {
               this.fourthArrName.push(val.name);
               this.fourthArrCode.push(val.code);
             } else {
-              this.remove(this.fourthArrName, val.name);
-              this.remove(this.fourthArrCode, val.code);
+              this._remove(this.fourthArrName, val.name);
+              this._remove(this.fourthArrCode, val.code);
               if (this.fourthArrName.length <= 0) {
                 this.showSelectDataAll = {};
                 return;
@@ -291,7 +291,7 @@ export default {
         }
       }
     },
-    remove (str, val) {
+    _remove (str, val) {
       for (let i in str) {
         if (str[i] === val) {
           str.splice(i, 1);

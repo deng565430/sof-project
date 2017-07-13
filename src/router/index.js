@@ -39,6 +39,24 @@ const AddProjectList = r => require.ensure([], () => r(require('../components/in
 
 Vue.use(Router);
 
+
+const scrollBehavior = (to, from, savedPosition) => {
+  if (savedPosition) {
+    // savedPosition is only available for popstate navigations.
+    return savedPosition
+  } else {
+    const position = {};
+    if (to.hash) {
+      position.selector = to.hash
+    }
+    if (to.matched.some(m => m.meta.scrollToTop)) {
+      position.x = 0;
+      position.y = 0;
+    }
+    return position;
+  }
+};
+
 const router = new Router({
   routes: [{
     path: '/',
@@ -120,8 +138,9 @@ const router = new Router({
       path: 'addprojectlist',
       component: AddProjectList
     }, {
-      path: 'report/:id',
-      component: Report
+      path: 'report/:project/:proid/:id',
+      component: Report,
+      meta: { scrollToTop: true }
     }]
   }],
   // mode: 'history',

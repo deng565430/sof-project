@@ -12,9 +12,9 @@
       <div class="project-list-clild" v-for="desc in item.dimUserSubscribeListDtos">
         <div>
           <span><i class="el-icon-time" style="color: #8dd1e2;"></i> 订阅开始日期： {{desc.date}}</span>
-          <span>订阅时长： {{desc.duration}}个月</span>
+          <span>订阅时长： {{desc.duration === '实时' ? desc.duration : desc.duration + '个月'}}</span>
           <span><i class="el-icon-document" style="color: #8dd1e2;"></i> 订阅截止日期： {{desc.targetDate}}</span>
-          <span><i class="el-icon-document" style="color: #8dd1e2;"></i> {{desc.rtype === 'week' ?  '周报' : '月报'}}</span>
+          <span><i class="el-icon-document" style="color: #8dd1e2;"></i> {{desc.rtype}}</span>
         </div>
         <div>
           <div class="project-list-left">
@@ -41,7 +41,7 @@
               <p>下期报告 <span v-html="desc.nextCycle === true ? '已完成' : '未完成'"></span><i :class="desc.nextCycle === true ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i></p>
             </div>
             <div class="show-btn">
-              <router-link :to="'/analysis/report/'+ desc.id"><el-button type="primary" >查看订阅 ></el-button></router-link>
+              <router-link :to="'/analysis/report/'+ desc.tagname + '/' + desc.userid + '/' + desc.id" ><el-button type="primary" >查看订阅 ></el-button></router-link>
             </div>
           </div>
         </div>
@@ -176,14 +176,18 @@ export default {
       display: flex
       .project-list-left
         display: flex
+        flex-wrap: wrap
+        justify-content: space-around
+        align-items: center
         width: 700px
-        div
-          width: 25%
-          padding-top: 20px
         p
+          height: 30px
+          font-size: 15px
           text-align: center
           line-height: 30px
           color: black
+        p:last-child
+          line-height: 20px  
         .list-color
           color: #6b6b6b
       .project-list-right
