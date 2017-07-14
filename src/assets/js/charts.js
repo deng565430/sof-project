@@ -11,14 +11,30 @@ export function line(data, name, title) {
         case 'selectTypeProject':
             var selectData = selectDatas(data);
             return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
+            break
+        case 'shichangfenxiTitle':
+            return mutilLine(data);
+            break
+        case 'shichangfenxiTitleLeft':
+            return radar(data);
+            break
+        case 'gengduorenqunpianhao01Left':
+            return radar(data);
             break    
+        case 'renqunpianhaozhuyaoquyuProject':
+            return pie(data);
+            break
+        case 'yewupinggu':
+            var selectData = selectDatas(data);
+            return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
+            break                       
         default:
             // statements_def
             break;
     }
 };
 
-// 处理 总关注趋势 数据
+// 处理 总关注趋势 数据 折线图
 function topAllData (data) {
     var k = [];
     var c = [];
@@ -69,7 +85,7 @@ function topAllData (data) {
         seriesData: seriesData
     }
 }
-// 处理 更多市场关注趋势 数据
+// 处理 更多市场关注趋势 数据 折线图
 function selectDatas (data) {
     var top5LegendData = data.tagname;
     var xAxisData = [];
@@ -78,6 +94,7 @@ function selectDatas (data) {
     var seriesData2 = [];
     var seriesData3 = [];
     var seriesData4 = [];
+    var seriesData5 = [];
     data.result.forEach(function(item, index) {
         item.forEach(function(childItem, childIndex) {
             switch (childItem.tagname ? childItem.tagname : childItem.name) {
@@ -94,8 +111,11 @@ function selectDatas (data) {
                 case top5LegendData[3]:
                     seriesData3.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
                     break;
-                default:
+                case top5LegendData[4]:
                     seriesData4.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
+                    break;    
+                default:
+                    seriesData5.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
                     break;
             }
         });
@@ -120,6 +140,10 @@ function selectDatas (data) {
         name: top5LegendData[4],
         type: 'line',
         data: seriesData4
+    }, {
+        name: top5LegendData[5],
+        type: 'line',
+        data: seriesData5
     }];
     return {
         top5LegendData: top5LegendData,
@@ -128,7 +152,7 @@ function selectDatas (data) {
     }
 };
 
-// 处理 'line' 数据option
+// 处理 'line' 数据option 折线图
 function option (title, legendData, xAxisData, seriesData) {
     var option = {
         title: {
@@ -160,297 +184,45 @@ function option (title, legendData, xAxisData, seriesData) {
     return option;
 }
 
-
-export function areaStack(pie) {
-    var title = ''; // _(pie).thru(_.head).result("classs");
-    var xAxis = [];
-    var data = [];
-
-    pie.forEach(function(attr) {
-        xAxis.push(attr.name);
-        data.push(attr.value);
+// 处理 人群偏好 总价 折线图
+function mutilLine (data) {
+    var legendData = [];
+    var xAxisData = [];
+    var seriesData = [];
+    data.forEach(function (item, index) {
+        legendData.push(item.name);
+        xAxisData.push(item.classes);
     })
-    return {
-        title: {
-            show: false,
-            text: title + "关注量",
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            data: [title]
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                dataView: {
-                    show: false,
-                    readOnly: false
-                },
-                magicType: {
-                    show: true,
-                    type: ['line', 'bar']
-                },
-                restore: {
-                    show: true
-                },
-                saveAsImage: {
-                    show: true
-                }
+    legendData = [...new Set(legendData)];
+    xAxisData = [...new Set(xAxisData)];
+    for (let i in legendData) {
+        let datas = [];
+        data.forEach(function(item, index) {
+            if (item.name === legendData[i]) {
+                datas.push(item.value);
             }
-        },
-        calculable: true,
-        xAxis: [{
-            type: 'category',
-            axisLabel: {
-                rotate: 45,
-                interval: 0
-            },
-            data: xAxis
-        }],
-        yAxis: [{
-            type: 'value'
-        }],
-        series: [{
-            name: title,
-            type: 'bar',
-            data: data
-        }]
-    };
-};
-
-export function BCGMatrix(bos, mutil) {
-    var xAxis = [];
-    var data = [];
-    var legend = [];
-    var xmin = 0,
-        xmax = 0,
-        ymin = 0,
-        ymax = 0,
-        symbol = ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow'];
-    if (mutil) {
-        var tmpArr = _.groupBy(bos, "classs");
-        legend = _.concat(legend, _.keys(tmpArr));
-        _.each(tmpArr, function(v, k) {
-            let tmpPoint = [];
-            _.each(v, function(_v, _k) {
-                var x = parseFloat(_v.classcode);
-                var y = parseFloat(_v.value);
-                xmin > x ? xmin = x : xmin;
-                xmax < x ? xmax = x : xmax;
-                ymin > y ? ymin = y : ymin;
-                ymax < y ? ymax = y : ymax;
-                tmpPoint.push([_v.classcode, _v.value, 100, _v.name, k])
-            });
-            data.push({
-                name: k,
-                type: 'scatter',
-                data: tmpPoint,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'top',
-                        formatter: function(a) {
-                            return a.data[3] + ''
-                        }
-                    }
-                }
-            });
-        });
-        _.each(data, function(v, k) {
-            v["markLine"] = {
-                animation: false,
-                label: {
-                    normal: {
-                        formatter: "评判线"
-                    }
-                },
-                lineStyle: {
-                    normal: {
-                        type: 'solid',
-                        color: "#f00"
-                    }
-                },
-                tooltip: {
-                    formatter: '评判线'
-                },
-                data: [
-                    [{
-                        coord: [10, (ymin - 10).toFixed(2)],
-                        symbol: 'none'
-                    }, {
-                        coord: [10, (ymax + 10).toFixed(2)],
-                        symbol: 'none'
-                    }],
-                    [{
-                        coord: [(xmin - 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
-                        symbol: 'none'
-                    }, {
-                        coord: [(xmax + 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
-                        symbol: 'none'
-                    }]
-                ]
-            };
-            v["symbol"] = k > 6 ? symbol[k - 6] : symbol[k];
         })
-    } else {
-        _.each(bos, function(attr) {
-            var x = parseFloat(attr.classcode);
-            var y = parseFloat(attr.value);
-            xmin > x ? xmin = x : xmin;
-            xmax < x ? xmax = x : xmax;
-            ymin > y ? ymin = y : ymin;
-            ymax < y ? ymax = y : ymax;
-            legend.push(attr.name);
-            data.push({
-                    name: attr.name,
-                    type: 'scatter',
-                    data: [
-                        [attr.classcode, attr.value]
-                    ],
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'top',
-                            formatter: "{a}"
-                        }
-                    }
-                }
-
-            );
-        });
-        data[0]['markLine'] = {
-            animation: false,
-            label: {
-                normal: {
-                    formatter: "评判线"
-                }
-            },
-            lineStyle: {
-                normal: {
-                    formatter: "评判线",
-                    type: 'solid',
-                    color: "#f00"
-                }
-            },
-            tooltip: {
-                formatter: '评判线'
-            },
-            data: [
-                [{
-                    coord: [10, (ymin - 10).toFixed(2)],
-                    symbol: 'none'
-                }, {
-                    coord: [10, (ymax + 10).toFixed(2)],
-                    symbol: 'none'
-                }],
-                [{
-                    coord: [(xmin - 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
-                    symbol: 'none'
-                }, {
-                    coord: [(xmax + 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
-                    symbol: 'none'
-                }]
-            ]
-        };
-    };
+        seriesData.push({
+            name: legendData[i],
+            type: 'line',
+            data: datas
+        })
+    }
     return {
         title: {
+            show: true,
             text: '',
-            x: 'center',
-            y: 0
-        },
-        legend: {
-            show: true,
-            data: legend,
-            top: "20",
-        },
-        grid: {
-            top: '80'
-        },
-        tooltip: {
-            formatter: "{a}<br/>占比,涨幅:{c}",
-        },
-        toolbox: {
-            feature: {
-                dataZoom: {},
-                brush: {
-                    type: ['rect', 'polygon', 'clear']
-                }
-            }
-        },
-        xAxis: [{
-            gridIndex: 0,
-            min: (xmin - 10).toFixed(2),
-            max: (xmax + 10).toFixed(2),
-            axisLine: {
-                lineStyle: {
-                    color: "#ddd"
-                }
-            },
-            axisTick: {
-                show: false
-            }
-        }],
-        yAxis: [{
-            gridIndex: 0,
-            min: (ymin - 10).toFixed(2),
-            max: (ymax + 10).toFixed(2),
-            axisLine: {
-                lineStyle: {
-                    color: "#ddd"
-                }
-            },
-            axisTick: {
-                show: false
-            }
-        }],
-        series: data
-    };
-}
-
-export function mutilLine(line, title, type, zoom) {
-    var xAxis = [];
-    var data = [];
-    const legend = [];
-    var type = type || 'line'
-    var series = _.groupBy(line, "name");
-    _.each(line, function(attr) {
-        xAxis.push(attr.classs);
-    })
-    xAxis = _.uniq(xAxis);
-    //遍历获取到的项目， 把他拼成series 所需要格式
-    _.each(series, function(val, key) {
-
-        var v = [];
-        for (var i = 0; i < val.length; i++) {
-            v.push(val[i].value)
-        }
-        data.push({
-            name: key,
-            type: !!type ? type : 'line',
-            data: v
-        });
-
-        legend.push(key);
-    });
-
-    return {
-        title: {
-            show: true,
-            text: title,
         },
         tooltip: {
             trigger: 'axis'
         },
         legend: {
-            data: legend
+            data: legendData
         },
         grid: {
             bottom: 80
         },
-        dataZoom: !!zoom ? null : [{
+        dataZoom: [{
             show: true,
             realtime: true,
             start: 65,
@@ -484,17 +256,71 @@ export function mutilLine(line, title, type, zoom) {
         calculable: true,
         xAxis: [{
             type: 'category',
-            data: xAxis
+            data: xAxisData
         }],
         yAxis: [{
             type: 'value'
         }],
-        series: data
+        series: seriesData
     };
 }
 
-export function pie(pie, title, size) {
+// 处理 人群偏好 雷达图
+function radar(radar, title, size) {
     var showTitle = !!title ? true : false;
+    title = !!title ? title : '';
+    var max = 0;
+    var datas = [];
+    var total = 0;
+    radar.forEach(function(v) {
+        total += parseInt(v.value);
+    });
+    var seriesData = [];
+    radar.forEach(function(v) {
+        var p = (parseInt(v.value) / parseInt(total) * 100).toFixed(2)
+        max = parseInt(max) > parseInt(p) ? parseInt(max) : parseInt(p);
+        seriesData.push(p);
+    })
+    var radarIndicator = [];
+    radar.forEach(function(v) {
+        radarIndicator.push({
+            name: v.name,
+            max: parseInt(max) + 5
+        })
+    })
+    return {
+        title: {
+            show: showTitle,
+            text: title
+        },
+        tooltip: {},
+        legend: {
+            data: title
+        },
+        radar: {
+            radius: "50%",
+            indicator: radarIndicator
+        },
+        series: [{
+            name: title,
+            type: 'radar',
+            data: [{
+                value: seriesData,
+                name: title
+            }]
+        }]
+    };
+}
+
+// 处理 总价偏好 饼图
+function pie(pie, title, size) {
+    var showTitle = !!title ? true : false;
+    var title = pie[0].classes;
+    var legendData = [];
+    pie.forEach(function(item, index) {
+        legendData.push(item.name);
+    })
+    legendData = [...new Set(legendData)];
     return {
         title: {
             show: true,
@@ -505,18 +331,13 @@ export function pie(pie, title, size) {
             trigger: 'item',
             confine: true,
             formatter: "{a} <br/>{b} : {c} ({d}%)",
-            position: function(point, params, dom) {
-
-                var pointX = point[0] / 2.4;
-                var pointY = point[1] * 1.15;
-                return [pointX, pointY];
-            }
         },
+
         legend: {
             show: false,
             orient: 'horizontal',
             left: 'left',
-            data: _.keys(_.groupBy(pie, "name"))
+            data: legendData
         },
         series: [{
             name: title,
@@ -538,50 +359,4 @@ export function pie(pie, title, size) {
             }
         }]
     };
-}
-
-export function pieNext(all, sin) {
-    var options = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            show: false,
-            orient: 'vertical',
-            x: 'left',
-            data: []
-        },
-        series: []
-    }
-
-    var seriesAll = {
-        name: all.name,
-        type: 'pie',
-        selectedMode: 'single',
-        radius: [0, '30%'],
-        label: {
-            normal: {
-                position: 'inner'
-            }
-        },
-        labelLine: {
-            normal: {
-                show: false
-            }
-        },
-        data: all.data
-    };
-
-    var seriesSin = {
-        name: sin.name,
-        type: 'pie',
-        radius: ['40%', '55%'],
-
-        data: sin.data
-    };
-
-    options.series = [seriesAll, seriesSin];
-
-    return options;
 }

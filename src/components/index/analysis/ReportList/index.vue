@@ -26,8 +26,8 @@
             <div>
               <div class="select-item" v-if="selectData !== ''">
                 <div class="title">
-                <span>关注趋势（{{selectData}}）</span>
-                <span></span>
+                  <span>关注趋势（{{selectData}}）</span>
+                  <span></span>
                 </div>
                 <Charts :id="'selectData'" :projectType="selectDataProject[0]" :chartStyle="chartStyle"></Charts>
               </div>
@@ -43,18 +43,61 @@
         </el-collapse>
        </div>
        <div class="r-bazaar-title">
-         <h3>房产人群偏好 - 总价偏好及趋势</h3>
+         <h3>{{shichangfenxiTitle}}</h3>
          <div class="r-bazaar-charts">
-           charts
+            <div class="r-bazaar-charts-l">
+              <Charts :id="'shichangfenxiTitleLeft'" :projectType="shichangfenxiTitleLeftProject[0]" :chartStyle="{width: '400px', height: '400px'}"></Charts>
+            </div>
+            <div class="r-bazaar-charts-r"> 
+              <Charts :id="'shichangfenxiTitleRight'" :projectType="shichangfenxiTitleProject[0]" :chartStyle="{width: '600px', height: '400px'}"></Charts>
+            </div>
          </div>
          <div class="r-bazaar-charts">
-          <h3>总价偏好（主要区域）</h3>
-           charts
+          <h3>{{renqunpianhaozhuyaoquyu}}</h3>
+           <div class="r-bazaar-charts-child">
+             <div>
+               <Charts :id="'renqunpianhaozhuyaoquyuLeft'" :projectType="renqunpianhaozhuyaoquyuProjectLeft[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
+             </div>
+             <div>
+               <Charts :id="'renqunpianhaozhuyaoquyuMiddle'" :projectType="renqunpianhaozhuyaoquyuProjectMiddle[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
+             </div>
+             <div>
+               <Charts :id="'renqunpianhaozhuyaoquyuRight'" :projectType="renqunpianhaozhuyaoquyuProjectRight[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
+             </div>
+           </div>
          </div>
-         <el-collapse v-model="activeNames" @change="handleChange" class="r-bazzaar-collapse" style="">
-          <el-collapse-item style="color: #fff !import" title="更多房产人群偏好" name="2" >
+         <el-collapse v-model="activeNames" @change="gengduopianhaoChange" class="r-bazzaar-collapse" style="">
+          <el-collapse-item style="color: #fff !import" :title="gengduorenqunpianhaoTitle" name="2" >
             <div>
-              charts
+              <div class="select-item" v-if="selectData !== ''">
+                <div class="title">
+                  <span>{{gengduorenqunpianhao01}}</span>
+                  <span></span>
+                </div>
+                <div class="r-bazaar-charts-l">
+                  <Charts :id="'gengduorenqunpianhao01Left'" :projectType="gengduorenqunpianhao01LeftProject[0]" :chartStyle="{width: '400px', height: '400px'}"></Charts>
+                </div>
+                <div class="r-bazaar-charts-r"> 
+                  <Charts :id="'gengduorenqunpianhao01Right'" :projectType="gengduorenqunpianhao01RightProject[0]" :chartStyle="{width: '600px', height: '400px'}"></Charts>
+                </div>
+              </div>
+              <div class="select-item" v-if="selectType !== ''">
+                <div class="title">
+                <span>{{gengduorenqunpianhao02}}</span>
+                <span></span>
+                </div>
+                <div class="r-bazaar-charts-child">
+                 <div>
+                   <Charts :id="'gengduorenqunpianhao02Left'" :projectType="renqunpianhaozhuyaoquyuProjectLeft[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
+                 </div>
+                 <div>
+                   <Charts :id="'gengduorenqunpianhao02Middle'" :projectType="renqunpianhaozhuyaoquyuProjectMiddle[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
+                 </div>
+                 <div>
+                   <Charts :id="'gengduorenqunpianhao02Right'" :projectType="renqunpianhaozhuyaoquyuProjectRight[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
+                 </div>
+               </div>
+              </div>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -62,14 +105,18 @@
        <h2> —— 项目分析 ——</h2>
        <div class="r-bazaar-title">
          <h3>业务评估</h3>
-         <div class="r-bazaar-charts">
-           charts
+         <div class="r-bazaar-charts" style="height: 490px" v-if="yewupingguTitle !== ''">
+            <div class="title">
+                <span>{{yewupingguTitle}}</span>
+                <span></span>
+            </div>
+           <Charts :id="'yewupinggu'" :projectType="yewupinggu[0]" :chartStyle="chartStyle"></Charts>
          </div>
-         <div class="r-bazaar-charts">
+         <div class="r-bazaar-charts" v-if="zonghepinggu !== ''">
           <h3>综合评估</h3>
            charts
          </div>
-         <div class="r-bazaar-charts">
+         <div class="r-bazaar-charts" v-if="chengzhangxingpinggu !== ''">
           <h3>成长性评估</h3>
            charts
          </div>
@@ -142,13 +189,29 @@ export default {
       activeNames: '',
       scrolled: false,
       num: 1,
-      chartStyle: {width: '1000px', height: '500px'},
+      chartStyle: {width: '1000px', height: '400px'},
       rBazaarCharts: [],
       selectDataProject: [],
       selectTypeProject: [],
+      shichangfenxiTitleProject: [],
+      shichangfenxiTitleLeftProject: [],
+      renqunpianhaozhuyaoquyuProjectLeft: [],
+      renqunpianhaozhuyaoquyuProjectMiddle: [],
+      renqunpianhaozhuyaoquyuProjectRight: [],
+      yewupinggu: [],
+      yewupingguTitle: '三级人群关注变化趋势',
       topName: '上海楼盘',
       selectData: '区域',
-      selectType: '物业类型'
+      selectType: '物业类型',
+      shichangfenxiTitle: '房产人群偏好 - 总价偏好及趋势',
+      renqunpianhaozhuyaoquyu: '总价偏好（主要区域）',
+      gengduorenqunpianhaoTitle: '更多房产人群偏好',
+      gengduorenqunpianhao01: '面积偏好及趋势',
+      gengduorenqunpianhao01LeftProject: [],
+      gengduorenqunpianhao01RightProject: [],
+      gengduorenqunpianhao02: '面积偏好（主要区域）',
+      zonghepinggu: '',
+      chengzhangxingpinggu: ''
     };
   },
   mounted () {
@@ -169,33 +232,44 @@ export default {
         return;
       }
       if (this.selectData !== '') {
-        this.$api.get(`/api/apis/subscribe/top5_tag_day_port?keywords=${this.selectData}&projectId=${this.id}`)
-        .then(res => {
-          if (res.data.code === 0) {
-            const data = res.data.data;
-            let option = line(data, 'selectData', this.selectData);
-            this.selectDataProject.push(option);
-          }
-        });
+        const selectDataUrl = `/api/apis/subscribe/top5_tag_day_port?keywords=${this.selectData}&projectId=${this.id}`;
+        const selectDataName = 'selectData';
+        this._getDataList(selectDataUrl, this.selectDataProject, selectDataName);
       };
       if (this.selectTypeProject !== '') {
-        this.$api.get(`/api/apis/subscribe/wy_day_port?keywords=${this.selectType}&type=line&projectId=${this.id}`)
-        .then(res => {
-          if (res.data.code === 0) {
-            const data = res.data.data;
-            let option = line(data, 'selectTypeProject', this.selectType);
-            this.selectTypeProject.push(option);
-          }
-        });
+        const selectTypeProjectUrl = `/api/apis/subscribe/wy_day_port?keywords=${this.selectType}&type=line&projectId=${this.id}`;
+        const selectTypeProjectName = 'selectTypeProject';
+        this._getDataList(selectTypeProjectUrl, this.selectTypeProject, selectTypeProjectName);
       };
+    },
+    gengduopianhaoChange (arr) {
+      // 更多人群偏好
+      const gengduorenqunpianhao01Url = `/api/apis/charts/getReport/areaType?id=${this.id}&type=mianj&style=total`;
+      const gengduorenqunpianhao01Name = 'gengduorenqunpianhao01Left';
+      this._getDataList(gengduorenqunpianhao01Url, this.gengduorenqunpianhao01LeftProject, gengduorenqunpianhao01Name);
+      const gengduorenqunpianhao01RightUrl = `/api/apis/charts/getReport/areaType?id=${this.id}&type=mianj&style=dateinfo`;
+      const gengduorenqunpianhao01RightName = 'shichangfenxiTitle';
+      this._getDataList(gengduorenqunpianhao01RightUrl, this.gengduorenqunpianhao01RightProject, gengduorenqunpianhao01RightName);
     },
     handleChange () {},
     getData () {
-      line();
-      this.$api.get('')
-      .then(res => {
-        console.log(res);
-      });
+      const shichangfenxiTitleUrl = `/api/apis/charts/getReport/areaType?id=${this.id}&type=zongj&style=dateinfo`;
+      const shichangfenxiTitleName = 'shichangfenxiTitle';
+      this._getDataList(shichangfenxiTitleUrl, this.shichangfenxiTitleProject, shichangfenxiTitleName);
+      // 市场分析
+      const shichangfenxiTitleLeftUrl = `/api/apis/charts/getReport/areaType?id=${this.id}&type=zongj&style=total`;
+      const shichangfenxiTitleLeftName = 'shichangfenxiTitleLeft';
+      this._getDataList(shichangfenxiTitleLeftUrl, this.shichangfenxiTitleLeftProject, shichangfenxiTitleLeftName);
+      // 人群偏好
+      const renqunpianhaozhuyaoquyuLeftUrl = `/api/apis/charts/getReport/areaType?id=${this.id}&type=zongj&style=dfb_area&top=1`;
+      const renqunpianhaozhuyaoquyuName = 'renqunpianhaozhuyaoquyuProject';
+      this._getDataList(renqunpianhaozhuyaoquyuLeftUrl, this.renqunpianhaozhuyaoquyuProjectLeft, renqunpianhaozhuyaoquyuName);
+      // 人群偏好主要区域
+      const renqunpianhaozhuyaoquyuMiddleUrl = `/api/apis/charts/getReport/areaType?id=${this.id}&type=zongj&style=dfb_area&top=2`;
+      this._getDataList(renqunpianhaozhuyaoquyuMiddleUrl, this.renqunpianhaozhuyaoquyuProjectMiddle, renqunpianhaozhuyaoquyuName);
+      // 人群偏好
+      const renqunpianhaozhuyaoquyuRightUrl = `/api/apis/charts/getReport/areaType?id=${this.id}&type=zongj&style=dfb_area&top=3`;
+      this._getDataList(renqunpianhaozhuyaoquyuRightUrl, this.renqunpianhaozhuyaoquyuProjectRight, renqunpianhaozhuyaoquyuName);
     },
     handleScroll () {
       const scrollY = window.scrollY;
@@ -206,7 +280,17 @@ export default {
       function callback () {
         if (innerHeight * self.num - scrollY < 100) {
           const num = Number(innerHeight * self.num - scrollY);
-          console.log(num);
+          console.log(self.num);
+          switch (self.num) {
+            case 1:
+              const yewupingguUrl = `/api/apis/subscribe/three_lev_people_port?keywords=${encodeURI(self.project)}&type=line`;
+              const yewupingguName = 'yewupinggu';
+              self._getDataList(yewupingguUrl, self.yewupinggu, yewupingguName);
+              break;
+            default:
+              // statements_def
+              break;
+          }
           if (num > 0) {
           }
           self.num++;
@@ -216,6 +300,16 @@ export default {
         clearTimeout(timeoutId);
       }
       timeoutId = setTimeout(callback, 50);
+    },
+    _getDataList (url, dataList, name) {
+      this.$api.get(url)
+      .then(res => {
+        if (res.data.code === 0) {
+          const data = res.data.data;
+          const option = line(data, name);
+          dataList.push(option);
+        }
+      });
     }
   }
 };
@@ -267,11 +361,11 @@ export default {
       .title
         margin: 0
         width: 297px
-        height: 56px
-        line-height: 56px
+        height: 46px
+        line-height: 46px
         font-size: 15px
         text-align: center
-        background: #13CE66
+        background: #1D8CE0
         margin: 10px
         color: #fff
         z-index: 9
@@ -308,6 +402,7 @@ export default {
         border: 1px solid #ccc
         border-top: 2px solid #20A0FF
         margin-bottom: 40px
+        width: 1000px
         height: 400px
         h3
           color: black
@@ -317,4 +412,18 @@ export default {
         border-bottom: 1px solid #20A0FF    
   .collapse-item
     color: white
+  .r-bazaar-charts-child
+    display: flex
+    widht: 1000px
+    height: 360px
+    div
+      width: 33%
+.r-bazaar-charts-l
+  display: inline-block
+  box-sizing: border-box
+  width: 398px
+  height: 400px
+.r-bazaar-charts-r
+  width: 597px
+  display: inline-block      
 </style>

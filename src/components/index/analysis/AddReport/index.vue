@@ -58,10 +58,6 @@
             <el-radio class="radio" v-model="checkRadio" label="周报">周报</el-radio>
             <el-radio class="radio" v-model="checkRadio" label="月报">月报</el-radio>
           </div>
-          <!-- <el-checkbox-group v-if="showCheckList" v-model="checkList" style="margin-left: 10px">
-            <el-checkbox label="周报"></el-checkbox>
-            <el-checkbox label="月报"></el-checkbox>
-          </el-checkbox-group> -->
          </div>
       </div>
       <div id="addProject">
@@ -261,11 +257,22 @@ export default {
       this.$api.post('/api/apis/subscribe/0', data)
       .then(res => {
         console.log(res);
-        if (res.data) {
-          self.$alert(res.data.msg, '提示信息');
+        if (res.data.code === 0) {
           self.dialogVisible = false;
           self.childfilterData = [];
-          window.location.reload();
+          this.$alert(res.data.msg, '提示信息', {
+            confirmButtonText: '确定',
+            callback: action => {
+              window.location.reload();
+            }
+          });
+        } else {
+          this.$alert(res.data.msg, '提示信息', {
+            confirmButtonText: '确定',
+            callback: action => {
+              window.location.reload();
+            }
+          });
         }
       });
     },
