@@ -11,6 +11,37 @@ export function line(data, name, title) {
         case 'selectTypeProject':
             var selectData = selectDatas(data);
             return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
+            break
+        case 'shichangfenxiTitle':
+            return mutilLine(data);
+            break
+        case 'shichangfenxiTitleLeft':
+            return radar(data);
+            break
+        case 'gengduorenqunpianhao01Left':
+            return radar(data);
+            break
+        case 'renqunpianhaozhuyaoquyuProject':
+            return pie(data);
+            break
+        case 'yewupouxiProject':
+            return pie(data, null, 'large');
+            break    
+        case 'yewupinggu':
+            var selectData = selectDatas(data);
+            return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
+            break
+        case 'bosd':
+            return bosd(data);
+            break
+        case 'guanzhuqushi':
+            return subscribe(data);
+            break
+        case 'guanzhuzhangfubi':
+            return mutilLine(data, '', 'bar', true);
+            break
+        case 'quyuguanzhuliang':
+            return customizedPie(data);
             break    
         default:
             // statements_def
@@ -18,7 +49,7 @@ export function line(data, name, title) {
     }
 };
 
-// 处理 总关注趋势 数据
+// 处理 总关注趋势 数据 折线图
 function topAllData (data) {
     var k = [];
     var c = [];
@@ -69,7 +100,7 @@ function topAllData (data) {
         seriesData: seriesData
     }
 }
-// 处理 更多市场关注趋势 数据
+// 处理 更多市场关注趋势 数据 折线图
 function selectDatas (data) {
     var top5LegendData = data.tagname;
     var xAxisData = [];
@@ -78,6 +109,7 @@ function selectDatas (data) {
     var seriesData2 = [];
     var seriesData3 = [];
     var seriesData4 = [];
+    var seriesData5 = [];
     data.result.forEach(function(item, index) {
         item.forEach(function(childItem, childIndex) {
             switch (childItem.tagname ? childItem.tagname : childItem.name) {
@@ -94,8 +126,11 @@ function selectDatas (data) {
                 case top5LegendData[3]:
                     seriesData3.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
                     break;
-                default:
+                case top5LegendData[4]:
                     seriesData4.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
+                    break;    
+                default:
+                    seriesData5.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
                     break;
             }
         });
@@ -120,6 +155,10 @@ function selectDatas (data) {
         name: top5LegendData[4],
         type: 'line',
         data: seriesData4
+    }, {
+        name: top5LegendData[5],
+        type: 'line',
+        data: seriesData5
     }];
     return {
         top5LegendData: top5LegendData,
@@ -128,7 +167,7 @@ function selectDatas (data) {
     }
 };
 
-// 处理 'line' 数据option
+// 处理 'line' 数据option 折线图
 function option (title, legendData, xAxisData, seriesData) {
     var option = {
         title: {
@@ -160,292 +199,40 @@ function option (title, legendData, xAxisData, seriesData) {
     return option;
 }
 
-
-export function areaStack(pie) {
-    var title = ''; // _(pie).thru(_.head).result("classs");
-    var xAxis = [];
-    var data = [];
-
-    pie.forEach(function(attr) {
-        xAxis.push(attr.name);
-        data.push(attr.value);
+// 处理 人群偏好 总价 折线图
+function mutilLine (data, title, type, zoom) {
+    var legendData = [];
+    var xAxisData = [];
+    var seriesData = [];
+    data.forEach(function (item, index) {
+        legendData.push(item.name);
+        xAxisData.push(item.classes);
     })
-    return {
-        title: {
-            show: false,
-            text: title + "关注量",
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            data: [title]
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                dataView: {
-                    show: false,
-                    readOnly: false
-                },
-                magicType: {
-                    show: true,
-                    type: ['line', 'bar']
-                },
-                restore: {
-                    show: true
-                },
-                saveAsImage: {
-                    show: true
-                }
+    legendData = [...new Set(legendData)];
+    xAxisData = [...new Set(xAxisData)];
+    for (let i in legendData) {
+        let datas = [];
+        data.forEach(function(item, index) {
+            if (item.name === legendData[i]) {
+                datas.push(item.value);
             }
-        },
-        calculable: true,
-        xAxis: [{
-            type: 'category',
-            axisLabel: {
-                rotate: 45,
-                interval: 0
-            },
-            data: xAxis
-        }],
-        yAxis: [{
-            type: 'value'
-        }],
-        series: [{
-            name: title,
-            type: 'bar',
-            data: data
-        }]
-    };
-};
-
-export function BCGMatrix(bos, mutil) {
-    var xAxis = [];
-    var data = [];
-    var legend = [];
-    var xmin = 0,
-        xmax = 0,
-        ymin = 0,
-        ymax = 0,
-        symbol = ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow'];
-    if (mutil) {
-        var tmpArr = _.groupBy(bos, "classs");
-        legend = _.concat(legend, _.keys(tmpArr));
-        _.each(tmpArr, function(v, k) {
-            let tmpPoint = [];
-            _.each(v, function(_v, _k) {
-                var x = parseFloat(_v.classcode);
-                var y = parseFloat(_v.value);
-                xmin > x ? xmin = x : xmin;
-                xmax < x ? xmax = x : xmax;
-                ymin > y ? ymin = y : ymin;
-                ymax < y ? ymax = y : ymax;
-                tmpPoint.push([_v.classcode, _v.value, 100, _v.name, k])
-            });
-            data.push({
-                name: k,
-                type: 'scatter',
-                data: tmpPoint,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'top',
-                        formatter: function(a) {
-                            return a.data[3] + ''
-                        }
-                    }
-                }
-            });
-        });
-        _.each(data, function(v, k) {
-            v["markLine"] = {
-                animation: false,
-                label: {
-                    normal: {
-                        formatter: "评判线"
-                    }
-                },
-                lineStyle: {
-                    normal: {
-                        type: 'solid',
-                        color: "#f00"
-                    }
-                },
-                tooltip: {
-                    formatter: '评判线'
-                },
-                data: [
-                    [{
-                        coord: [10, (ymin - 10).toFixed(2)],
-                        symbol: 'none'
-                    }, {
-                        coord: [10, (ymax + 10).toFixed(2)],
-                        symbol: 'none'
-                    }],
-                    [{
-                        coord: [(xmin - 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
-                        symbol: 'none'
-                    }, {
-                        coord: [(xmax + 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
-                        symbol: 'none'
-                    }]
-                ]
-            };
-            v["symbol"] = k > 6 ? symbol[k - 6] : symbol[k];
         })
-    } else {
-        _.each(bos, function(attr) {
-            var x = parseFloat(attr.classcode);
-            var y = parseFloat(attr.value);
-            xmin > x ? xmin = x : xmin;
-            xmax < x ? xmax = x : xmax;
-            ymin > y ? ymin = y : ymin;
-            ymax < y ? ymax = y : ymax;
-            legend.push(attr.name);
-            data.push({
-                    name: attr.name,
-                    type: 'scatter',
-                    data: [
-                        [attr.classcode, attr.value]
-                    ],
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'top',
-                            formatter: "{a}"
-                        }
-                    }
-                }
-
-            );
-        });
-        data[0]['markLine'] = {
-            animation: false,
-            label: {
-                normal: {
-                    formatter: "评判线"
-                }
-            },
-            lineStyle: {
-                normal: {
-                    formatter: "评判线",
-                    type: 'solid',
-                    color: "#f00"
-                }
-            },
-            tooltip: {
-                formatter: '评判线'
-            },
-            data: [
-                [{
-                    coord: [10, (ymin - 10).toFixed(2)],
-                    symbol: 'none'
-                }, {
-                    coord: [10, (ymax + 10).toFixed(2)],
-                    symbol: 'none'
-                }],
-                [{
-                    coord: [(xmin - 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
-                    symbol: 'none'
-                }, {
-                    coord: [(xmax + 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
-                    symbol: 'none'
-                }]
-            ]
-        };
-    };
-    return {
-        title: {
-            text: '',
-            x: 'center',
-            y: 0
-        },
-        legend: {
-            show: true,
-            data: legend,
-            top: "20",
-        },
-        grid: {
-            top: '80'
-        },
-        tooltip: {
-            formatter: "{a}<br/>占比,涨幅:{c}",
-        },
-        toolbox: {
-            feature: {
-                dataZoom: {},
-                brush: {
-                    type: ['rect', 'polygon', 'clear']
-                }
-            }
-        },
-        xAxis: [{
-            gridIndex: 0,
-            min: (xmin - 10).toFixed(2),
-            max: (xmax + 10).toFixed(2),
-            axisLine: {
-                lineStyle: {
-                    color: "#ddd"
-                }
-            },
-            axisTick: {
-                show: false
-            }
-        }],
-        yAxis: [{
-            gridIndex: 0,
-            min: (ymin - 10).toFixed(2),
-            max: (ymax + 10).toFixed(2),
-            axisLine: {
-                lineStyle: {
-                    color: "#ddd"
-                }
-            },
-            axisTick: {
-                show: false
-            }
-        }],
-        series: data
-    };
-}
-
-export function mutilLine(line, title, type, zoom) {
-    var xAxis = [];
-    var data = [];
-    const legend = [];
-    var type = type || 'line'
-    var series = _.groupBy(line, "name");
-    _.each(line, function(attr) {
-        xAxis.push(attr.classs);
-    })
-    xAxis = _.uniq(xAxis);
-    //遍历获取到的项目， 把他拼成series 所需要格式
-    _.each(series, function(val, key) {
-
-        var v = [];
-        for (var i = 0; i < val.length; i++) {
-            v.push(val[i].value)
-        }
-        data.push({
-            name: key,
+        seriesData.push({
+            name: legendData[i],
             type: !!type ? type : 'line',
-            data: v
-        });
-
-        legend.push(key);
-    });
-
+            data: datas
+        })
+    }
     return {
         title: {
             show: true,
-            text: title,
+            text: '',
         },
         tooltip: {
             trigger: 'axis'
         },
         legend: {
-            data: legend
+            data: legendData
         },
         grid: {
             bottom: 80
@@ -484,17 +271,71 @@ export function mutilLine(line, title, type, zoom) {
         calculable: true,
         xAxis: [{
             type: 'category',
-            data: xAxis
+            data: xAxisData
         }],
         yAxis: [{
             type: 'value'
         }],
-        series: data
+        series: seriesData
     };
 }
 
-export function pie(pie, title, size) {
+// 处理 人群偏好 雷达图
+function radar (radar, title, size) {
     var showTitle = !!title ? true : false;
+    title = !!title ? title : '';
+    var max = 0;
+    var datas = [];
+    var total = 0;
+    radar.forEach(function(v) {
+        total += parseInt(v.value);
+    });
+    var seriesData = [];
+    radar.forEach(function(v) {
+        var p = (parseInt(v.value) / parseInt(total) * 100).toFixed(2)
+        max = parseInt(max) > parseInt(p) ? parseInt(max) : parseInt(p);
+        seriesData.push(p);
+    })
+    var radarIndicator = [];
+    radar.forEach(function(v) {
+        radarIndicator.push({
+            name: v.name,
+            max: parseInt(max) + 5
+        })
+    })
+    return {
+        title: {
+            show: showTitle,
+            text: title
+        },
+        tooltip: {},
+        legend: {
+            data: title
+        },
+        radar: {
+            radius: '50%',
+            indicator: radarIndicator
+        },
+        series: [{
+            name: title,
+            type: 'radar',
+            data: [{
+                value: seriesData,
+                name: title
+            }]
+        }]
+    };
+}
+
+// 处理 总价偏好 饼图
+function pie (pie, title, size) {
+    var showTitle = !!title ? true : false;
+    var title = pie[0].classes;
+    var legendData = [];
+    pie.forEach(function(item, index) {
+        legendData.push(item.name);
+    })
+    legendData = [...new Set(legendData)];
     return {
         title: {
             show: true,
@@ -504,24 +345,19 @@ export function pie(pie, title, size) {
         tooltip: {
             trigger: 'item',
             confine: true,
-            formatter: "{a} <br/>{b} : {c} ({d}%)",
-            position: function(point, params, dom) {
-
-                var pointX = point[0] / 2.4;
-                var pointY = point[1] * 1.15;
-                return [pointX, pointY];
-            }
+            formatter: '{a} <br/>{b} : {c} ({d}%)',
         },
+
         legend: {
             show: false,
             orient: 'horizontal',
             left: 'left',
-            data: _.keys(_.groupBy(pie, "name"))
+            data: legendData
         },
         series: [{
             name: title,
             type: 'pie',
-            radius: size == "large" ? '65%' : "20%",
+            radius: size == 'large' ? '65%' : '20%',
             center: ['50%', '50%'],
             data: pie,
             label: {
@@ -540,48 +376,416 @@ export function pie(pie, title, size) {
     };
 }
 
-export function pieNext(all, sin) {
-    var options = {
+// 处理 波士顿矩阵
+function bosd (data) {
+    var echart1Name = [];
+    var beginPoint = [];
+    var endPoint = [];
+    data.businessChartOnes.forEach(function(r) {
+        echart1Name.push(r.name);
+    });
+    data.businessChartOnes.forEach(function(r) {
+        beginPoint.push(r.point);
+    });
+    data.businessChartOnes.forEach(function(r) {
+        endPoint.push(r.coord);
+    });
+    var option1 = {
+        baseOption: {
+            title: {
+                text: '楼盘业务评估',
+                show: true
+            },
+            tooltip: {
+                //
+            },
+            legend: {
+                left: '20%',
+                right: '4%',
+                data: echart1Name, ////显示/隐藏的btn名称，需要与下列属性相同才能显示
+                containLabel: true
+            },
+            xAxis: [{
+                'min': -150,
+                'max': 150
+            }],
+            yAxis: [{
+                'min': -150,
+                'max': 150
+            }],
+            series: [{
+                'name': '\u5353\u8d8a\u65f6\u4ee3\u5e7f\u573a\u5546\u4f4f',
+                'type': 'scatter', //显示/隐藏的btn样式
+                'label': {
+                    'normal': {
+                        'show': true,
+                        'position': 'top',
+                        'formatter': '{a}'
+                    }
+                },
+                'data': [
+                    ['0.00', null]
+                ],
+                'markLine': {
+                    'silent': true,
+                    'data': [
+                        [{
+                            'symbol': 'none',
+                            'coord': [0, 0]
+                        }, { //coord由外一点向原点划线
+                            'symbol': 'none', //两点话线
+                            'coord': [0, 0], //coord由原点向外一点划线
+                            'lineStyle': {
+                                'normal': {
+                                    'color': '#8B008B'
+                                }
+                            },
+                            'label': {
+                                'normal': {
+                                    'show': true,
+                                    'formatter': '0',
+                                    'position': 'middle'
+                                }
+                            } //formatter原点中间的内容“0”
+                        }], {
+                            'yAxis': data.businessChartOnes[0].z_line, //Y为0花一条平行于x轴的线
+                            'label': {
+                                'normal': {
+                                    'show': true,
+                                    'position': 'end', //end随着线的生成至结尾处
+                                    'formatter': '\u8f6c\u5316\u8d28\u91cf\u57fa\u51c6\u7ebf' //这条线上内容
+                                }
+                            }
+                        }, {
+                            'xAxis': data.businessChartOnes[0].g_line, //过该点垂直于Y轴直线
+                            'label': {
+                                'normal': {
+                                    'show': true,
+                                    'position': 'start',
+                                    'formatter': '\u4f9b\u7ed9\u91cf\u57fa\u51c6\u7ebf'
+                                }
+                            }
+                        },
+                        [{
+                            'symbol': 'none',
+                            'coord': [-150, 150]
+                        }, { //同上，两点之间划线
+                            'symbol': 'none',
+                            'coord': [150, -150], //同上，两点之间划线
+                            'lineStyle': {
+                                'normal': {
+                                    'color': 'red',
+                                    'type': 'solid'
+                                }
+                            },
+                            'label': {
+                                'normal': {
+                                    'show': true,
+                                    'formatter': '\u4e1a\u52a1\u8868\u73b0\u57fa\u51c6\u7ebf'
+                                }
+                            }
+                        }]
+                    ],
+                    'symbol': 'none'
+                }
+            }]
+        }
+    };
+    for (var i = 0; i < echart1Name.length; i++) {
+        option1.baseOption.series[0].markLine.data.push(
+            [{
+                "symbol": "none",
+                "coord": beginPoint[i]
+            }, { //划虚线
+                "symbol": "none",
+                "coord": endPoint[i],
+                "lineStyle": {
+                    "normal": {
+                        "color": "#800000"
+                    }
+                },
+                "label": {
+                    "normal": {
+                        "show": true,
+                        "formatter": data.businessChartOnes[i].line,
+                        "position": "middle"
+                    }
+                }
+            }]
+        )
+    }
+    for (var i = 0; i < echart1Name.length; i++) {
+        option1.baseOption.series.push({ //加入点
+            name: echart1Name[i],
+            type: 'scatter',
+            data: [beginPoint[i]]
+        })
+    }
+    var option3 = {
+        title: {
+            text: '波士顿矩阵',
+            show: true
+        },
         tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
+            //
         },
         legend: {
-            show: false,
-            orient: 'vertical',
-            x: 'left',
-            data: []
+            left: '20%',
+            right: '4%',
+            data: data.businessChartThree.name,
+            containLabel: true
         },
-        series: []
+        xAxis: [data.businessChartThree.xA],
+        yAxis: [data.businessChartThree.yA],
+        series: [{
+            'type': 'scatter',
+            'label': {
+                'normal': {
+                    'show': true,
+                    'position': 'top',
+                    'formatter': '{a}'
+                }
+            },
+            'markLine': {
+                'data': [{
+                    'xAxis': data.businessChartThree.x, //垂直虚线
+                    'label': {
+                        'normal': {
+                            'show': true,
+                            'position': 'start',
+                            'formatter': ''
+                        }
+                    },
+                    'lineStyle': {
+                        'normal': {
+                            'color': 'red'
+                        }
+                    }
+                }, {
+                    'yAxis': data.businessChartThree.y, //平行虚线
+                    'label': {
+                        'normal': {
+                            'show': true,
+                            'position': 'start',
+                            'formatter': ''
+                        }
+                    },
+                    'lineStyle': {
+                        'normal': {
+                            'color': 'red'
+                        }
+                    }
+                }],
+                'symbol': 'none',
+                'silent': true
+            }
+        }]
+    };
+    for (var i = 0; i < data.businessChartThree.name.length; i++) {
+        option3.series.push({
+            "name": data.businessChartThree.name[i],
+            "type": "scatter",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "top",
+                    "formatter": "{a}"
+                }
+            },
+            "data": [data.businessChartThree.ponit[i]],
+        })
     }
-
-    var seriesAll = {
-        name: all.name,
-        type: 'pie',
-        selectedMode: 'single',
-        radius: [0, '30%'],
-        label: {
-            normal: {
-                position: 'inner'
+    var option2 = {
+        color: ['#d53a35'], //柱状图颜色or总体颜色
+        tooltip: {
+            formatter: '{c}',
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
             }
         },
-        labelLine: {
+        xAxis: [{
+            axisLabel: {
+                rotate: 20,
+                interval: 0
+            },
+            data: data.businessChartTwo.name //柱状图x轴横坐标名称
+        }],
+        yAxis: [{
+            type: 'value'
+        }],
+        series: [{
+            name: '销量',
+            type: 'bar',
+            //                                  color:['#d53a35'],  //柱状图颜色
+            data: data.businessChartTwo.data
+        }, {
+            silent: true,
+            type: 'bar',
+            data: [{
+                'label': {
+                    'normal': {
+                        'show': false,
+                        'position': 'top',
+                        'formatter': '{a}'
+                    }
+                },
+                'name': '\u5353\u8d8a\u65f6\u4ee3\u5e7f\u573a\u5546\u4f4f',
+                'value': 0 //鼠标悬停显示内容
+            }],
+            markLine: {
+                symbol: 'none',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'middle',
+                        formatter: '市场成长性基准线'
+                    }
+
+                },
+                lineStyle: {
+                    normal: {
+                        color: 'orange'
+                    }
+                },
+                data: [{
+                    yAxis: 1
+                }]
+            }
+        }]
+    };
+    return {
+        option1,
+        option2,
+        option3
+    }
+}
+
+// 处理 关注趋势
+function subscribe (data) {
+    var xAxisData = [];
+    var seriesData = [];
+    data.result[0].forEach(function(item) {
+        xAxisData.push(item.date);
+    })
+    data.result.forEach(function(item, index) {
+        seriesData.push({
+            data: item,
+            name: item[index].name,
+            type: 'line'
+        })
+    })
+    var markLineOpt = {
+        animation: false,
+        lineStyle: {
             normal: {
-                show: false
+                type: 'dashed'
             }
         },
-        data: all.data
+        tooltip: {},
+        data: [
+            {
+                name: '平均线',
+                type: 'average',
+                symbol: 'none'
+            }
+        ]
     };
 
-    var seriesSin = {
-        name: sin.name,
-        type: 'pie',
-        radius: ['40%', '55%'],
-
-        data: sin.data
+    var option = {
+        title: {
+            text: '本案及竞品关注变化趋势',
+            show: false
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            left: '20%',
+            right: '4%',
+            data: data['tagname'],
+            containLabel: true
+        },
+        xAxis: {
+            axisLabel: {
+                rotate: 45,
+                interval: 2
+            },
+            type: 'category',
+            boundaryGap: false,
+            data: xAxisData
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: seriesData
     };
+    return option;
+}
 
-    options.series = [seriesAll, seriesSin];
+// 处理 自定义饼图
+function customizedPie(data) {
+    var markLineOpt = {
+        animation: false,
+        lineStyle: {
+            normal: {
+                type: 'dashed'
+            }
+        },
+        tooltip: {},
+        data: [
+            {
+                name: '平均线',
+                type: 'average',
+                symbol: 'none'
+            }
+        ]
+    };
+    var option = {
+        title: {
+            text: '区域关注量分布'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+            left: '20%',
+            right: '4%',
+            data: data['tagname'],
+            containLabel: true
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                saveAsImage: {
+                    show: true,
+                    title: '保存为图片'
+                }
+            }
+        },
+        calculable: true,
+        series: {
+            name: '半径模式',
+            type: 'pie',
+            roseType: 'radius',
+            label: {
+                normal: {
+                    show: true,
+                    formatter: '{b}:{d}' + '%'
+                }
 
-    return options;
+            },
+            lableLine: {
+                normal: {
+                    show: false
+                },
+                normal: {
+                    show: true
+                }
+            },
+            data: data['result']
+        }
+    };
+    return option
 }
