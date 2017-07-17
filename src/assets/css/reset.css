@@ -136,8 +136,8 @@ th.el-table-column--selection .cell .el-checkbox .el-checkbox__inner{
     text-align: left;
 }
 .el-collapse-item__header{
-    background: rgba(19, 206, 103, 0.067) !important;
-    color: white !important;
+    background: rgba(19, 206, 103, 0.067) ;
+    color: white ;
 }
 .el-collapse-item__content{
     padding:0px !important;

@@ -6,6 +6,7 @@
     <el-button type="text" @click="back">返回</el-button>
   </div>
 
+  <!-- 筛选 -->
   <el-dialog title="已有项目" :visible.sync="dialogVisible" size="tiny" :close-on-press-escape="false" :before-close="handleClose">
     <div v-if="showTab">
       <ShowTag :tabTitle="tabTitle" @clickActive="clickActive" :ifHideActive="true" :flag="true"></ShowTag>
@@ -21,68 +22,103 @@
     </span>
   </el-dialog>
 
-    <div class="show-tag">
-      <div>
-        <el-tag
-          v-for="(tag, index) in showSelectData"
-          :key="tag.name"
-          :closable="true"
-          :type="'danger'"
-          hit
-          @close.stop="removeClose(tag)"
-          @click.native="showTag(tag)"
-        >
-        {{tag.name}}
-        </el-tag>
+  <!-- 筛选条件 -->
+    <el-dialog
+      title="已选择项目"
+      :visible.sync="showDialogVisible"
+      size="tiny"
+      :close-on-press-escape="false"
+      :before-close="handleClose">
+      <div v-if="showSelectTag">
+        <div style="height: 50px; overflow: auto;margin-bottom: 10px">
+          <div class="active-show-tag">
+            <span>已选择：</span><span style="color: blue;"> {{activeShowTag.name}} </span>
+          </div>
+        </div>
+        <ShowTag :tabTitle="tabTitle" :childShowTag="childShowTag"></ShowTag>
       </div>
-      <div class="add-data-list">
-        <el-button type="text" @click="addZhixing">添加执行单</el-button> 
-      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirm">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 已选tag -->
+    <div v-loading="loading2"  element-loading-text="拼命加载中">
+        <div class="show-tag" v-for="(parentTag, parentIndex) in showSelectData" style="margin-top:10px">
+          <div>
+            <el-tag
+              v-for="(tag, index) in parentTag"
+              :key="tag.name"
+              :closable="true"
+              :type="'danger'"
+              hit
+              @close.stop="removeClose(tag,parentTag, parentIndex)"
+              @click.native="showTag(tag)"
+            >
+            {{tag.name}}
+            </el-tag>
+            <div v-if="" style="text-align: center; padding: 10px 0">
+              <el-button type="primary" v-if="btnfalse === '0'"  :disabled="showSelectData.length <= 0 || zname !== ''" @click="submitF(parentIndex,parentTag)">确认</el-button>
+            </div>
+          </div>
+        </div>
+
+        <div class="add-data-list">
+            <el-button type="text" @click="addZhixing">添加执行单</el-button> 
+        </div>
+        <div class="add-data-list">
+          <el-button  @click="addzu">添加新组</el-button> 
+        </div>
+        
+        <!-- 筛选条件提交 -->
+        <div style="text-align: center; padding-top: 20px">
+          <el-button type="primary" v-if="btnfalse === '0'"  :disabled="showSelectData.length <= 0 || zname !== ''" @click="submit">提交</el-button>
+        </div>
+
+        <!-- 搜索结果表格展示 -->
+        <el-table
+          :data="table"
+          height="250"
+          border
+          v-if="table.length > 1"
+          style="width: 100%;margin-top:20px">
+          <el-table-column
+            prop="name"
+            label="name"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="code"
+            label="code"
+            width="180">
+          </el-table-column>
+        </el-table>
+
+        <!-- 执行单名称 -->
+        <el-form  style="width:300px;margin-top:20px"  label-width="100px"><!-- v-if="table.length > 1 " -->
+          <el-form-item label="执行单名称">
+            <el-input v-model="zname" ref="tiele"  :disabled="title !== ''"></el-input>
+          </el-form-item>
+        </el-form>
+
+        <!-- 执行单提交 -->
+        <div style="text-align: left; padding: 20px 0">
+          <el-button type="primary"  @click="submit2">确认</el-button><!-- v-if="zname !== '' " -->
+        </div>
     </div>
-    
-
-<el-dialog
-  title="已选择项目"
-  :visible.sync="showDialogVisible"
-  size="tiny"
-  :close-on-press-escape="false"
-  :before-close="handleClose">
-  <div v-if="showSelectTag">
-    <div style="height: 50px; overflow: auto;margin-bottom: 10px">
-      <div class="active-show-tag">
-        <span>已选择：</span><span style="color: blue;"> {{activeShowTag.name}} </span>
-      </div>
-    </div>
-    <ShowTag :tabTitle="tabTitle" :childShowTag="childShowTag"></ShowTag>
-  </div>
-  <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="confirm">确 定</el-button>
-  </span>
-</el-dialog>
 
 
-    <el-form style="width:300px;margin-top:20px"  label-width="100px">
-      <el-form-item label="执行单名称">
-        <el-input v-model="zname" :disabled="title !== ''"></el-input>
-      </el-form-item>
-    </el-form>
-
-
-    <div style="text-align: left; padding-top: 20px">
-      <el-button type="primary" :disabled="showSelectData.length <= 0" @click="submit">提交</el-button>
-    </div>
-    <div style="text-align: left; padding-top: 20px">
-      <el-button type="primary" :disabled="showSelectData.length <= 0" @click="submit2">提交2</el-button>
-    </div>
 </div>
 </template>
 
 <script>
 import ShowTag from './showTag';
+const num = 0;
+
 export default {
 
   name: 'shaixuan',
-  props: ['getcode', 'showselected', 'title'],
+  props: ['getcode', 'showselected', 'title', 'getZXinfo', 'btnfalse'],
   components: {
     ShowTag
   },
@@ -101,7 +137,15 @@ export default {
       childShowTag: '',
       activeShowTag: '',
       lastVal: '',
-      zname: ''
+      zname: '',
+      table: [{
+        name: '',
+        code: ''
+      }],
+      loading2: false,
+      parentTags: [num],
+      num1: 0,
+      datas: []
     };
   },
   created () {
@@ -109,15 +153,20 @@ export default {
     this.getTab();
     this.showSelectData = this.showselected;
     this.zname = this.title;
-    console.log(this.zname);
+    console.log(this.getZXinfo);
   },
   methods: {
+    addzu () {
+      this.num1 ++;
+      this.showSelectData[this.num1] = [];
+      console.log(this.showSelectData);
+    },
     getTab () {
-      this.$api.get('/api/campaign/getCampaignOption?page=0&prov=zj&city=hz&ind_code=i01&code=' + this.getcode).then((res) => {
+      this.$api.get('/api/campaign/getCampaignOption?page=0&prov=' + this.getZXinfo.area + '&city=' + this.getZXinfo.city + '&ind_code=' + this.getZXinfo.industryId + '&code=' + this.getcode).then((res) => {
         const data = res.data.data;
         this.tabTitle = data;
         for (let i in this.tabTitle) {
-          this.$api.get(`api/campaign/getCampaignOption2?page=1&ind_code=i01&prov=zj&city=hz&code=${this.tabTitle[i].code}`)
+          this.$api.get(`api/campaign/getCampaignOption2?page=1&ind_code=` + this.getZXinfo.industryId + `&prov=` + this.getZXinfo.area + `&city=` + this.getZXinfo.city + `&code=${this.tabTitle[i].code}`)
           .then(res => {
             if (res.data.data) {
               const data = res.data.data;
@@ -145,26 +194,59 @@ export default {
     },
     // 提交
     submit () {
-      this.$api.post('/api/campaign/getCampaignToView', this.showSelectData)
+      var data = {};
+      data.prov = this.getZXinfo.area;
+      data.city = this.getZXinfo.city;
+      data.ind_code = this.getZXinfo.industryId;
+      data.selects = this.showSelectData;
+      console.log(data);
+      this.datas = data;
+      this.$api.post('/api/campaign/getCampaignToView', data)
       .then(res => {
         console.log(res);
       });
     },
     // 提交
     submit2 () {
-      this.$api.post('/api/campaign/getCampaignToView', this.showSelectData)
+      var data = {};
+      data.selects = this.showSelectData;
+      this.datas = data;
+      var obj = {};
+      obj.tac_code = this.getcode;
+      obj.file_name = this.zname;
+      // obj.tags = this.showSelectData;
+      obj.tags = this.showSelectData;
+      this.$emit('fendans', obj);
+      console.log(obj);
+    },
+    // 组提交
+    submitF (parentIndex, parentTag) {
+      console.log(parentIndex, parentTag);
+      this.loading2 = true;
+      var data = {};
+      data.prov = this.getZXinfo.area;
+      data.city = this.getZXinfo.city;
+      data.ind_code = this.getZXinfo.industryId;
+      data.selects = parentTag;
+      this.$api.post('/api/campaign/getCampaignToView', data)
       .then(res => {
         console.log(res);
-        var obj = {};
-        obj.title = this.zname;
-        obj.tags = this.showSelectData;
-        this.$emit('fendan', obj);
+        this.loading2 = false;
+        if (res.data.data.length === 0) {
+          this.$confirm('没有找到对应数据！');
+        } else {
+          this.table = res.data.data;
+        }
       });
     },
     // 确定添加选择项目
     selectDataList () {
+      console.log(this.showSelectData[this.num1]);
       this.showTab = false;
-      this.showSelectData.push(this.showSelectDataAll);
+      if (!this.showSelectData[this.num1]) {
+        this.showSelectData[this.num1] = [];
+      }
+      this.showSelectData[this.num1].push(this.showSelectDataAll);
       this.dialogVisible = false;
     },
     cancel () {
@@ -183,9 +265,9 @@ export default {
       this.showDialogVisible = true;
       console.log(tag);
     },
-    removeClose (tag) {
-      console.log(tag);
-      this.showSelectData.splice(this.showSelectData.indexOf(tag), 1);
+    removeClose (tag, parentTag, parentIndex) {
+      console.log(tag, parentTag, parentIndex, this.showSelectData);
+      // this.showSelectData.splice(this.showSelectData[parentIndex].indexOf(tag), 1);
     },
     handleClose (done) {
       this.$confirm('确认关闭？')

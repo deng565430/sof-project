@@ -6,48 +6,53 @@
         <span  class="el-icon-arrow-left" style="font-size:14px;color:#20A0FF"></span>
         <el-button type="text" @click="back">返回</el-button>
       </div>
+      <!-- 需求单信息 -->
+      <el-collapse style="width:100%;margin-bottom:20px">
+        <el-collapse-item title="需求单信息" name="1" style="padding:10px 10px 0 10px">
+          <div >
+            <div class="xuqiutitle" style="display:flex">
+              <p><span>需求单编号:</span><span>{{hanginfo.order_num}}</span></p>
+              <p><span>制单人:</span><span>{{hanginfo.tabulator}}</span></p>
+              <p><span>制单时间:</span><span>{{hanginfo.create_time}}</span></p>
+            </div>
+            <ul class="tanchu">
+              <li><div>所属行业</div><div>{{hanginfo.ind_name}}</div></li>
+              <li><div>所属区域</div><div>{{hanginfo.prov_name}}<b v-if="hanginfo.city_name">/{{hanginfo.city_name}}</b></div></li>
+              <li><div>项目名称</div><div>{{hanginfo.phone_demand}}</div></li>
+              <li><div>策略类型</div><div>{{hanginfo.strategy}}</div></li>
+              <li><div>需求公司</div><div>{{hanginfo.demand_side}}</div></li>
+              <li><div>所需电话量/天</div><div>{{hanginfo.phone_demand}}</div></li>
+              <li><div>所需周期</div><div>{{hanginfo.start_date}}<b style="margin:0 10px;back">-</b>{{hanginfo.end_date}}</div></li>
+              <li><div>项目描述</div><div>{{hanginfo.project_description}}</div></li>
+            </ul>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+      <!-- 数据选择 -->
       <el-radio-group v-model="radio2"    @change="handleChecked"     style="text-align:left;width:100%">
         <el-radio v-for="i in radio" :label="i.code">{{i.name}}</el-radio>
       </el-radio-group>
       <!-- 分单 -->
       <div style="margin-top:30px;display:flex">
-        <el-card class="box-card" v-if="fendanone.length > 0">
+        <el-card v-for="(i,index) in radio" class="box-card" v-if="i.fendan.length > 0">
           <div slot="header" class="clearfix">
-            <span style="line-height: 36px;">{{fendan1}}分单</span>
+            <span style="line-height: 36px;">{{i.name}}分单</span>
           </div>
-          <div v-for="(index,o) in fendanone" :key="o" class="text item">
-            <span class="el-icon-circle-close" style="float:left;color:#E5E9F2" @click="delet(o)"></span>
-            <span>{{ index.title}}</span>
-            <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn(o)" >查看</el-button>
-          </div>
-        </el-card>
-        <el-card class="box-card" v-if="fendantwo.length > 0">
-          <div slot="header" class="clearfix">
-            <span style="line-height: 36px;">{{fendan2}}分单</span>
-          </div>
-          <div v-for="(index,o) in fendantwo" :key="o" class="text item">
-            <span class="el-icon-circle-close" style="float:left;color:#E5E9F2" @click="delet2(o)"></span>
-            <span>{{ index.title }}</span>
-            <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn2(o)">查看</el-button>
-          </div>
-        </el-card>
-        <el-card class="box-card" v-if="fendanthree.length > 0">
-          <div slot="header" class="clearfix">
-            <span style="line-height: 36px;">{{fendan3}}分单</span>
-            
-          </div>
-          <div v-for="(index,o) in fendanthree" :key="o" class="text item">
-            <span class="el-icon-circle-close" style="float:left;color:#E5E9F2" @click="delet3(o)"></span>
-            <span>{{index.title}}</span>
-            <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn3(o)">查看</el-button>
+
+          <div v-for="(index,o) in i.fendan" ref="tagss"   :code="o"  :key="o" class="text item">
+            <!-- {{i.fendan}} -->{{o}}
+            <span class="el-icon-circle-close" style="float:left;color:#E5E9F2" @click="delet(i,o)"></span>
+            <span>{{ index.file_name}}</span>
+            <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn(i,o)" >查看</el-button>
           </div>
         </el-card>
       </div>
       <!-- 提交 -->
-      <div style="text-align:left;margin-top:30px"><el-button type="primary" @click="sureBtn">提交</el-button></div>
-    </div>
+      <div style="text-align:left;margin-top:30px">
+        <el-button type="primary" @click="sureBtn">提交</el-button></div>
+      </div>
     <!-- 筛选条件 -->
-    <Shaixuan v-if="Shaixuan" :getcode="getcode" @fendan="fendan" @back="back2" :showselected="showselected" :title="title" ></Shaixuan><!--  -->
+    <Shaixuan v-if="Shaixuan" :getZXinfo="getZXinfo"  :getcode="getcode" @fendans="fendans" @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan><!--  -->
   </div>
 </template>
 
@@ -55,6 +60,7 @@
 import Shaixuan from './shaixuan';
 export default {
   name: 'zhixingdan',
+  props: ['hanginfo'],
   components: {
     Shaixuan
   },
@@ -66,6 +72,7 @@ export default {
       radio: [],
       getcode: '',
       showselected: [],
+      fendan: [],
       fendan1: '',
       fendan2: '',
       fendan3: '',
@@ -75,23 +82,30 @@ export default {
       fen1: false,
       fen2: false,
       fen3: false,
-      title: ''
+      title: '',
+      getZXinfo: {},
+      btnfalse: ''
     };
   },
   created () {
     this.getlabel();
+    console.log(this.hanginfo);
   },
   methods: {
     getlabel () {
       this.$api.get('/api/campaign/getdatatype').then((res) => {
         console.log(res);
         this.radio = res.data.data;
-        this.fendan1 = res.data.data[0].name;
-        this.fendan2 = res.data.data[1].name;
-        this.fendan3 = res.data.data[2].name;
+        for (var i = 0; i < this.radio.length; i++) {
+          var data = [];
+          this.radio[i].fendan = data;
+          this.fendan = this.radio[i].fendan;
+        }
       });
     },
     handleChecked (val) {
+      this.getZXinfo = this.hanginfo;
+      this.btnfalse = '0';
       console.log(val);
       this.getcode = val;
       this.first = false;
@@ -108,61 +122,60 @@ export default {
       this.$emit('back', 'back');
     },
     back2 () {
+      this.radio2 = '';
       this.Shaixuan = false;
       this.first = true;
     },
-    fendan (val) {
+    fendans (val) {
       console.log(val);
+      this.radio2 = '';
       this.Shaixuan = false;
       this.first = true;
-      if (this.radio2 === 'tac01') {
-        this.fen1 = true;
-        this.fendanone.push(val);
+      for (var i = 0; i < this.radio.length; i++) {
+        if (val.tac_code === this.radio[i].code) {
+          // this.fen1 = true;
+          delete val.tac_code;
+          this.radio[i].fendan.push(val);
+        }
       }
-      if (this.radio2 === 'tac02') {
-        this.fen2 = true;
-        this.fendantwo.push(val);
-      }
-      if (this.radio2 === 'tac03') {
-        this.fen3 = true;
-        this.fendanthree.push(val);
-      }
-      console.log(this.fendanone);
+      console.log(this.radio);
     },
+    // 提交执行单
     sureBtn () {
-      console.log(this.fendanone);
-      console.log(this.fendantwo);
-      console.log(this.fendanthree);
+      var obj = {};
+      obj.order_num = this.hanginfo.order_num;
+      obj.city = this.hanginfo.city;
+      obj.ind_code = this.hanginfo.industryId;
+      obj.prov = this.hanginfo.area;
+      obj.subunit = [];
+      for (var i = 0; i < this.radio.length; i++) {
+        var obj2 = {};
+        obj2.tac_code = this.radio[i].code;
+        obj2.fendan = this.radio[i].fendan;
+        obj.subunit.push(obj2);
+      }
+      console.log(obj);
+      // this.$api.post('/api/campaign/addCampaign', obj).then((res) => {
+      //   console.log(res);
+      // });
     },
     // 查看
-    seeBtn (o) {
+    seeBtn (i, o) {
       this.first = false;
       this.Shaixuan = true;
-      this.showselected = this.fendanone[o].tags;
-      this.title = this.fendanone[o].title;
-    },
-    seeBtn2 (o) {
-      this.first = false;
-      this.Shaixuan = true;
-      this.showselected = this.fendantwo[o].tags;
-      this.title = this.fendantwo[o].title;
-    },
-    seeBtn3 (o) {
-      this.first = false;
-      this.Shaixuan = true;
-      this.showselected = this.fendanthree[o].tags;
-      this.title = this.fendanthree[o].title;
-      console.log(this.title);
+      this.btnfalse = '1';
+      console.log(i, o);
+      console.log(i.fendan[o]);
+      this.showselected = i.fendan[o].tags;
+
+      // this.title = this.fendanone[o].title;
     },
     // 删除分单
-    delet (o) {
-      this.fendanone.splice(this.fendanone.indexOf(this.fendanone[o]), 1);
-    },
-    delet2 (o) {
-      this.fendantwo.splice(this.fendantwo.indexOf(this.fendantwo[o]), 1);
-    },
-    delet3 (o) {
-      this.fendanthree.splice(this.fendanthree.indexOf(this.fendanthree[o]), 1);
+    delet (i, o) {
+      console.log(i, o);
+      console.log(i.fendan);
+      console.log(this.radio[o]);
+      // this.radio[o].fendan.splice(this.radio[o].fendan.indexOf(this.radio[o].fendan), 1);
     }
   }
 };
@@ -196,4 +209,39 @@ export default {
   .item{
     cursor: pointer;
   }
+  .xuqiutitle{
+  text-align: left;
+}
+.xuqiutitle p{
+  margin-bottom: 10px;
+  margin-right: 20px;
+  margin-top: 15px;
+}
+.tanchu{
+  text-align: left;
+  border: 1px solid #ccc
+}
+.tanchu li{
+  /*line-height: 30px;*/
+  min-height: 30px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+}
+.tanchu li:last-child{
+  border-bottom:0;
+}
+.tanchu li div:first-child{
+  color: #333;
+  line-height: 30px;
+  height: 100%;
+  width:100px;
+  background: #eee;
+  /*display: inline-block;*/
+  text-align: center;
+}
+.tanchu li div:nth-child(2){
+  padding-left: 8px;
+  word-wrap: break-word;
+  overflow: hidden;
+}
 </style>

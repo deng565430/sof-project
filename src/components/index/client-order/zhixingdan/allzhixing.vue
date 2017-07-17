@@ -6,7 +6,7 @@
                 <el-tab-pane v-for="s in hangye" :label="s.name" :name="s.code" >
                     <Search @search="search" @qingchu="qingchu"></Search>
                     <!-- table -->
-                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhiixngbtnm="zhiixngbtnm" @services-zhixing="servicesZhixing"></TableList>
+                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhixingbtns="zhixingbtns" @services-zhixingxiugai="servicesZhixingxiugai"  :zhiixngxiugais="zhiixngxiugais"  @services-zhixing="servicesZhixing"></TableList>
                     <!-- 分页 -->
                     <el-pagination
                       @size-change="handleSizeChange"
@@ -23,7 +23,7 @@
 		</el-tabs>
     <!-- 修改需求单 -->
     <!-- <Xiugai v-if="Xiugais" :chakanxiang="chakanxiang" :xiugai="xiugai" @isshow='isshow' @isshow2="isshow2"></Xiugai> -->
-    <Xinjian v-if="Xinjian" @back="back"></Xinjian>
+    <Xinjian v-if="Xinjian" @back="back" :hanginfo="hanginfo" ></Xinjian>
 	</div>
 </template>
 
@@ -61,9 +61,11 @@ export default {
       loading2: true,
       tabs3: this.tabs2,
       hangye: hangye,
-      zhiixngbtnm: 4,
+      zhiixngxiugais: this.tabs2,
+      zhixingbtns: this.tabs2,
       hanyetab: '',
-      Xinjian: false
+      Xinjian: false,
+      hanginfo: {}
     };
   },
   watch: {
@@ -73,16 +75,19 @@ export default {
       this.tabName = 1;
       this.currentPage4 = 1;
       this.pageSize = 10;
-      this.getTable(this.tabs3, 0, 10, '', '', '');// 新增xiugai的watch，监听变更并同步到c上
+      console.log(val);
+      this.getNewList(val, '', '0', '10', '', '', '');// 新增xiugai的watch，监听变更并同步到c上
+      this.zhiixngxiugais = val;
     }
   },
   created () {
+    console.log(this.tabs2);
     this.tabName = 1;
     this.hanyetab = 1;
     // this.getTable(this.tabs3, 0, 10, '', '', ''); // 获取列表
     this.getcelue();// 获取策略类型
     this.getHangyeList();// 获取行业
-    this.getNewList('', '0', '10', '', '', ''); // 获取新建  所有
+    this.getNewList(0, '', '0', '10', '', '', ''); // 获取新建  所有
   },
   methods: {
     // 获取行业
@@ -93,6 +98,14 @@ export default {
           var all = this.hangye.concat(res.data.data.industry);
           this.hangye = all;
         }
+      });
+    },
+    servicesZhixingxiugai (val) {
+      console.log(val);
+      this.tabsisshow = false;
+      this.Xinjian = true;
+      this.$api.post('/api/campaign/getcampaigndata/' + val.single_num + '').then((res) => {
+        console.log(res);
       });
     },
     // 查看行
@@ -111,6 +124,7 @@ export default {
       console.log(val);
       this.tabsisshow = false;
       this.Xinjian = true;
+      this.hanginfo = val;
     },
     // 确认删除窗
     servicesQurrenshanchu (val) {
@@ -137,11 +151,11 @@ export default {
     // 搜索查询
     search (val, val2) {
       console.log(val, val2);
-      this.getNewList(this.hanyetab, 0, 10, '', val, val2);
+      this.getNewList(0, this.hanyetab, 0, 10, '', val, val2);
     },
     // 清除查询
     qingchu (val) {
-      this.getNewList(this.hanyetab, 0, 10, '', val, '');
+      this.getNewList(0, this.hanyetab, 0, 10, '', val, '');
     },
     // 修改提交
     isshow () {
@@ -162,10 +176,9 @@ export default {
       });
     },
     // 获取新建列表
-    getNewList (industryId, start, pagesize, strategy, kwflag, kw) {
-      var url = '/api/campaign/getNewCampaign?industryId=' + industryId + '&start=' + start + '&length=' + pagesize + '&strategy=' + strategy + '&kw_flag=' + kwflag + '&kw=' + kw;
+    getNewList (status, industryId, start, pagesize, strategy, kwflag, kw) {
+      var url = '/api/campaign/getNewCampaign?status=' + status + '&industryId=' + industryId + '&start=' + start + '&length=' + pagesize + '&strategy=' + strategy + '&kw_flag=' + kwflag + '&kw=' + kw;
       this.$api.get(url).then((res) => {
-        console.log(res.data.data);
         if (res.status === 200) {
           if (res.data.code === 1) {
             this.loading2 = false;
@@ -204,13 +217,13 @@ export default {
       this.pageSize = val;
       console.log(this.tabName, this.hanyetab);
       if (this.tabName === 1 && this.hanyetab === 1) {
-        this.getNewList('', '0', val, '', '', '');
+        this.getNewList(0, '', '0', val, '', '', '');
       } else if (this.tabName !== 1 && this.hanyetab === 1) {
-        this.getNewList('', '0', val, this.tabName, '', '');
+        this.getNewList(0, '', '0', val, this.tabName, '', '');
       } else if (this.tabName !== 1 && this.hanyetab !== 1) {
-        this.getNewList(this.hanyetab, '0', val, this.tabName, '', '');
+        this.getNewList(0, this.hanyetab, '0', val, this.tabName, '', '');
       } else if (this.tabName === 1 && this.hanyetab !== 1) {
-        this.getNewList('', '0', val, this.tabName, '', '');
+        this.getNewList(0, '', '0', val, this.tabName, '', '');
       }
     },
     // 第几页
@@ -219,16 +232,16 @@ export default {
       this.pageSize = 10;
       if (this.tabName === 1 && this.hanyetab === 1) {
         console.log(1);
-        this.getNewList('', val - 1, 10, '', '', '');
+        this.getNewList(0, '', val - 1, 10, '', '', '');
       } else if (this.tabName !== 1 && this.hanyetab === 1) {
         console.log(2);
-        this.getNewList('', val - 1, 10, this.tabName, '', '');
+        this.getNewList(0, '', val - 1, 10, this.tabName, '', '');
       } else if (this.tabName !== 1 && this.hanyetab !== 1) {
         console.log(3);
-        this.getNewList(this.hanyetab, val - 1, 10, this.tabName, '', '');
+        this.getNewList(0, this.hanyetab, val - 1, 10, this.tabName, '', '');
       } else if (this.tabName === 1 && this.hanyetab !== 1) {
         console.log(4);
-        this.getNewList('', val - 1, 10, this.tabName, '', '');
+        this.getNewList(0, '', val - 1, 10, this.tabName, '', '');
       }
     },
     // 获取详情
@@ -265,9 +278,9 @@ export default {
       this.currentPage4 = 1;
       this.hanyetab = tab.name;
       if (tab.name === '1') {
-        this.getNewList('', '0', '10', '', '', '');
+        this.getNewList(0, '', '0', '10', '', '', '');
       } else {
-        this.getNewList(tab.name, 0, 10, '', '', '');
+        this.getNewList(0, tab.name, 0, 10, '', '', '');
       };
     },
     // 返回

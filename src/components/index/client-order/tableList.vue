@@ -7,6 +7,12 @@
     	max-height="350"
 	    :default-sort = "{prop: 'date', order: 'descending'}"
 	    > 
+        <el-table-column
+          v-if="single_num"
+          prop="single_num"
+          label="执行单编号"
+          width="180">
+        </el-table-column>
 	    	<el-table-column
 		      fixed
 		      prop="order_num"
@@ -55,10 +61,9 @@
 		      <template scope="scope">
 		        <el-button v-if="xiugaibtns in xiugaibtn" type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
 		         <el-button v-if="shanchuque == isshanchum" type="text" size="small"  @click.native.prevent="deleteRow(scope.$index, table)" >删除</el-button>
-		         <el-button 
-	     v-if="chakan == chakanm" type="text" size="small"  @click="chakanxiqngiqng" >查看</el-button>
-	     		<el-button 
-	     v-if="zhiixngbtn == zhiixngbtnm" type="text" size="small"  @click.native.prevent="zhiixng(scope.$index, table)" >执行</el-button>
+		         <el-button v-if="chakan == chakanm" type="text" size="small"  @click="chakanxiqngiqng" >查看</el-button>
+	     		<el-button v-if="zhiixngbtn == zhiixngxiugais" type="text" size="small"  @click.native.prevent="zhiixng(scope.$index, table)" >执行</el-button>
+        <el-button  v-if="zhiixngxiugai == zhiixngxiugais" type="text" size="small"  @click.native.prevent="zhiixng2(scope.$index, table)" >修改</el-button>
 		      </template> 
 		    </el-table-column>
 	  </el-table>
@@ -68,18 +73,19 @@
 
 <script>
 export default {
-  props: ['table', 'isshanchum', 'chakanm', 'xiugaibtns', 'zhiixngbtnm'],
+  props: ['table', 'isshanchum', 'chakanm', 'xiugaibtns', 'zhixingbtns', 'zhiixngxiugais'],
   data () {
     return {
       shanchuque: 0,
       isshanchum: this.isshanchum,
       rowid: '',
       chakan: 3,
-      zhiixngbtn: 4,
-      zhiixngbtnm: this.zhiixngbtnm,
+      zhiixngbtn: 0,
       xiugaibtn: [0, 1, 2],
+      zhiixngxiugai: 1,
       chakanm: this.chakanm,
-      id: this.table.id
+      id: this.table.id,
+      tables: this.table
     };
   },
   watch: {
@@ -94,12 +100,17 @@ export default {
     },
     zhiixng (val) {
       // console.log(val);
+    },
+    zhiixngxiugais () {
+      console.log(this.zhiixngxiugais);
+      console.log(this.zhiixngbtn);
+      console.log(this.zhiixngxiugai);
     }
-    /* shachuzhiling (val) {
-      console.log(this.shachuzhiling);
-    } */
   },
   created () {
+    console.log(this.zhiixngxiugais);
+    console.log(this.zhiixngbtn);
+    console.log(this.zhiixngxiugai);
     // console.log(this.chakanm);
     // console.log(this.shachuzhiling);
   },
@@ -107,7 +118,12 @@ export default {
     // 跳转执行
     zhiixng (index, rows) {
       console.log(rows[index].id);
-      this.$emit('services-zhixing', rows[index].id);
+      this.$emit('services-zhixing', rows[index]);
+    },
+    // 跳转执行单修改
+    zhiixng2 (index, rows) {
+      console.log(rows[index].id);
+      this.$emit('services-zhixingxiugai', rows[index]);
     },
     // 跳转到查看
     chakanxiqngiqng (val) {
