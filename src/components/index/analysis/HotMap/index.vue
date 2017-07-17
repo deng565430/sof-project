@@ -14,7 +14,6 @@
 <script>
 import BMap from 'BMap';
 import BMapLib from 'BMapLib';
-import data from './data.json';
 export default {
 
   name: 'index',
@@ -27,27 +26,12 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.charts(this.id, data);
+      this.charts(this.id, this.projectType);
+      this.showReli();
     });
-  },
-  watch: {
-    'projectType': {
-      handler: function (val, oldValue) {
-        this.charts(this.id, val);
-      },
-      deep: true
-    }
   },
   created () {},
   methods: {
-    getAllData () {
-      this.$api.get(``)
-      .then(res => {
-        return new Promise((resolve, reject) => {
-          resolve(res);
-        });
-      });
-    },
     charts (id, data) {
       this.map = new BMap.Map(document.getElementById('hotCharts'), {});
       this.map.centerAndZoom(new BMap.Point(121.474488, 31.238034), 11);
@@ -56,17 +40,17 @@ export default {
         anchor: 'BMAP_ANCHOR_TOP_LEFT'
       }));
       this.map.addControl(new BMap.NavigationControl());
-      const func = this.data();
-      this.reli(this.map, func.dataPoints);
-      this.madian(this.map, func.points, func.options);
+      const func = this.data(data);
+      this.reli(this.map, data);
+      this.madian(this.map, func.points, data);
     },
-    reli (map, dataPoints) {
+    reli (map, data) {
       const heatmapOverlay = new BMapLib.HeatmapOverlay({
         'radius': 20
       });
       map.addOverlay(heatmapOverlay);
       heatmapOverlay.setDataSet({
-        data: dataPoints,
+        data: data,
         max: 100
       });
     },
@@ -74,12 +58,10 @@ export default {
       var pointCollection = new BMap.PointCollection(points, options);
       map.addOverlay(pointCollection);
     },
-    data () {
+    data (data) {
       const points = [];
-      const dataPoints = [];
-      for (let i = 0; i < data[0].length; i++) {
-        points.push(new BMap.Point(data[0][i].coord[0], data[0][i].coord[1]));
-        dataPoints.push({count: '18', lat: data[0][i].coord[1], lng: data[0][i].coord[0]});
+      for (let i = 0; i < data.length; i++) {
+        points.push(new BMap.Point(data[i]['lng'], data[i]['lat']));
       }
       const options = {
         size: 'BMAP_POINT_SIZE_BIG',
@@ -88,25 +70,23 @@ export default {
       };
       return {
         options,
-        dataPoints,
         points
       };
     },
     showReli () {
-      const func = this.data();
       this.map.clearOverlays();
-      this.reli(this.map, func.dataPoints);
+      this.reli(this.map, this.projectType);
     },
     showMadian () {
-      const func = this.data();
+      const func = this.data(this.projectType);
       this.map.clearOverlays();
-      this.madian(this.map, func.points, func.options);
+      this.madian(this.map, func.points, this.projectType);
     },
     showAll () {
-      const func = this.data();
+      const func = this.data(this.projectType);
       this.map.clearOverlays();
-      this.reli(this.map, func.dataPoints);
-      this.madian(this.map, func.points, func.options);
+      this.reli(this.map, this.projectType);
+      this.madian(this.map, func.points, this.projectType);
     }
   },
   props: ['id', 'projectType', 'chartStyle']

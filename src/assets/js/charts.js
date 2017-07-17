@@ -20,14 +20,29 @@ export function line(data, name, title) {
             break
         case 'gengduorenqunpianhao01Left':
             return radar(data);
-            break    
+            break
         case 'renqunpianhaozhuyaoquyuProject':
             return pie(data);
             break
+        case 'yewupouxiProject':
+            return pie(data, null, 'large');
+            break    
         case 'yewupinggu':
             var selectData = selectDatas(data);
             return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
-            break                       
+            break
+        case 'bosd':
+            return bosd(data);
+            break
+        case 'guanzhuqushi':
+            return subscribe(data);
+            break
+        case 'guanzhuzhangfubi':
+            return mutilLine(data, '', 'bar', true);
+            break
+        case 'quyuguanzhuliang':
+            return customizedPie(data);
+            break    
         default:
             // statements_def
             break;
@@ -185,7 +200,7 @@ function option (title, legendData, xAxisData, seriesData) {
 }
 
 // 处理 人群偏好 总价 折线图
-function mutilLine (data) {
+function mutilLine (data, title, type, zoom) {
     var legendData = [];
     var xAxisData = [];
     var seriesData = [];
@@ -204,7 +219,7 @@ function mutilLine (data) {
         })
         seriesData.push({
             name: legendData[i],
-            type: 'line',
+            type: !!type ? type : 'line',
             data: datas
         })
     }
@@ -222,7 +237,7 @@ function mutilLine (data) {
         grid: {
             bottom: 80
         },
-        dataZoom: [{
+        dataZoom: !!zoom ? null : [{
             show: true,
             realtime: true,
             start: 65,
@@ -266,7 +281,7 @@ function mutilLine (data) {
 }
 
 // 处理 人群偏好 雷达图
-function radar(radar, title, size) {
+function radar (radar, title, size) {
     var showTitle = !!title ? true : false;
     title = !!title ? title : '';
     var max = 0;
@@ -298,7 +313,7 @@ function radar(radar, title, size) {
             data: title
         },
         radar: {
-            radius: "50%",
+            radius: '50%',
             indicator: radarIndicator
         },
         series: [{
@@ -313,7 +328,7 @@ function radar(radar, title, size) {
 }
 
 // 处理 总价偏好 饼图
-function pie(pie, title, size) {
+function pie (pie, title, size) {
     var showTitle = !!title ? true : false;
     var title = pie[0].classes;
     var legendData = [];
@@ -330,7 +345,7 @@ function pie(pie, title, size) {
         tooltip: {
             trigger: 'item',
             confine: true,
-            formatter: "{a} <br/>{b} : {c} ({d}%)",
+            formatter: '{a} <br/>{b} : {c} ({d}%)',
         },
 
         legend: {
@@ -342,7 +357,7 @@ function pie(pie, title, size) {
         series: [{
             name: title,
             type: 'pie',
-            radius: size == "large" ? '65%' : "20%",
+            radius: size == 'large' ? '65%' : '20%',
             center: ['50%', '50%'],
             data: pie,
             label: {
@@ -359,4 +374,418 @@ function pie(pie, title, size) {
             }
         }]
     };
+}
+
+// 处理 波士顿矩阵
+function bosd (data) {
+    var echart1Name = [];
+    var beginPoint = [];
+    var endPoint = [];
+    data.businessChartOnes.forEach(function(r) {
+        echart1Name.push(r.name);
+    });
+    data.businessChartOnes.forEach(function(r) {
+        beginPoint.push(r.point);
+    });
+    data.businessChartOnes.forEach(function(r) {
+        endPoint.push(r.coord);
+    });
+    var option1 = {
+        baseOption: {
+            title: {
+                text: '楼盘业务评估',
+                show: true
+            },
+            tooltip: {
+                //
+            },
+            legend: {
+                left: '20%',
+                right: '4%',
+                data: echart1Name, ////显示/隐藏的btn名称，需要与下列属性相同才能显示
+                containLabel: true
+            },
+            xAxis: [{
+                'min': -150,
+                'max': 150
+            }],
+            yAxis: [{
+                'min': -150,
+                'max': 150
+            }],
+            series: [{
+                'name': '\u5353\u8d8a\u65f6\u4ee3\u5e7f\u573a\u5546\u4f4f',
+                'type': 'scatter', //显示/隐藏的btn样式
+                'label': {
+                    'normal': {
+                        'show': true,
+                        'position': 'top',
+                        'formatter': '{a}'
+                    }
+                },
+                'data': [
+                    ['0.00', null]
+                ],
+                'markLine': {
+                    'silent': true,
+                    'data': [
+                        [{
+                            'symbol': 'none',
+                            'coord': [0, 0]
+                        }, { //coord由外一点向原点划线
+                            'symbol': 'none', //两点话线
+                            'coord': [0, 0], //coord由原点向外一点划线
+                            'lineStyle': {
+                                'normal': {
+                                    'color': '#8B008B'
+                                }
+                            },
+                            'label': {
+                                'normal': {
+                                    'show': true,
+                                    'formatter': '0',
+                                    'position': 'middle'
+                                }
+                            } //formatter原点中间的内容“0”
+                        }], {
+                            'yAxis': data.businessChartOnes[0].z_line, //Y为0花一条平行于x轴的线
+                            'label': {
+                                'normal': {
+                                    'show': true,
+                                    'position': 'end', //end随着线的生成至结尾处
+                                    'formatter': '\u8f6c\u5316\u8d28\u91cf\u57fa\u51c6\u7ebf' //这条线上内容
+                                }
+                            }
+                        }, {
+                            'xAxis': data.businessChartOnes[0].g_line, //过该点垂直于Y轴直线
+                            'label': {
+                                'normal': {
+                                    'show': true,
+                                    'position': 'start',
+                                    'formatter': '\u4f9b\u7ed9\u91cf\u57fa\u51c6\u7ebf'
+                                }
+                            }
+                        },
+                        [{
+                            'symbol': 'none',
+                            'coord': [-150, 150]
+                        }, { //同上，两点之间划线
+                            'symbol': 'none',
+                            'coord': [150, -150], //同上，两点之间划线
+                            'lineStyle': {
+                                'normal': {
+                                    'color': 'red',
+                                    'type': 'solid'
+                                }
+                            },
+                            'label': {
+                                'normal': {
+                                    'show': true,
+                                    'formatter': '\u4e1a\u52a1\u8868\u73b0\u57fa\u51c6\u7ebf'
+                                }
+                            }
+                        }]
+                    ],
+                    'symbol': 'none'
+                }
+            }]
+        }
+    };
+    for (var i = 0; i < echart1Name.length; i++) {
+        option1.baseOption.series[0].markLine.data.push(
+            [{
+                "symbol": "none",
+                "coord": beginPoint[i]
+            }, { //划虚线
+                "symbol": "none",
+                "coord": endPoint[i],
+                "lineStyle": {
+                    "normal": {
+                        "color": "#800000"
+                    }
+                },
+                "label": {
+                    "normal": {
+                        "show": true,
+                        "formatter": data.businessChartOnes[i].line,
+                        "position": "middle"
+                    }
+                }
+            }]
+        )
+    }
+    for (var i = 0; i < echart1Name.length; i++) {
+        option1.baseOption.series.push({ //加入点
+            name: echart1Name[i],
+            type: 'scatter',
+            data: [beginPoint[i]]
+        })
+    }
+    var option3 = {
+        title: {
+            text: '波士顿矩阵',
+            show: true
+        },
+        tooltip: {
+            //
+        },
+        legend: {
+            left: '20%',
+            right: '4%',
+            data: data.businessChartThree.name,
+            containLabel: true
+        },
+        xAxis: [data.businessChartThree.xA],
+        yAxis: [data.businessChartThree.yA],
+        series: [{
+            'type': 'scatter',
+            'label': {
+                'normal': {
+                    'show': true,
+                    'position': 'top',
+                    'formatter': '{a}'
+                }
+            },
+            'markLine': {
+                'data': [{
+                    'xAxis': data.businessChartThree.x, //垂直虚线
+                    'label': {
+                        'normal': {
+                            'show': true,
+                            'position': 'start',
+                            'formatter': ''
+                        }
+                    },
+                    'lineStyle': {
+                        'normal': {
+                            'color': 'red'
+                        }
+                    }
+                }, {
+                    'yAxis': data.businessChartThree.y, //平行虚线
+                    'label': {
+                        'normal': {
+                            'show': true,
+                            'position': 'start',
+                            'formatter': ''
+                        }
+                    },
+                    'lineStyle': {
+                        'normal': {
+                            'color': 'red'
+                        }
+                    }
+                }],
+                'symbol': 'none',
+                'silent': true
+            }
+        }]
+    };
+    for (var i = 0; i < data.businessChartThree.name.length; i++) {
+        option3.series.push({
+            "name": data.businessChartThree.name[i],
+            "type": "scatter",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "top",
+                    "formatter": "{a}"
+                }
+            },
+            "data": [data.businessChartThree.ponit[i]],
+        })
+    }
+    var option2 = {
+        color: ['#d53a35'], //柱状图颜色or总体颜色
+        tooltip: {
+            formatter: '{c}',
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        xAxis: [{
+            axisLabel: {
+                rotate: 20,
+                interval: 0
+            },
+            data: data.businessChartTwo.name //柱状图x轴横坐标名称
+        }],
+        yAxis: [{
+            type: 'value'
+        }],
+        series: [{
+            name: '销量',
+            type: 'bar',
+            //                                  color:['#d53a35'],  //柱状图颜色
+            data: data.businessChartTwo.data
+        }, {
+            silent: true,
+            type: 'bar',
+            data: [{
+                'label': {
+                    'normal': {
+                        'show': false,
+                        'position': 'top',
+                        'formatter': '{a}'
+                    }
+                },
+                'name': '\u5353\u8d8a\u65f6\u4ee3\u5e7f\u573a\u5546\u4f4f',
+                'value': 0 //鼠标悬停显示内容
+            }],
+            markLine: {
+                symbol: 'none',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'middle',
+                        formatter: '市场成长性基准线'
+                    }
+
+                },
+                lineStyle: {
+                    normal: {
+                        color: 'orange'
+                    }
+                },
+                data: [{
+                    yAxis: 1
+                }]
+            }
+        }]
+    };
+    return {
+        option1,
+        option2,
+        option3
+    }
+}
+
+// 处理 关注趋势
+function subscribe (data) {
+    var xAxisData = [];
+    var seriesData = [];
+    data.result[0].forEach(function(item) {
+        xAxisData.push(item.date);
+    })
+    data.result.forEach(function(item, index) {
+        seriesData.push({
+            data: item,
+            name: item[index].name,
+            type: 'line'
+        })
+    })
+    var markLineOpt = {
+        animation: false,
+        lineStyle: {
+            normal: {
+                type: 'dashed'
+            }
+        },
+        tooltip: {},
+        data: [
+            {
+                name: '平均线',
+                type: 'average',
+                symbol: 'none'
+            }
+        ]
+    };
+
+    var option = {
+        title: {
+            text: '本案及竞品关注变化趋势',
+            show: false
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            left: '20%',
+            right: '4%',
+            data: data['tagname'],
+            containLabel: true
+        },
+        xAxis: {
+            axisLabel: {
+                rotate: 45,
+                interval: 2
+            },
+            type: 'category',
+            boundaryGap: false,
+            data: xAxisData
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: seriesData
+    };
+    return option;
+}
+
+// 处理 自定义饼图
+function customizedPie(data) {
+    var markLineOpt = {
+        animation: false,
+        lineStyle: {
+            normal: {
+                type: 'dashed'
+            }
+        },
+        tooltip: {},
+        data: [
+            {
+                name: '平均线',
+                type: 'average',
+                symbol: 'none'
+            }
+        ]
+    };
+    var option = {
+        title: {
+            text: '区域关注量分布'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+            left: '20%',
+            right: '4%',
+            data: data['tagname'],
+            containLabel: true
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                saveAsImage: {
+                    show: true,
+                    title: '保存为图片'
+                }
+            }
+        },
+        calculable: true,
+        series: {
+            name: '半径模式',
+            type: 'pie',
+            roseType: 'radius',
+            label: {
+                normal: {
+                    show: true,
+                    formatter: '{b}:{d}' + '%'
+                }
+
+            },
+            lableLine: {
+                normal: {
+                    show: false
+                },
+                normal: {
+                    show: true
+                }
+            },
+            data: data['result']
+        }
+    };
+    return option
 }
