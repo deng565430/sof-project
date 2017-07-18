@@ -177,13 +177,13 @@
             </div>
            <Charts :id="'zonghepinggu'" :projectType="zonghepinggu[0]" :chartStyle="chartStyle"></Charts>
          </div>
-         <div class="r-bazaar-charts" style="height: 1200px">
+         <div class="r-bazaar-charts" style="height: 1070px">
           <div class="r-bazaar-charts" style="height: 490px; border-bottom: none;" v-if="yewupingguTitle !== ''">
               <div class="title">
                   <span>{{chengzhangxingpingguTitle}}</span>
                   <span></span>
               </div>
-             <Charts style="margin-left: 140px" :id="'chengzhangxingpingguTop'" :projectType="chengzhangxingpingguTopProject[0]" :chartStyle="{width: '615px', height: '590px'}"></Charts>
+             <Charts style="margin-left: 200px" :id="'chengzhangxingpingguTop'" :projectType="chengzhangxingpingguTopProject[0]" :chartStyle="{width: '615px', height: '590px'}"></Charts>
              <Charts :id="'chengzhangxingpingguBottom'" :projectType="chengzhangxingpingguBottomProject[0]" :chartStyle="chartStyle"></Charts>
            </div>
          </div>
@@ -197,17 +197,34 @@
             </div>
            <Charts :id="'yewupouxi'" :projectType="yewupouxiProject[0]" :chartStyle="chartStyle"></Charts>
          </div>
-         <el-collapse v-model="activeNames" @change="handleChange" class="r-bazzaar-collapse" style="">
+         <el-collapse v-model="activeNames" @change="Top8HandleChange" class="r-bazzaar-collapse" style="">
           <el-collapse-item title="本案人群偏好排名TOP8" name="3" style="color: #fff">
             <div>
-              charts
+                <div class="select-item" v-if="selectData !== ''" v-for="item in top8List">
+                  <div class="title">
+                    <span>{{item.benanTop}}</span>
+                    <span></span>
+                  </div>
+                  <div class="r-bazaar-charts-l">
+                    <Charts :id="item.leftId" :projectType="item.benanTopLeftProject[0]" :chartStyle="{width: '400px', height: '500px'}"></Charts>
+                  </div>
+                  <div class="r-bazaar-charts-r"> 
+                    <Charts :id="item.rightId" :projectType="item.benanTopRightProject[0]" :chartStyle="{width: '600px', height: '500px'}"></Charts>
+                  </div>
+                </div>
             </div>
           </el-collapse-item>
         </el-collapse>
-        <el-collapse v-model="activeNames" @change="handleChange" class="r-bazzaar-collapse" style="">
+        <el-collapse v-model="activeNames" @change="renqunpianhaoHandleChange" class="r-bazzaar-collapse" style="">
           <el-collapse-item title="本案人群偏好评估" name="4" style="color: #fff">
             <div>
-              charts
+                <div class="select-item" v-if="selectData !== ''" v-for="item in renqunpianhaoList">
+                  <div class="title">
+                    <span>{{item.name}}</span>
+                    <span></span>
+                    </div>
+                    <Charts :id="item.id" :projectType="item.projectList[0]" :chartStyle="chartStyle"></Charts>
+                  </div>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -311,7 +328,89 @@ export default {
       guanzhuzhangfubiTitle: '关注涨跌幅环比',
       guanzhuzhangfubiProject: [],
       quyuguanzhuliangProject: [],
-      HotMapList: []
+      HotMapList: [],
+      top8List: [{
+        benanTop: '本案人群偏好排名TOP1-户型',
+        leftId: 'benanTop01Left',
+        rightId: 'benanTop01right',
+        benanTopLeftProject: [],
+        benanTopRightProject: []
+      }, {
+        benanTop: '本案人群偏好排名TOP2-区域',
+        leftId: 'benanTop02Left',
+        rightId: 'benanTop02right',
+        benanTopLeftProject: [],
+        benanTopRightProject: []
+      }, {
+        benanTop: '本案人群偏好排名TOP3-面积',
+        leftId: 'benanTop03Left',
+        rightId: 'benanTop03right',
+        benanTopLeftProject: [],
+        benanTopRightProject: []
+      }, {
+        benanTop: '本案人群偏好排名TOP4-总价',
+        leftId: 'benanTop04Left',
+        rightId: 'benanTop04right',
+        benanTopLeftProject: [],
+        benanTopRightProject: []
+      }, {
+        benanTop: '本案人群偏好排名TOP5-地铁',
+        leftId: 'benanTop05Left',
+        rightId: 'benanTop05right',
+        benanTopLeftProject: [],
+        benanTopRightProject: []
+      }, {
+        benanTop: '本案人群偏好排名TOP6-朝向',
+        leftId: 'benanTop06Left',
+        rightId: 'benanTop06right',
+        benanTopLeftProject: [],
+        benanTopRightProject: []
+      }, {
+        benanTop: '本案人群偏好排名TOP7-装修',
+        leftId: 'benanTop07Left',
+        rightId: 'benanTop07right',
+        benanTopLeftProject: [],
+        benanTopRightProject: []
+      }, {
+        benanTop: '本案人群偏好排名TOP8-单价',
+        leftId: 'benanTop08Left',
+        rightId: 'benanTop08right',
+        benanTopLeftProject: [],
+        benanTopRightProject: []
+      }],
+      renqunpianhaoList: [{
+        id: 'renqunpianhao01',
+        projectList: [],
+        name: '本案人群偏好评估 - 总价'
+      }, {
+        id: 'renqunpianhao02',
+        projectList: [],
+        name: '本案人群偏好评估 - 面积'
+      }, {
+        id: 'renqunpianhao03',
+        projectList: [],
+        name: '本案人群偏好评估 - 户型'
+      }, {
+        id: 'renqunpianhao04',
+        projectList: [],
+        name: '本案人群偏好评估 - 地铁'
+      }, {
+        id: 'renqunpianhao05',
+        projectList: [],
+        name: '本案人群偏好评估 - 总价'
+      }, {
+        id: 'renqunpianhao06',
+        projectList: [],
+        name: '本案人群偏好评估 - 面积'
+      }, {
+        id: 'renqunpianhao07',
+        projectList: [],
+        name: '本案人群偏好评估 - 户型'
+      }, {
+        id: 'renqunpianhao08',
+        projectList: [],
+        name: '本案人群偏好评估 - 地铁'
+      }]
     };
   },
   mounted () {
@@ -365,7 +464,34 @@ export default {
       this._getCharts(this.id, 'dit', 'dfb_area&top=2', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao06ProjectMiddle);
       this._getCharts(this.id, 'dit', 'dfb_area&top=3', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao06ProjectRight);
     },
-    handleChange () {},
+    Top8HandleChange (arr) {
+      if (arr.length <= 1) {
+        return;
+      }
+      if (this.top8List[0].benanTopLeftProject.length > 0) {
+        return;
+      }
+      for (let i = 0; i < this.top8List.length; i++) {
+        this._getDataList(`/api/apis/charts/getReport/attr?id=${this.id}&style=bar&top=${i + 1}`, this.top8List[i].benanTopLeftProject, 'renqunpianhaozhuyaoquyuProject', 'barStack', this.top8List[i].benanTopRightProject, this.top8List[i].benanTop);
+      }
+    },
+    renqunpianhaoHandleChange (arr) {
+      if (arr.length <= 1) {
+        return;
+      }
+      if (this.renqunpianhaoList[0].projectList.length > 0) {
+        return;
+      }
+      this._getDataList(`/api/apis/charts/getReport/areaType?id=${this.id}&type=zongj&style=bos`, this.renqunpianhaoList[0].projectList, 'matrix');
+      this._getDataList(`/api/apis/charts/getReport/areaType?id=${this.id}&type=mianj&style=bos`, this.renqunpianhaoList[1].projectList, 'matrix');
+      this._getDataList(`/api/apis/charts/getReport/areaType?id=${this.id}&type=hux&style=bos`, this.renqunpianhaoList[2].projectList, 'matrix');
+      this._getDataList(`/api/apis/charts/getReport/areaType?id=${this.id}&type=dit&style=bos`, this.renqunpianhaoList[3].projectList, 'matrix');
+
+      this._getDataList(`/api/apis/charts/getReport/longbos?id=${this.id}&type=zongj`, this.renqunpianhaoList[4].projectList, 'longbos');
+      this._getDataList(`/api/apis/charts/getReport/longbos?id=${this.id}&type=mianj`, this.renqunpianhaoList[5].projectList, 'longbos');
+      this._getDataList(`/api/apis/charts/getReport/longbos?id=${this.id}&type=hux`, this.renqunpianhaoList[6].projectList, 'longbos');
+      this._getDataList(`/api/apis/charts/getReport/longbos?id=${this.id}&type=dit`, this.renqunpianhaoList[7].projectList, 'longbos');
+    },
     getData () {
       this._getCharts(this.id, 'zongj', 'dateinfo', 'shichangfenxiTitle', this.shichangfenxiTitleProject);
       // 市场分析
@@ -407,16 +533,16 @@ export default {
                 }
               });
               break;
-            case 4:
+            case 3:
               self._getDataList(`/api/apis/charts/getReport/topself?id=${self.id}`, self.yewupouxiProject, 'yewupouxiProject');
               break;
-            case 5:
+            case 4:
               self._getDataList(`/api/apis/subscribe/thecase_rel_top10_port?keywords=${self.id}&type=line`, self.guanzhuqushiProject, 'guanzhuqushi');
               break;
-            case 6:
+            case 5:
               self._getDataList(`/api/apis/charts/getReport/huanbi?id=${self.id}`, self.guanzhuzhangfubiProject, 'guanzhuzhangfubi');
               break;
-            case 7:
+            case 6:
               self._getDataList(`/api/apis/subscribe/area_rose_pie_port?keywords=${self.id}&type=scatter`, self.quyuguanzhuliangProject, 'quyuguanzhuliang');
               self.$api.get(`api/apis/charts/getReport/map_hot?id=${self.id}`)
               .then(res => {
@@ -445,13 +571,20 @@ export default {
       }
       timeoutId = setTimeout(callback, 50);
     },
-    _getDataList (url, dataList, name) {
+    _getDataList (url, dataList, name, name2, dataList2, titleName) {
       this.$api.get(url)
       .then(res => {
         if (res.data.code === 0) {
           const data = res.data.data;
           const option = line(data, name);
           dataList.push(option);
+          if (name2) {
+            const option = line(data, name2);
+            dataList2.push(option);
+          }
+          if (titleName) {
+            titleName += data[0].classes;
+          }
         }
       });
     },

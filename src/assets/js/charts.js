@@ -42,7 +42,16 @@ export function line(data, name, title) {
             break
         case 'quyuguanzhuliang':
             return customizedPie(data);
-            break    
+            break
+        case 'barStack':
+            return barStack(data);
+            break
+        case 'matrix':
+            return BCGMatrix(data);
+            break
+        case 'longbos':
+            return BCGMatrix(data, true);
+            break
         default:
             // statements_def
             break;
@@ -788,4 +797,251 @@ function customizedPie(data) {
         }
     };
     return option
+}
+
+// 处理 柱状图
+function barStack(data) {
+    var title = data[0].classes;
+    var xAxisData = [];
+    var seriesData = [];
+    data.forEach(function(item) {
+        xAxisData.push(item.name);
+        seriesData.push(item.value);
+    })
+    return {
+        title: {
+            show: false,
+            text: title + '关注量',
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: [title]
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                dataView: {
+                    show: false,
+                    readOnly: false
+                },
+                magicType: {
+                    show: true,
+                    type: ['line', 'bar']
+                },
+                restore: {
+                    show: true
+                },
+                saveAsImage: {
+                    show: true
+                }
+            }
+        },
+        calculable: true,
+        xAxis: [{
+            type: 'category',
+            axisLabel: {
+                rotate: 45,
+                interval: 0
+            },
+            data: xAxisData
+        }],
+        yAxis: [{
+            type: 'value'
+        }],
+        series: [{
+            name: title,
+            type: 'bar',
+            data: seriesData
+        }]
+    };
+}
+
+// 处理矩阵图
+function BCGMatrix(bos, mutil) {
+    var xAxis = [];
+    var data = [];
+    var legend = [];
+    var xmin = 0,
+        xmax = 0,
+        ymin = 0,
+        ymax = 0,
+        symbol = ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow'];
+    if (mutil) {
+        legend = [bos[0].classes];
+        let tmpPoint = [];
+        bos.forEach(function(v, k) {
+            var x = parseFloat(v.classcode);
+            var y = parseFloat(v.value);
+            xmin > x ? xmin = x : xmin;
+            xmax < x ? xmax = x : xmax;
+            ymin > y ? ymin = y : ymin;
+            ymax < y ? ymax = y : ymax;
+            tmpPoint.push([v.classcode, v.value, 100, v.name, legend[0]]);
+        })
+        data.push({
+            name: legend[0],
+            type: 'scatter',
+            data: tmpPoint,
+            label: {
+                normal: {
+                    show: true,
+                    position: 'top',
+                    formatter: function(a) {
+                        return a.data[3] + ''
+                    }
+                }
+            }
+        });
+        data.forEach(function(v, k) {
+            v['markLine'] = {
+                animation: false,
+                label: {
+                    normal: {
+                        formatter: "评判线"
+                    }
+                },
+                lineStyle: {
+                    normal: {
+                        type: 'solid',
+                        color: "#f00"
+                    }
+                },
+                tooltip: {
+                    formatter: '评判线'
+                },
+                data: [
+                    [{
+                        coord: [10, (ymin - 10).toFixed(2)],
+                        symbol: 'none'
+                    }, {
+                        coord: [10, (ymax + 10).toFixed(2)],
+                        symbol: 'none'
+                    }],
+                    [{
+                        coord: [(xmin - 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
+                        symbol: 'none'
+                    }, {
+                        coord: [(xmax + 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
+                        symbol: 'none'
+                    }]
+                ]
+            };
+            v["symbol"] = k > 6 ? symbol[k - 6] : symbol[k];
+        })
+    } else {
+        bos.forEach(function(attr) {
+            var x = parseFloat(attr.classcode);
+            var y = parseFloat(attr.value);
+            xmin > x ? xmin = x : xmin;
+            xmax < x ? xmax = x : xmax;
+            ymin > y ? ymin = y : ymin;
+            ymax < y ? ymax = y : ymax;
+            legend.push(attr.name);
+            data.push({
+                    name: attr.name,
+                    type: 'scatter',
+                    data: [
+                        [attr.classcode, attr.value]
+                    ],
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'top',
+                            formatter: "{a}"
+                        }
+                    }
+                }
+
+            );
+        });
+        data[0]['markLine'] = {
+            animation: false,
+            label: {
+                normal: {
+                    formatter: "评判线"
+                }
+            },
+            lineStyle: {
+                normal: {
+                    formatter: "评判线",
+                    type: 'solid',
+                    color: "#f00"
+                }
+            },
+            tooltip: {
+                formatter: '评判线'
+            },
+            data: [
+                [{
+                    coord: [10, (ymin - 10).toFixed(2)],
+                    symbol: 'none'
+                }, {
+                    coord: [10, (ymax + 10).toFixed(2)],
+                    symbol: 'none'
+                }],
+                [{
+                    coord: [(xmin - 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
+                    symbol: 'none'
+                }, {
+                    coord: [(xmax + 10).toFixed(2), ((ymax + ymin) / 2).toFixed(2)],
+                    symbol: 'none'
+                }]
+            ]
+        };
+    }
+    return {
+        title: {
+            text: '',
+            x: 'center',
+            y: 0
+        },
+        legend: {
+            show: true,
+            data: legend,
+            top: "20",
+        },
+        grid: {
+            top: '80'
+        },
+        tooltip: {
+            formatter: "{a}<br/>占比,涨幅:{c}",
+        },
+        toolbox: {
+            feature: {
+                dataZoom: {},
+                brush: {
+                    type: ['rect', 'polygon', 'clear']
+                }
+            }
+        },
+        xAxis: [{
+            gridIndex: 0,
+            min: (xmin - 10).toFixed(2),
+            max: (xmax + 10).toFixed(2),
+            axisLine: {
+                lineStyle: {
+                    color: "#ddd"
+                }
+            },
+            axisTick: {
+                show: false
+            }
+        }],
+        yAxis: [{
+            gridIndex: 0,
+            min: (ymin - 10).toFixed(2),
+            max: (ymax + 10).toFixed(2),
+            axisLine: {
+                lineStyle: {
+                    color: "#ddd"
+                }
+            },
+            axisTick: {
+                show: false
+            }
+        }],
+        series: data
+    };
 }
