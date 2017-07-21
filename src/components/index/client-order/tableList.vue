@@ -8,7 +8,6 @@
 	    :default-sort = "{prop: 'date', order: 'descending'}"
 	    > 
         <el-table-column
-          v-if="single_num"
           prop="single_num"
           label="执行单编号"
           width="180">

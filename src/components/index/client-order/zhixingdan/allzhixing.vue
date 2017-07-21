@@ -24,6 +24,7 @@
     <!-- 修改需求单 -->
     <!-- <Xiugai v-if="Xiugais" :chakanxiang="chakanxiang" :xiugai="xiugai" @isshow='isshow' @isshow2="isshow2"></Xiugai> -->
     <Xinjian v-if="Xinjian" @back="back" :hanginfo="hanginfo" ></Xinjian>
+    <Xiugai v-if="zhixiugai" @back="back" :hanginfo="hanginfo" :getxginfo="getxginfo"></Xiugai>
 	</div>
 </template>
 
@@ -31,6 +32,7 @@
 import TableList from './../tableList';
 import Search from './../xuqiudan/search';
 import Xinjian from './xinjian';
+import Xiugai from './xiugai';
 /* import Xiugai from './xiugai';
 import Search from './search'; */
 
@@ -41,7 +43,8 @@ export default {
   components: {
     TableList,
     Search,
-    Xinjian
+    Xinjian,
+    Xiugai
     /* Xiugai,
     Search */
   },
@@ -65,7 +68,9 @@ export default {
       zhixingbtns: this.tabs2,
       hanyetab: '',
       Xinjian: false,
-      hanginfo: {}
+      zhixiugai: false,
+      hanginfo: {},
+      getxginfo: {}
     };
   },
   watch: {
@@ -103,9 +108,11 @@ export default {
     servicesZhixingxiugai (val) {
       console.log(val);
       this.tabsisshow = false;
-      this.Xinjian = true;
+      this.zhixiugai = true;
+      this.hanginfo = val;
       this.$api.post('/api/campaign/getcampaigndata/' + val.single_num + '').then((res) => {
         console.log(res);
+        this.getxginfo = res.data.data;
       });
     },
     // 查看行

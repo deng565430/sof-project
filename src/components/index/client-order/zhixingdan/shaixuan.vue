@@ -22,6 +22,7 @@
     </span>
   </el-dialog>
 
+
   <!-- 筛选条件 -->
     <el-dialog
       title="已选择项目"
@@ -43,39 +44,44 @@
     </el-dialog>
 
     <!-- 已选tag -->
-    <div v-loading="loading2"  element-loading-text="拼命加载中">
-        <div class="show-tag" v-for="(parentTag, parentIndex) in showSelectData" style="margin-top:10px">
+    <div style="font-size:16px;text-align:left">筛选条件</div>
+    <div v-loading="loading2" class="tiaojian"  element-loading-text="拼命加载中">
+        <div class="show-tag" ref="showtag"  v-for="(parentTag, parentIndex) in showSelectData" style="margin-top:10px;height:100px;width:100%">
+          <span class="el-icon-close" @click="deletezu(parentIndex,parentTag)"></span>
           <div>
             <el-tag
               v-for="(tag, index) in parentTag"
               :key="tag.name"
               :closable="true"
               :type="'danger'"
-              hit
-              @close.stop="removeClose(tag,parentTag, parentIndex)"
+              @close.stop="removeClose(tag,parentTag, parentIndex, index)"
               @click.native="showTag(tag)"
             >
             {{tag.name}}
             </el-tag>
+            <!-- <div class="add-data-list">
+                <el-button type="text" @click="addZhixing(parentTag, parentIndex)">添加执行单</el-button> 
+            </div> -->
             <div v-if="" style="text-align: center; padding: 10px 0">
-              <el-button type="primary" v-if="btnfalse === '0'"  :disabled="showSelectData.length <= 0 || zname !== ''" @click="submitF(parentIndex,parentTag)">确认</el-button>
+              <el-button type="text" @click="addZhixing(parentTag, parentIndex)">添加执行单</el-button> 
+              <el-button type="primary"   @click="submitF(parentIndex,parentTag)">搜索</el-button>
             </div>
           </div>
         </div>
-
-        <div class="add-data-list">
-            <el-button type="text" @click="addZhixing">添加执行单</el-button> 
-        </div>
-        <div class="add-data-list">
+        <!-- <div class="add-data-list">
           <el-button  @click="addzu">添加新组</el-button> 
-        </div>
+        </div> -->
         
         <!-- 筛选条件提交 -->
         <div style="text-align: center; padding-top: 20px">
-          <el-button type="primary" v-if="btnfalse === '0'"  :disabled="showSelectData.length <= 0 || zname !== ''" @click="submit">提交</el-button>
+          <el-button  @click="addzu">添加新组</el-button> 
+          <el-button type="primary"    @click="submit">多组搜素</el-button>
         </div>
+    </div>
 
-        <!-- 搜索结果表格展示 -->
+    <div class="jieguo">
+    <div>结果展示</div>
+    <!-- 搜索结果表格展示 -->
         <el-table
           :data="table"
           height="250"
@@ -93,7 +99,7 @@
             width="180">
           </el-table-column>
         </el-table>
-
+        <div v-if="table.length > 1" style="margin-top:10px;font-size:12px">共<span style="color:#FF4949;font-size:16px;margin:0 8px;">{{table.length}}</span>条</div>
         <!-- 执行单名称 -->
         <el-form  style="width:300px;margin-top:20px"  label-width="100px"><!-- v-if="table.length > 1 " -->
           <el-form-item label="执行单名称">
@@ -105,8 +111,7 @@
         <div style="text-align: left; padding: 20px 0">
           <el-button type="primary"  @click="submit2">确认</el-button><!-- v-if="zname !== '' " -->
         </div>
-    </div>
-
+  </div>
 
 </div>
 </template>
@@ -145,21 +150,47 @@ export default {
       loading2: false,
       parentTags: [num],
       num1: 0,
-      datas: []
+      datas: [],
+      surnum: 0
     };
   },
   created () {
     // 获取展示数据
     this.getTab();
+    console.log(this.showselected);
     this.showSelectData = this.showselected;
+    console.log(this.showSelectData);
     this.zname = this.title;
-    console.log(this.getZXinfo);
   },
   methods: {
     addzu () {
-      this.num1 ++;
-      this.showSelectData[this.num1] = [];
-      console.log(this.showSelectData);
+      // this.num1 ++;
+      // this.showSelectData[this.num1] = [];
+      // console.log(this.showSelectData);
+      console.log(this.$refs);
+      if (this.num1 === 0) {
+        this.num1 ++;
+        this.showSelectData[this.num1] = [];
+        var _this = this;
+        _this.showSelectData = _this.showSelectData.filter(function (item) {
+          console.log(_this.showSelectData);
+          return item;
+        });
+      } else {
+        this.num1 = this.$refs.showtag.length;
+        this.showSelectData[this.num1] = [];
+        console.log(this.showSelectData);
+        var that = this;
+        that.showSelectData = that.showSelectData.filter(function (item) {
+          console.log(that.showSelectData);
+          return item;
+        });
+      }
+    },
+    // 删除组
+    deletezu (parentIndex, parentTag) {
+      console.log(parentIndex, parentTag);
+      this.showSelectData.splice(parentIndex, 1);
     },
     getTab () {
       this.$api.get('/api/campaign/getCampaignOption?page=0&prov=' + this.getZXinfo.area + '&city=' + this.getZXinfo.city + '&ind_code=' + this.getZXinfo.industryId + '&code=' + this.getcode).then((res) => {
@@ -179,7 +210,9 @@ export default {
       });
     },
     // 获取所有数据并更新数组
-    addZhixing () {
+    addZhixing (parentTag, parentIndex) {
+      console.log(parentTag, parentIndex);
+      this.surnum = parentIndex;
       this.fourthArrName = [];
       this.fourthArrCode = [];
       this.showSelectDataAll = {};
@@ -194,6 +227,7 @@ export default {
     },
     // 提交
     submit () {
+      this.loading2 = true;
       var data = {};
       data.prov = this.getZXinfo.area;
       data.city = this.getZXinfo.city;
@@ -203,23 +237,41 @@ export default {
       this.datas = data;
       this.$api.post('/api/campaign/getCampaignToView', data)
       .then(res => {
-        console.log(res);
+        if (res.data.code === 0) {
+          this.loading2 = false;
+          if (res.data.data.length === 0) {
+            this.$confirm('没有找到对应数据!');
+          } else {
+            this.table = res.data.data;
+          }
+          console.log(res);
+        } else {
+          this.$confirm('请求出错!');
+        }
       });
     },
-    // 提交
+    // 分单提交
     submit2 () {
-      var data = {};
-      data.selects = this.showSelectData;
-      this.datas = data;
-      var obj = {};
-      obj.tac_code = this.getcode;
-      obj.file_name = this.zname;
-      // obj.tags = this.showSelectData;
-      obj.tags = this.showSelectData;
-      this.$emit('fendans', obj);
-      console.log(obj);
+      // console.log(this.$refs.tiele);
+      if (this.zname === '') {
+        this.$confirm('执行单名称不能为空!');
+      } else {
+        if (this.$refs.tiele.disabled === false) {
+          var data = {};
+          data.selects = this.showSelectData;
+          this.datas = data;
+          var obj = {};
+          obj.tac_code = this.getcode;
+          obj.file_name = this.zname;
+          // obj.tags = this.showSelectData;
+          obj.tags = this.showSelectData;
+          this.$emit('fendans', obj);
+        } else {
+          this.$emit('fendans', this.zname);
+        }
+      }
     },
-    // 组提交
+    // 组搜索
     submitF (parentIndex, parentTag) {
       console.log(parentIndex, parentTag);
       this.loading2 = true;
@@ -227,26 +279,35 @@ export default {
       data.prov = this.getZXinfo.area;
       data.city = this.getZXinfo.city;
       data.ind_code = this.getZXinfo.industryId;
-      data.selects = parentTag;
+      data.selects = [parentTag];
+      console.log(data);
+      this.datas = data;
       this.$api.post('/api/campaign/getCampaignToView', data)
       .then(res => {
-        console.log(res);
-        this.loading2 = false;
-        if (res.data.data.length === 0) {
-          this.$confirm('没有找到对应数据！');
+        if (res.data.code === 0) {
+          this.loading2 = false;
+          if (res.data.data.length === 0) {
+            this.$confirm('没有找到对应数据!');
+          } else {
+            this.table = res.data.data;
+          }
+          console.log(res);
         } else {
-          this.table = res.data.data;
+          this.$confirm('请求出错!');
         }
       });
     },
     // 确定添加选择项目
     selectDataList () {
-      console.log(this.showSelectData[this.num1]);
+      //  console.log(this.showSelectData[this.num1]);
+      //  this.showTab = false;
+      //  if (!this.showSelectData[this.num1]) {
+      //    this.showSelectData[this.num1] = [];
+      //  }
+      //  this.showSelectData[this.num1].push(this.showSelectDataAll);
+      //  this.dialogVisible = false;
       this.showTab = false;
-      if (!this.showSelectData[this.num1]) {
-        this.showSelectData[this.num1] = [];
-      }
-      this.showSelectData[this.num1].push(this.showSelectDataAll);
+      this.showSelectData[this.surnum].push(this.showSelectDataAll);
       this.dialogVisible = false;
     },
     cancel () {
@@ -265,9 +326,30 @@ export default {
       this.showDialogVisible = true;
       console.log(tag);
     },
-    removeClose (tag, parentTag, parentIndex) {
-      console.log(tag, parentTag, parentIndex, this.showSelectData);
-      // this.showSelectData.splice(this.showSelectData[parentIndex].indexOf(tag), 1);
+    removeClose (tag, parentTag, parentIndex, index) {
+      // this.showSelectData = this.showSelectData[parentIndex].filter((item, i) => {
+      //   if (item.code === tag.code) {
+      //     console.log(i);
+      //     this.showSelectData[parentIndex].splice(i, 1);
+      //   };
+      //   return item;
+      // });
+      var _this = this;
+      for (var i = 0; i < _this.showSelectData.length; i++) {
+        for (var s = 0; s < _this.showSelectData[i].length; s++) {
+          if (tag.code === _this.showSelectData[i][s].code) {
+            console.log(1);
+            _this.showSelectData[i].splice(index, 1);
+            _this.showSelectData = _this.showSelectData.filter(function (item) {
+              console.log(_this.showSelectData);
+              return item;
+            });
+            return;
+          } else {
+            console.log(2);
+          }
+        }
+      }
     },
     handleClose (done) {
       this.$confirm('确认关闭？')
@@ -388,31 +470,44 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-.show-tag
-  border: 1px solid #ccc
-  text-align: left
-  overflow: auto
-  span
-    display: block
-    margin: 10px
-    font-size: 15px
-  .add-data-list
-    height: 100px
-    border: 1px dashed #ccc
-    width: 100px
-    text-algin: center
-    margin: 20px
-    button
+.tiaojian
+  padding:0 10px 10px 10px
+  border: 1px solid #d1dbe5
+  border-radius: 4px
+  background-color: #fff
+  overflow: hidden
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04)
+  .show-tag
+    border: 1px solid #ccc
+    text-align: left
+    overflow: auto
+    span
+      margin: 10px
+      font-size: 15px
+    .el-icon-close
+      display: block
+      text-align:right
+      cursor:pointer
+      font-size:14px
+    .add-data-list
+      height: 100px
+      border: 1px dashed #ccc
+      width: 100px
+      text-algin: center
+      margin: 20px
+      button
+        display: inline-block
+        width: 50px
+        margin: 35px 15px
+  .active-show-tag
+    color: red
+    text-align: left
+    span
       display: inline-block
-      width: 50px
-      margin: 35px 15px
-.active-show-tag
-  color: red
-  text-align: left
-  span
-    display: inline-block
-    line-height: 20px
-  span:first-child
-    width: 70px
-    vertical-align: center
+      line-height: 20px
+    span:first-child
+      width: 70px
+      vertical-align: center
+.jieguo
+  margin-top:15px
 </style>

@@ -2,6 +2,7 @@
   <div>
     <div v-if="first">
       <!-- 返回 -->
+      修改
       <div style="text-align:left;margin-bottom:30px">
         <span  class="el-icon-arrow-left" style="font-size:14px;color:#20A0FF"></span>
         <el-button type="text" @click="back">返回</el-button>
@@ -34,9 +35,9 @@
       </el-radio-group>
       <!-- 分单 -->
       <div style="margin-top:30px;display:flex">
-        <el-card v-for="(i,index) in radio" class="box-card" v-if="i.fendan.length > 0">
+        <el-card v-for="(i,index) in getxginfo.subunit" class="box-card" v-if="i.fendan.length > 0">
           <div slot="header" class="clearfix">
-            <span style="line-height: 36px;">{{i.name}}分单</span>
+            <span style="line-height: 36px;">{{i.tac_name}}分单</span>
           </div>
 
           <div v-for="(index,o) in i.fendan" ref="tagss"   :code="o"  :key="o" class="text item">
@@ -48,7 +49,7 @@
       </div>
       <!-- 提交 -->
       <div style="text-align:left;margin-top:30px">
-        <el-button type="primary" @click="sureBtn">提交</el-button></div>
+        <el-button type="primary" @click="sureBtn">修改</el-button></div>
       </div>
     <!-- 筛选条件 -->
     <Shaixuan v-if="Shaixuan" :getZXinfo="getZXinfo"  :getcode="getcode" @fendans="fendans" @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan><!--  -->
@@ -59,7 +60,7 @@
 import Shaixuan from './shaixuan';
 export default {
   name: 'zhixingdan',
-  props: ['hanginfo'],
+  props: ['hanginfo', 'getxginfo'],
   components: {
     Shaixuan
   },
@@ -93,9 +94,9 @@ export default {
   },
   created () {
     this.getlabel();
-    // console.log(this.getxginfo.subunit);
-    // this.radio = this.getxginfo.subunit;
-    // console.log(this.radio);
+    console.log(this.getxginfo.subunit);
+    this.radio = this.getxginfo.subunit;
+    console.log(this.radio);
     // for (var i = 0; i < this.getxginfo.subunit.length; i++) {
     //   for (var s = 0; s < this.getxginfo.subunit[i].length; s++) {
     //     if (this.getxginfo.subunit[i][s].tac_code === 'tac01') {
@@ -139,47 +140,65 @@ export default {
       this.first = true;
     },
     fendans (val) {
-      console.log(val);
-      this.radio2 = '';
-      this.Shaixuan = false;
-      this.first = true;
-      for (var i = 0; i < this.radio.length; i++) {
-        if (val.tac_code === this.radio[i].code) {
-          // this.fen1 = true;
-          delete val.tac_code;
-          console.log(this.radio[i]);
-          for (var s = 0; s < this.radio[i].fendan.length; s++) {
-            console.log(this.radio[i].fendan[s].file_name);
-            if (val.file_name === this.radio[i].fendan[s].file_name) {
-              this.chongfu = 'chongfu';
-            }
+      console.log(typeof val);
+      if (typeof val === 'number') {
+        this.Shaixuan = false;
+        this.first = true;
+      } else {
+        console.log(22);
+        this.radio2 = '';
+        this.Shaixuan = false;
+        this.first = true;
+        for (var i = 0; i < this.getxginfo.subunit.length; i++) {
+          if (val.tac_code === this.getxginfo.subunit[i].tac_code) {
+            // this.fen1 = true;
+            delete val.tac_code;
+            this.getxginfo.subunit[i].fendan.push(val);
           }
-          this.radio[i].fendan.push(val);
         }
       }
-      console.log(this.radio);
+      // console.log(this.getxginfo.subunit);
+      // this.radio2 = '';
+      // this.Shaixuan = false;
+      // this.first = true;
+      // for (var i = 0; i < this.radio.length; i++) {
+      //   if (val.tac_code === this.radio[i].code) {
+      //     // this.fen1 = true;
+      //     delete val.tac_code;
+      //     this.radio[i].fendan.push(val);
+      //   }
+      // }
+      console.log(this.getxginfo.subunit);
     },
     // 提交执行单
     sureBtn () {
+      console.log(this.getxginfo.subunit);
       var obj = {};
       obj.order_num = this.hanginfo.order_num;
+      obj.single_num = this.getxginfo.single_num;
       obj.city = this.hanginfo.city;
       obj.ind_code = this.hanginfo.industryId;
       obj.prov = this.hanginfo.area;
       obj.subunit = [];
-      for (var i = 0; i < this.radio.length; i++) {
+      for (var i = 0; i < this.getxginfo.subunit.length; i++) {
         var obj2 = {};
-        obj2.tac_code = this.radio[i].code;
-        obj2.fendan = this.radio[i].fendan;
+        obj2.tac_code = this.getxginfo.subunit[i].tac_code;
+        obj2.tac_name = this.getxginfo.subunit[i].tac_name;
+        for (var s = 0; s < this.getxginfo.subunit[i].fendan.length; s++) {
+          this.getxginfo.subunit[i].fendan[s].child_single_num = '';
+        }
+        obj2.fendan = this.getxginfo.subunit[i].fendan;
         obj.subunit.push(obj2);
       }
       console.log(obj);
-      this.$api.post('/api/campaign/addCampaign', obj).then((res) => {
+      this.$api.post('/api/campaign/modifyCampaign', obj).then((res) => {
         console.log(res);
       });
     },
     // 查看
     seeBtn (i, o) {
+      this.getZXinfo = this.hanginfo;
+      this.getcode = i.tac_code;
       this.first = false;
       this.Shaixuan = true;
       this.btnfalse = '1';
