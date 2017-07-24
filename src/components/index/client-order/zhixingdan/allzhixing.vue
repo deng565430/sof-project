@@ -6,7 +6,7 @@
                 <el-tab-pane v-for="s in hangye" :label="s.name" :name="s.code" >
                     <Search @search="search" @qingchu="qingchu"></Search>
                     <!-- table -->
-                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhixingbtns="zhixingbtns" @services-zhixingxiugai="servicesZhixingxiugai"  :zhiixngxiugais="zhiixngxiugais"  @services-zhixing="servicesZhixing"></TableList>
+                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhixingbtns="zhixingbtns" @services-zhixingxiugai="servicesZhixingxiugai"  :zhiixngxiugais="zhiixngxiugais"  @services-zhixing="servicesZhixing" @services-zhixingchakan="servicesZhixingchakan"></TableList>
                     <!-- 分页 -->
                     <el-pagination
                       @size-change="handleSizeChange"
@@ -21,10 +21,10 @@
             </el-tabs>
   		  </el-tab-pane>
 		</el-tabs>
+    <!-- 新建需求单 -->
+    <Xinjian v-if="Xinjian" @back="back" :hanginfo="hanginfo" :tabtoggle="tabtoggle"></Xinjian>
     <!-- 修改需求单 -->
-    <!-- <Xiugai v-if="Xiugais" :chakanxiang="chakanxiang" :xiugai="xiugai" @isshow='isshow' @isshow2="isshow2"></Xiugai> -->
-    <Xinjian v-if="Xinjian" @back="back" :hanginfo="hanginfo" ></Xinjian>
-    <Xiugai v-if="zhixiugai" @back="back" :hanginfo="hanginfo" :getxginfo="getxginfo"></Xiugai>
+    <Xiugai v-if="zhixiugai" @back="back" :hanginfo="hanginfo" :histroy="histroy" :getxginfo="getxginfo" :tabtoggle="tabtoggle"></Xiugai>
 	</div>
 </template>
 
@@ -33,8 +33,7 @@ import TableList from './../tableList';
 import Search from './../xuqiudan/search';
 import Xinjian from './xinjian';
 import Xiugai from './xiugai';
-/* import Xiugai from './xiugai';
-import Search from './search'; */
+// import { line } from 'assets/js/charts';
 
 const tab = [{'name': '所有', 'code': '1'}];
 const hangye = [{'name': '所有', 'code': '1'}];
@@ -45,8 +44,6 @@ export default {
     Search,
     Xinjian,
     Xiugai
-    /* Xiugai,
-    Search */
   },
   data () {
     return {
@@ -70,29 +67,36 @@ export default {
       Xinjian: false,
       zhixiugai: false,
       hanginfo: {},
-      getxginfo: {}
+      getxginfo: {},
+      tabtoggle: ''
     };
   },
   watch: {
     tabs2 (val) {
       this.tabs3 = val;
+      this.tabtoggle = val;
       this.activeName = '1';
       this.tabName = 1;
       this.currentPage4 = 1;
       this.pageSize = 10;
-      console.log(val);
       this.getNewList(val, '', '0', '10', '', '', '');// 新增xiugai的watch，监听变更并同步到c上
       this.zhiixngxiugais = val;
+      this.Xinjian = false;
+      this.zhixiugai = false;
+      this.tabsisshow = true;
+    },
+    tabs (val) {
+      console.log(val);
     }
   },
   created () {
     console.log(this.tabs2);
     this.tabName = 1;
     this.hanyetab = 1;
-    // this.getTable(this.tabs3, 0, 10, '', '', ''); // 获取列表
     this.getcelue();// 获取策略类型
     this.getHangyeList();// 获取行业
-    this.getNewList(0, '', '0', '10', '', '', ''); // 获取新建  所有
+    this.getNewList(this.tabs2, '', '0', '10', '', '', ''); // 获取新建  所有
+    this.getgl();
   },
   methods: {
     // 获取行业
@@ -113,6 +117,18 @@ export default {
       this.$api.post('/api/campaign/getcampaigndata/' + val.single_num + '').then((res) => {
         console.log(res);
         this.getxginfo = res.data.data;
+      });
+    },
+    // 历史执行单查看
+    servicesZhixingchakan (val) {
+      console.log(val);
+      this.tabsisshow = false;
+      this.zhixiugai = true;
+      this.hanginfo = val;
+      this.$api.post('/api/campaign/getcampaigndata/' + val.single_num + '').then((res) => {
+        console.log(res);
+        this.getxginfo = res.data.data;
+        this.histroy = this.tabs2;
       });
     },
     // 查看行
@@ -158,11 +174,28 @@ export default {
     // 搜索查询
     search (val, val2) {
       console.log(val, val2);
-      this.getNewList(0, this.hanyetab, 0, 10, '', val, val2);
+      // this.getNewList(0, this.hanyetab, 0, 10, '', val, val2);
+      if (this.tabName === 1 && this.hanyetab === 1) {
+        this.getNewList(this.tabs2, '', '0', 10, '', val, val2);
+      } else if (this.tabName !== 1 && this.hanyetab === 1) {
+        this.getNewList(this.tabs2, '', '0', 10, this.tabName, val, val2);
+      } else if (this.tabName !== 1 && this.hanyetab !== 1) {
+        this.getNewList(this.tabs2, this.hanyetab, '0', 10, this.tabName, val, val2);
+      } else if (this.tabName === 1 && this.hanyetab !== 1) {
+        this.getNewList(this.tabs2, '', '0', 10, this.tabName, val, val2);
+      }
     },
     // 清除查询
     qingchu (val) {
-      this.getNewList(0, this.hanyetab, 0, 10, '', val, '');
+      if (this.tabName === 1 && this.hanyetab === 1) {
+        this.getNewList(this.tabs2, '', '0', 10, '', val, '');
+      } else if (this.tabName !== 1 && this.hanyetab === 1) {
+        this.getNewList(this.tabs2, '', '0', 10, this.tabName, val, '');
+      } else if (this.tabName !== 1 && this.hanyetab !== 1) {
+        this.getNewList(this.tabs2, this.hanyetab, '0', 10, this.tabName, val, '');
+      } else if (this.tabName === 1 && this.hanyetab !== 1) {
+        this.getNewList(this.tabs2, '', '0', 10, this.tabName, val, '');
+      }
     },
     // 修改提交
     isshow () {
@@ -201,22 +234,6 @@ export default {
         }
       });
     },
-    // 获取列表
-    getTable (status, start, pagesize, strategy, kwflag, kw) {
-      this.loading2 = true;
-      var url = '/api/brief/getBriefListByStatus?status=' + status + '&start=' + start + '&length=' + pagesize + '&strategy=' + strategy + '&kw_flag=' + kwflag + '&kw=' + kw;
-      this.$api.get(url).then((res) => {
-        this.loading2 = false;
-        if (res.data.data === '用户未登录!') {
-          this.$alert(res.data.data);
-        } else if (res.data.code === 0) {
-          this.table = res.data.data;
-          this.total = res.data.recordsFiltered;
-        }
-        this.table = res.data.data;
-        this.total = res.data.recordsFiltered;
-      });
-    },
     // 每页条数
     handleSizeChange (val) {
       // console.log(`每页 ${val} 条`);
@@ -224,13 +241,13 @@ export default {
       this.pageSize = val;
       console.log(this.tabName, this.hanyetab);
       if (this.tabName === 1 && this.hanyetab === 1) {
-        this.getNewList(0, '', '0', val, '', '', '');
+        this.getNewList(this.tabs2, '', '0', val, '', '', '');
       } else if (this.tabName !== 1 && this.hanyetab === 1) {
-        this.getNewList(0, '', '0', val, this.tabName, '', '');
+        this.getNewList(this.tabs2, '', '0', val, this.tabName, '', '');
       } else if (this.tabName !== 1 && this.hanyetab !== 1) {
-        this.getNewList(0, this.hanyetab, '0', val, this.tabName, '', '');
+        this.getNewList(this.tabs2, this.hanyetab, '0', val, this.tabName, '', '');
       } else if (this.tabName === 1 && this.hanyetab !== 1) {
-        this.getNewList(0, '', '0', val, this.tabName, '', '');
+        this.getNewList(this.tabs2, '', '0', val, this.tabName, '', '');
       }
     },
     // 第几页
@@ -239,16 +256,16 @@ export default {
       this.pageSize = 10;
       if (this.tabName === 1 && this.hanyetab === 1) {
         console.log(1);
-        this.getNewList(0, '', val - 1, 10, '', '', '');
+        this.getNewList(this.tabs2, '', val - 1, 10, '', '', '');
       } else if (this.tabName !== 1 && this.hanyetab === 1) {
         console.log(2);
-        this.getNewList(0, '', val - 1, 10, this.tabName, '', '');
+        this.getNewList(this.tabs2, '', val - 1, 10, this.tabName, '', '');
       } else if (this.tabName !== 1 && this.hanyetab !== 1) {
         console.log(3);
-        this.getNewList(0, this.hanyetab, val - 1, 10, this.tabName, '', '');
+        this.getNewList(this.tabs2, this.hanyetab, val - 1, 10, this.tabName, '', '');
       } else if (this.tabName === 1 && this.hanyetab !== 1) {
         console.log(4);
-        this.getNewList(0, '', val - 1, 10, this.tabName, '', '');
+        this.getNewList(this.tabs2, '', val - 1, 10, this.tabName, '', '');
       }
     },
     // 获取详情
@@ -270,12 +287,20 @@ export default {
       this.pageSize = 10;
       this.currentPage4 = 1;
       this.tabName = tab.name;
-      console.log(this.tabName);
-      if (tab.name === '1') {
+      console.log(typeof this.hanyetab);
+      if (tab.name === 1 || tab.name === '1') {
         this.tabName = '';
-        this.getTable(this.tabs3, 0, 10, '', '', '');
+        if (this.hanyetab === '1' || this.hanyetab === 1) {
+          this.getNewList(this.tabs3, '', 0, 10, this.tabName, '');
+        } else {
+          this.getNewList(this.tabs3, this.hanyetab, 0, 10, this.tabName, '');
+        }
       } else {
-        this.getTable(this.tabs3, 0, 10, tab.name, '', '');
+        if (this.hanyetab === '1' || this.hanyetab === 1) {
+          this.getNewList(this.tabs3, '', 0, 10, tab.name, '');
+        } else {
+          this.getNewList(this.tabs3, this.hanyetab, 0, 10, tab.name, '');
+        }
       };
     },
     // 切换行业列表
@@ -284,16 +309,27 @@ export default {
       this.pageSize = 10;
       this.currentPage4 = 1;
       this.hanyetab = tab.name;
-      if (tab.name === '1') {
-        this.getNewList(0, '', '0', '10', '', '', '');
+      console.log(typeof this.hanyetab);
+      if (this.tabName === 1 || this.tabName === '1') {
+        if (this.hanyetab === '1' || this.hanyetab === 1) {
+          this.getNewList(this.tabs3, '', 0, 10, '', '');
+        } else {
+          this.getNewList(this.tabs3, this.hanyetab, 0, 10, '', '');
+        }
       } else {
-        this.getNewList(0, tab.name, 0, 10, '', '', '');
+        console.log(this.hanyetab);
+        if (this.hanyetab === '1' || this.hanyetab === 1) {
+          this.getNewList(this.tabs3, '', 0, 10, this.tabName, '');
+        } else {
+          this.getNewList(this.tabs3, this.hanyetab, 0, 10, this.tabName, '');
+        }
       };
     },
     // 返回
     back (val) {
       console.log(val);
       this.Xinjian = false;
+      this.zhixiugai = false;
       this.tabsisshow = true;
     }
   }

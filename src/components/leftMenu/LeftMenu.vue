@@ -6,14 +6,10 @@
              {{value.all.val}}
             </el-menu-item>
             <el-menu-item :index="value.name.val">
-              <el-badge :value="1" class="item">
-               {{value.name.val}}
-              </el-badge>
+              {{value.name.val}}
             </el-menu-item>
             <el-menu-item :index="value.ing.val">
-              <el-badge :value="1" class="item">
-               {{value.ing.val}}
-              </el-badge>
+             {{value.ing.val}}
             </el-menu-item>
             <el-menu-item :index="value.now.val">
                 {{value.now.val}}

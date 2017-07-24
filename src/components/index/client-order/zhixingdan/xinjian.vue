@@ -46,12 +46,13 @@
           </div>
         </el-card>
       </div>
+      {{tabtoggle}}
       <!-- 提交 -->
       <div style="text-align:left;margin-top:30px">
         <el-button type="primary" @click="sureBtn">提交</el-button></div>
       </div>
     <!-- 筛选条件 -->
-    <Shaixuan v-if="Shaixuan" :getZXinfo="getZXinfo"  :getcode="getcode" @fendans="fendans" @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan><!--  -->
+    <Shaixuan :cdtab="cdtab" v-if="Shaixuan" :getZXinfo="getZXinfo"  :getcode="getcode" @fendans="fendans" @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan>
   </div>
 </template>
 
@@ -59,7 +60,7 @@
 import Shaixuan from './shaixuan';
 export default {
   name: 'zhixingdan',
-  props: ['hanginfo'],
+  props: ['hanginfo', 'tabtoggle'],
   components: {
     Shaixuan
   },
@@ -83,25 +84,24 @@ export default {
       fen3: false,
       title: '',
       getZXinfo: {},
-      btnfalse: ''
+      btnfalse: '',
+      cdtab: this.tabtoggle
     };
   },
   watch: {
     getxginfo (val) {
       console.log(val);
+    },
+    tabtoggle (val) {
+      console.log(val);
+      this.cdtab = val;
+      this.radio2 = '';
+      this.Shaixuan = false;
+      this.first = true;
     }
   },
   created () {
     this.getlabel();
-    // console.log(this.getxginfo.subunit);
-    // this.radio = this.getxginfo.subunit;
-    // console.log(this.radio);
-    // for (var i = 0; i < this.getxginfo.subunit.length; i++) {
-    //   for (var s = 0; s < this.getxginfo.subunit[i].length; s++) {
-    //     if (this.getxginfo.subunit[i][s].tac_code === 'tac01') {
-    //     }
-    //   }
-    // }
   },
   methods: {
     getlabel () {
@@ -147,6 +147,7 @@ export default {
         if (val.tac_code === this.radio[i].code) {
           // this.fen1 = true;
           delete val.tac_code;
+          delete val.child_single_num;
           console.log(this.radio[i]);
           for (var s = 0; s < this.radio[i].fendan.length; s++) {
             console.log(this.radio[i].fendan[s].file_name);
@@ -176,6 +177,18 @@ export default {
       console.log(obj);
       this.$api.post('/api/campaign/addCampaign', obj).then((res) => {
         console.log(res);
+        if (res.status === 200) {
+          if (res.data.code === 0) {
+            this.$confirm('添加成功！')
+              .then(_ => {
+                this.$emit('back', 'back');
+              });
+          } else {
+            this.$confirm('添加失败！');
+          }
+        } else {
+          this.$confirm('服务器出错,请重试！');
+        }
       });
     },
     // 查看
@@ -189,26 +202,17 @@ export default {
       this.title = i.fendan[o].file_name;
     },
     // 删除分单
-    delet (i, o) {
-      console.log(i, o);
-      // var _this = this;
-      /* for (var n = 0; n < _this.radio.length; n++) {
-        for (var s = 0; s < _this.radio[n].length; s++) {
-          console.log(_this.radio[n][s]);
-           if (tag.code === _this.showSelectData[i][s].code) {
-            console.log(1);
-            _this.showSelectData[i].splice(index, 1);
-            _this.showSelectData = _this.showSelectData.filter(function (item) {
-              console.log(_this.showSelectData);
-              return item;
-            });
-            return;
-          } else {
-            console.log(2);
-          }
-        }
-      } */
-      // this.radio[o].fendan.splice(this.radio[o].fendan.indexOf(this.radio[o].fendan), 1);
+    delet (index, o) {
+      console.log(index, o);
+      for (var i = 0; i < index.fendan.length; i++) {
+        index.fendan.splice(o, 1);
+      }
+      console.log(this.radio);
+      var that = this;
+      that.radio = that.radio.filter(function (item) {
+        console.log(that.radio);
+        return item;
+      });
     }
   }
 };

@@ -46,7 +46,7 @@
     <!-- 已选tag -->
     <div style="font-size:16px;text-align:left">筛选条件</div>
     <div v-loading="loading2" class="tiaojian"  element-loading-text="拼命加载中">
-        <div class="show-tag" ref="showtag"  v-for="(parentTag, parentIndex) in showSelectData" style="margin-top:10px;height:100px;width:100%">
+        <div class="show-tag" ref="showtag"  v-for="(parentTag, parentIndex) in showSelectData" style="margin-top:10px;height:100px;width:100%" >
           <span class="el-icon-close" @click="deletezu(parentIndex,parentTag)"></span>
           <div>
             <el-tag
@@ -59,18 +59,12 @@
             >
             {{tag.name}}
             </el-tag>
-            <!-- <div class="add-data-list">
-                <el-button type="text" @click="addZhixing(parentTag, parentIndex)">添加执行单</el-button> 
-            </div> -->
             <div v-if="" style="text-align: center; padding: 10px 0">
               <el-button type="text" @click="addZhixing(parentTag, parentIndex)">添加执行单</el-button> 
               <el-button type="primary"   @click="submitF(parentIndex,parentTag)">搜索</el-button>
             </div>
           </div>
         </div>
-        <!-- <div class="add-data-list">
-          <el-button  @click="addzu">添加新组</el-button> 
-        </div> -->
         
         <!-- 筛选条件提交 -->
         <div style="text-align: center; padding-top: 20px">
@@ -86,7 +80,7 @@
           :data="table"
           height="250"
           border
-          v-if="table.length > 1"
+          v-if="table.length >= 1"
           style="width: 100%;margin-top:20px">
           <el-table-column
             prop="name"
@@ -99,7 +93,7 @@
             width="180">
           </el-table-column>
         </el-table>
-        <div v-if="table.length > 1" style="margin-top:10px;font-size:12px">共<span style="color:#FF4949;font-size:16px;margin:0 8px;">{{table.length}}</span>条</div>
+        <div v-if="table.length >= 1" style="margin-top:10px;font-size:12px">共<span style="color:#FF4949;font-size:16px;margin:0 8px;">{{table.length}}</span>条</div>
         <!-- 执行单名称 -->
         <el-form  style="width:300px;margin-top:20px"  label-width="100px"><!-- v-if="table.length > 1 " -->
           <el-form-item label="执行单名称">
@@ -109,7 +103,7 @@
 
         <!-- 执行单提交 -->
         <div style="text-align: left; padding: 20px 0">
-          <el-button type="primary"  @click="submit2">确认</el-button><!-- v-if="zname !== '' " -->
+          <el-button type="primary" v-if="histroy2 !== 3"  @click="submit2">确认</el-button><!-- v-if="zname !== '' " -->
         </div>
   </div>
 
@@ -123,7 +117,7 @@ const num = 0;
 export default {
 
   name: 'shaixuan',
-  props: ['getcode', 'showselected', 'title', 'getZXinfo', 'btnfalse'],
+  props: ['getcode', 'showselected', 'title', 'getZXinfo', 'btnfalse', 'cdtab', 'histroy2'],
   components: {
     ShowTag
   },
@@ -143,10 +137,7 @@ export default {
       activeShowTag: '',
       lastVal: '',
       zname: '',
-      table: [{
-        name: '',
-        code: ''
-      }],
+      table: [],
       loading2: false,
       parentTags: [num],
       num1: 0,
@@ -154,12 +145,17 @@ export default {
       surnum: 0
     };
   },
+  watch: {
+    cdtab (val) {
+      console.log(val);
+    }
+  },
   created () {
     // 获取展示数据
     this.getTab();
     console.log(this.showselected);
     this.showSelectData = this.showselected;
-    console.log(this.showSelectData);
+    console.log(this.cdtab);
     this.zname = this.title;
   },
   methods: {
@@ -241,6 +237,7 @@ export default {
           this.loading2 = false;
           if (res.data.data.length === 0) {
             this.$confirm('没有找到对应数据!');
+            this.table = res.data.data;
           } else {
             this.table = res.data.data;
           }
@@ -263,7 +260,7 @@ export default {
           var obj = {};
           obj.tac_code = this.getcode;
           obj.file_name = this.zname;
-          // obj.tags = this.showSelectData;
+          obj.child_single_num = ''; // 修改执行单时
           obj.tags = this.showSelectData;
           this.$emit('fendans', obj);
         } else {
@@ -327,13 +324,6 @@ export default {
       console.log(tag);
     },
     removeClose (tag, parentTag, parentIndex, index) {
-      // this.showSelectData = this.showSelectData[parentIndex].filter((item, i) => {
-      //   if (item.code === tag.code) {
-      //     console.log(i);
-      //     this.showSelectData[parentIndex].splice(i, 1);
-      //   };
-      //   return item;
-      // });
       var _this = this;
       for (var i = 0; i < _this.showSelectData.length; i++) {
         for (var s = 0; s < _this.showSelectData[i].length; s++) {

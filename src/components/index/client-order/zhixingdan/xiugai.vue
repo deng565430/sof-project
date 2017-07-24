@@ -1,11 +1,10 @@
 <template>
   <div>
-    <div v-if="first">
+    <div v-if="first"  v-loading="loading2">
       <!-- 返回 -->
-      修改
       <div style="text-align:left;margin-bottom:30px">
         <span  class="el-icon-arrow-left" style="font-size:14px;color:#20A0FF"></span>
-        <el-button type="text" @click="back">返回</el-button>
+        <el-button type="text" @click="backs">返回</el-button>
       </div>
       <!-- 需求单信息 -->
       <el-collapse style="width:100%;margin-bottom:20px">
@@ -31,11 +30,11 @@
       </el-collapse>
       <!-- 数据选择 -->
       <el-radio-group v-model="radio2"    @change="handleChecked"     style="text-align:left;width:100%">
-        <el-radio v-for="i in radio" :label="i.code">{{i.name}}</el-radio>
+        <el-radio v-for="i in radios" :label="i.code">{{i.name}}</el-radio>
       </el-radio-group>
       <!-- 分单 -->
-      <div style="margin-top:30px;display:flex">
-        <el-card v-for="(i,index) in getxginfo.subunit" class="box-card" v-if="i.fendan.length > 0">
+     <div style="margin-top:30px;display:flex">
+        <el-card v-for="(i,index) in radio" class="box-card" v-if="i.fendan.length > 0">
           <div slot="header" class="clearfix">
             <span style="line-height: 36px;">{{i.tac_name}}分单</span>
           </div>
@@ -49,10 +48,10 @@
       </div>
       <!-- 提交 -->
       <div style="text-align:left;margin-top:30px">
-        <el-button type="primary" @click="sureBtn">修改</el-button></div>
+        <el-button type="primary" v-if="histroy !== 3" @click="sureBtn">修改</el-button></div>
       </div>
     <!-- 筛选条件 -->
-    <Shaixuan v-if="Shaixuan" :getZXinfo="getZXinfo"  :getcode="getcode" @fendans="fendans" @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan><!--  -->
+    <Shaixuan v-if="Shaixuan" :getZXinfo="getZXinfo"  :getcode="getcode" @fendans="fendans" @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse" :histroy2='histroy2'></Shaixuan><!--  -->
   </div>
 </template>
 
@@ -60,7 +59,7 @@
 import Shaixuan from './shaixuan';
 export default {
   name: 'zhixingdan',
-  props: ['hanginfo', 'getxginfo'],
+  props: ['hanginfo', 'getxginfo', 'tabtoggle', 'histroy'],
   components: {
     Shaixuan
   },
@@ -70,6 +69,7 @@ export default {
       first: true,
       radio2: '',
       radio: [],
+      radios: [],
       getcode: '',
       showselected: [],
       fendan: [],
@@ -84,36 +84,38 @@ export default {
       fen3: false,
       title: '',
       getZXinfo: {},
-      btnfalse: ''
+      btnfalse: '',
+      loading2: false,
+      histroy2: this.histroy
     };
   },
   watch: {
     getxginfo (val) {
       console.log(val);
+      this.radio = val;
+    },
+    tabtoggle (val) {
+      console.log(val);
+      this.cdtab = val;
+      this.radio2 = '';
+      this.Shaixuan = false;
+      this.first = true;
+    },
+    histroy (val) {
+      console.log(val);
     }
   },
   created () {
     this.getlabel();
-    console.log(this.getxginfo.subunit);
-    this.radio = this.getxginfo.subunit;
-    console.log(this.radio);
-    // for (var i = 0; i < this.getxginfo.subunit.length; i++) {
-    //   for (var s = 0; s < this.getxginfo.subunit[i].length; s++) {
-    //     if (this.getxginfo.subunit[i][s].tac_code === 'tac01') {
-    //     }
-    //   }
-    // }
+    console.log(this.histroy);
+    // this.radio = this.getxginfo.subunit;
   },
   methods: {
     getlabel () {
+      this.loading2 = true;
       this.$api.get('/api/campaign/getdatatype').then((res) => {
-        this.radio = res.data.data;
-        for (var i = 0; i < this.radio.length; i++) {
-          var data = [];
-          this.radio[i].fendan = data;
-          this.fendan = this.radio[i].fendan;
-        }
-        console.log(this.radio);
+        this.loading2 = false;
+        this.radios = res.data.data;
       });
     },
     handleChecked (val) {
@@ -131,7 +133,7 @@ export default {
       this.title3 = '';
     },
     // 返回
-    back () {
+    backs () {
       this.$emit('back', 'back');
     },
     back2 () {
@@ -140,39 +142,51 @@ export default {
       this.first = true;
     },
     fendans (val) {
-      console.log(typeof val);
+      console.log(val);
       if (typeof val === 'number') {
         this.Shaixuan = false;
         this.first = true;
       } else {
-        console.log(22);
         this.radio2 = '';
         this.Shaixuan = false;
         this.first = true;
-        for (var i = 0; i < this.getxginfo.subunit.length; i++) {
-          if (val.tac_code === this.getxginfo.subunit[i].tac_code) {
-            // this.fen1 = true;
+        for (var i = 0; i < this.radio.length; i++) {
+          if (val.tac_code === this.radio[i].tac_code) {
+            console.log(1);
             delete val.tac_code;
-            this.getxginfo.subunit[i].fendan.push(val);
+            delete val.child_single_num;
+            console.log(this.radio[i]);
+            for (var s = 0; s < this.radio[i].fendan.length; s++) {
+              console.log(this.radio[i].fendan[s].file_name);
+              if (val.file_name === this.radio[i].fendan[s].file_name) {
+                this.chongfu = 'chongfu';
+              }
+            }
+            this.radio[i].fendan.push(val);
+          } else {
+            console.log(333);
+            for (var q = 0; q < this.radios.length; q++) {
+              console.log(this.radios[q]);
+              if (val.tac_code === this.radios[q].code) {
+                var obj = {};
+                obj.fendan = [];
+                obj.tac_code = this.radios[q].code;
+                obj.tac_name = this.radios[q].name;
+                delete val.tac_code;
+                obj.fendan.push(val);
+                console.log(obj);
+                this.radio.push(obj);
+              }
+            }
           }
         }
+        console.log(this.radio);
       }
-      // console.log(this.getxginfo.subunit);
-      // this.radio2 = '';
-      // this.Shaixuan = false;
-      // this.first = true;
-      // for (var i = 0; i < this.radio.length; i++) {
-      //   if (val.tac_code === this.radio[i].code) {
-      //     // this.fen1 = true;
-      //     delete val.tac_code;
-      //     this.radio[i].fendan.push(val);
-      //   }
-      // }
-      console.log(this.getxginfo.subunit);
     },
     // 提交执行单
     sureBtn () {
-      console.log(this.getxginfo.subunit);
+      this.loading2 = true;
+      console.log(this.radio);
       var obj = {};
       obj.order_num = this.hanginfo.order_num;
       obj.single_num = this.getxginfo.single_num;
@@ -180,20 +194,25 @@ export default {
       obj.ind_code = this.hanginfo.industryId;
       obj.prov = this.hanginfo.area;
       obj.subunit = [];
-      for (var i = 0; i < this.getxginfo.subunit.length; i++) {
+      for (var i = 0; i < this.radio.length; i++) {
         var obj2 = {};
-        obj2.tac_code = this.getxginfo.subunit[i].tac_code;
-        obj2.tac_name = this.getxginfo.subunit[i].tac_name;
-        for (var s = 0; s < this.getxginfo.subunit[i].fendan.length; s++) {
-          this.getxginfo.subunit[i].fendan[s].child_single_num = '';
+        obj2.tac_code = this.radio[i].tac_code;
+        obj2.tac_name = this.radio[i].tac_name;
+        for (var s = 0; s < this.radio[i].fendan.length; s++) {
+          this.radio[i].fendan[s].child_single_num = '';
         }
-        obj2.fendan = this.getxginfo.subunit[i].fendan;
+        obj2.fendan = this.radio[i].fendan;
         obj.subunit.push(obj2);
       }
       console.log(obj);
-      this.$api.post('/api/campaign/modifyCampaign', obj).then((res) => {
-        console.log(res);
-      });
+      this.$confirm('修改后将无法撤回,确认修改?')
+        .then(_ => {
+          this.$api.post('/api/campaign/modifyCampaign', obj).then((res) => {
+            this.loading2 = false;
+            console.log(res);
+          });
+        })
+        .catch(_ => {});
     },
     // 查看
     seeBtn (i, o) {
@@ -208,26 +227,17 @@ export default {
       this.title = i.fendan[o].file_name;
     },
     // 删除分单
-    delet (i, o) {
+    delet (index, o) {
       console.log(i, o);
-      // var _this = this;
-      /* for (var n = 0; n < _this.radio.length; n++) {
-        for (var s = 0; s < _this.radio[n].length; s++) {
-          console.log(_this.radio[n][s]);
-           if (tag.code === _this.showSelectData[i][s].code) {
-            console.log(1);
-            _this.showSelectData[i].splice(index, 1);
-            _this.showSelectData = _this.showSelectData.filter(function (item) {
-              console.log(_this.showSelectData);
-              return item;
-            });
-            return;
-          } else {
-            console.log(2);
-          }
-        }
-      } */
-      // this.radio[o].fendan.splice(this.radio[o].fendan.indexOf(this.radio[o].fendan), 1);
+      for (var i = 0; i < index.fendan.length; i++) {
+        index.fendan.splice(o, 1);
+      }
+      console.log(this.radio);
+      var that = this;
+      that.radio = that.radio.filter(function (item) {
+        console.log(that.radio);
+        return item;
+      });
     }
   }
 };

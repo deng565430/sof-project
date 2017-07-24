@@ -5,13 +5,8 @@
     <Gailan v-if="Gailan"></Gailan>
     <OrderIndex v-if="OrderIndex" @tiaozhuan="tiaozhuan"></OrderIndex>
     <Dinging :tabs2="tabs2" v-if="show"></Dinging>
-    <!-- <Dingyue v-if="Dingyue"></Dingyue>
-    <Historyding v-if="Historyding"></Historyding> -->
     <Xinjian v-if="Xinjian"></Xinjian>
     <New :tabs2="tabs2" v-if="New"></New>
-    <!-- <Weizhi v-if="Weizhi"></Weizhi>
-    <Historycampaign v-if="Historycampaign"></Historycampaign> -->
-    <!-- <Campaigning v-if="Campaigning"></Campaigning> -->
 
 
     <router-view></router-view>
@@ -24,13 +19,8 @@ import LeftMenu from './../../leftMenu/LeftMenu';
 import Gailan from './xuqiudan/gailan';
 import Dinging from './xuqiudan/daishenhe';
 import OrderIndex from './xuqiudan/neworder';
-/* import Dingyue from './dingyue';
-import Historyding from './historyding'; */
 import Xinjian from './zhixingdan/shaixuan';
 import New from './zhixingdan/allzhixing';
-// import Weizhi from './zhixing/weizhi';
-// import Historycampaign from './zhixing/historycampaign';
-// import Campaigning from './zhixing/campaigning';
 
 export default {
   components: {
@@ -38,13 +28,8 @@ export default {
     Dinging,
     OrderIndex,
     Gailan,
-    /* Dingyue,
-    Historyding, */
     Xinjian,
     New
-    /* Weizhi,
-    Historycampaign,
-    Campaigning */
   },
   data () {
     return {
@@ -78,24 +63,14 @@ export default {
           this.show = false;
           this.Gailan = true;
           this.Xinjian = false;
-          /* this.Dingyue = false;
-          this.Historyding = false; */
           this.New = false;
-          /* this.Weizhi = false;
-          this.Historycampaign = false;
-          this.Campaigning = false; */
           break;
         case '新建需求单':
           this.OrderIndex = true;
           this.show = false;
           this.Gailan = false;
           this.Xinjian = false;
-          /* this.Dingyue = false;
-          this.Historyding = false; */
           this.New = false;
-          /* this.Weizhi = false;
-          this.Historycampaign = false;
-          this.Campaigning = false; */
           break;
         case '待审核':
           this.show = true;
@@ -103,12 +78,7 @@ export default {
           this.Gailan = false;
           this.tabs2 = 0;
           this.Xinjian = false;
-          /* this.Dingyue = false;
-          this.Historyding = false; */
           this.New = false;
-          /* this.Weizhi = false;
-          this.Historycampaign = false;
-          this.Campaigning = false; */
           break;
         case '待执行':
           this.show = true;
@@ -120,9 +90,6 @@ export default {
           // this.show = false;
           this.Historyding = false;
           this.New = false;
-          /* this.Weizhi = false;
-          this.Historycampaign = false;
-          this.Campaigning = false; */
           break;
         case '执行中':
           this.show = true;
@@ -134,34 +101,22 @@ export default {
           // this.show = false;
           this.Dingyue = false;
           this.New = false;
-          /* this.Weizhi = false;
-          this.Historycampaign = false;
-          this.Campaigning = false; */
           break;
         case '已完成':
           this.show = true;
           this.tabs2 = 3;
           this.Gailan = false;
           this.Xinjian = false;
-          // this.Historycampaign = true;
           this.OrderIndex = false;
           this.Dingyue = false;
           this.New = false;
-          /* this.Weizhi = false;
-          this.Historyding = false;
-          this.Campaigning = false; */
           break;
         case '执行单':
           this.OrderIndex = false;
           this.show = false;
-          this.Gailan = false;
-          this.Xinjian = true;
-          /* this.Dingyue = false;
-          this.Historyding = false; */
+          this.Gailan = true;
+          this.Xinjian = false;
           this.New = false;
-          /* this.Weizhi = false;
-          this.Historycampaign = false;
-          this.Campaigning = false; */
           break;
         case '新执行单':
           this.Gailan = false;
@@ -172,9 +127,6 @@ export default {
           this.show = false;
           this.Dingyue = false;
           this.Historyding = false;
-          /* this.Weizhi = false;
-          this.Historycampaign = false;
-          this.Campaigning = false; */
           break;
         case '未执行的':
           this.Gailan = false;
@@ -186,8 +138,6 @@ export default {
           this.Dingyue = false;
           this.New = true;
           this.Historyding = false;
-          // this.Historycampaign = false;
-          // this.Campaigning = false;
           break;
         case '正在执行的':
           this.Gailan = false;
@@ -198,22 +148,15 @@ export default {
           this.show = false;
           this.Dingyue = false;
           this.New = true;
-          // this.Weizhi = false;
-          // this.Historycampaign = false;
-          // this.Historyding = false;
           break;
         case '历史执行单':
           this.Gailan = false;
           this.Xinjian = false;
           this.tabs2 = 3;
-          // this.Historycampaign = true;
           this.OrderIndex = false;
           this.show = false;
           this.Dingyue = false;
           this.New = true;
-          // this.Weizhi = false;
-          // this.Historyding = false;
-          // this.Campaigning = false;
           break;
       }
     }

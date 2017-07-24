@@ -9,6 +9,7 @@
 	    > 
         <el-table-column
           prop="single_num"
+          v-if="zhiixngxiugais > 0"
           label="执行单编号"
           width="180">
         </el-table-column>
@@ -63,6 +64,7 @@
 		         <el-button v-if="chakan == chakanm" type="text" size="small"  @click="chakanxiqngiqng" >查看</el-button>
 	     		<el-button v-if="zhiixngbtn == zhiixngxiugais" type="text" size="small"  @click.native.prevent="zhiixng(scope.$index, table)" >执行</el-button>
         <el-button  v-if="zhiixngxiugai == zhiixngxiugais" type="text" size="small"  @click.native.prevent="zhiixng2(scope.$index, table)" >修改</el-button>
+         <el-button  v-if="zhiixngxiugais == 3" type="text" size="small"  @click.native.prevent="zhiixng3(scope.$index, table)" >查看</el-button>
 		      </template> 
 		    </el-table-column>
 	  </el-table>
@@ -123,6 +125,11 @@ export default {
     zhiixng2 (index, rows) {
       console.log(rows[index].id);
       this.$emit('services-zhixingxiugai', rows[index]);
+    },
+    // 跳转执行单查看
+    zhiixng3 (index, rows) {
+      console.log(rows[index].id);
+      this.$emit('services-zhixingchakan', rows[index]);
     },
     // 跳转到查看
     chakanxiqngiqng (val) {
