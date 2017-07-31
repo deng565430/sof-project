@@ -537,13 +537,13 @@ export default {
               self._getDataList(`/api/apis/charts/getReport/topself?id=${self.id}`, self.yewupouxiProject, 'yewupouxiProject');
               break;
             case 4:
-              self._getDataList(`/api/apis/subscribe/thecase_rel_top10_port?keywords=${self.id}&type=line`, self.guanzhuqushiProject, 'guanzhuqushi');
+              self._getDataList(`/api/apis/subscribe/thecase_rel_top10_port?id=${self.id}&type=line`, self.guanzhuqushiProject, 'guanzhuqushi');
               break;
             case 5:
               self._getDataList(`/api/apis/charts/getReport/huanbi?id=${self.id}`, self.guanzhuzhangfubiProject, 'guanzhuzhangfubi');
               break;
             case 6:
-              self._getDataList(`/api/apis/subscribe/area_rose_pie_port?keywords=${self.id}&type=scatter`, self.quyuguanzhuliangProject, 'quyuguanzhuliang');
+              self._getDataList(`/api/apis/subscribe/area_rose_pie_port?id=${self.id}&type=scatter`, self.quyuguanzhuliangProject, 'quyuguanzhuliang');
               self.$api.get(`api/apis/charts/getReport/map_hot?id=${self.id}`)
               .then(res => {
                 console.log(res);
