@@ -12,3 +12,7 @@ export const brieid = function(state) {
 export const yimeicampaignmsg = function(state) {
     return state.yimeicampaignmsg;
 }
+
+export const userName = state => state.userName;
+
+export const dialogVisible = state => state.dialogVisible;

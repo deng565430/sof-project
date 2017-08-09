@@ -4,7 +4,7 @@ export function line(data, name, title) {
             var topAll = topAllData(data);
             return option(topAll.title, topAll.legendData, topAll.xAxisData, topAll.seriesData)
             break;
-        case 'selectData':
+        case 'line':
             var selectData = selectDatas(data);
             return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
             break
@@ -15,14 +15,14 @@ export function line(data, name, title) {
         case 'shichangfenxiTitle':
             return mutilLine(data);
             break
-        case 'shichangfenxiTitleLeft':
+        case 'radar':
             return radar(data);
             break
         case 'gengduorenqunpianhao01Left':
             return radar(data);
             break
-        case 'renqunpianhaozhuyaoquyuProject':
-            return pie(data);
+        case 'bing':
+            return pie(data, null, 'large');
             break
         case 'yewupouxiProject':
             return pie(data, null, 'large');
@@ -211,23 +211,29 @@ function option (title, legendData, xAxisData, seriesData) {
 // 处理 人群偏好 总价 折线图
 function mutilLine (data, title, type, zoom) {
     var legendData = [];
+    var legendDataList = [];
     var xAxisData = [];
+    var xAxisDataList = [];
     var seriesData = [];
     data.forEach(function (item, index) {
         legendData.push(item.name);
         xAxisData.push(item.classes);
     })
-    legendData = [...new Set(legendData)];
-    xAxisData = [...new Set(xAxisData)];
-    for (let i in legendData) {
-        let datas = [];
+    new Set(legendData).forEach(function(item){
+        legendDataList.push(item);
+    });
+    new Set(xAxisData).forEach(function(item){
+        xAxisDataList.push(item);
+    });
+    for (var i = 0; i < legendDataList.length; i++) {
+        var datas = [];
         data.forEach(function(item, index) {
-            if (item.name === legendData[i]) {
+            if (item.name === legendDataList[i]) {
                 datas.push(item.value);
             }
         })
         seriesData.push({
-            name: legendData[i],
+            name: legendDataList[i],
             type: !!type ? type : 'line',
             data: datas
         })
@@ -241,7 +247,7 @@ function mutilLine (data, title, type, zoom) {
             trigger: 'axis'
         },
         legend: {
-            data: legendData
+            data: legendDataList
         },
         grid: {
             bottom: 80
@@ -280,7 +286,7 @@ function mutilLine (data, title, type, zoom) {
         calculable: true,
         xAxis: [{
             type: 'category',
-            data: xAxisData
+            data: xAxisDataList
         }],
         yAxis: [{
             type: 'value'
@@ -341,10 +347,13 @@ function pie (pie, title, size) {
     var showTitle = !!title ? true : false;
     var title = pie[0].classes;
     var legendData = [];
+    var legendDataList = [];
     pie.forEach(function(item, index) {
         legendData.push(item.name);
     })
-    legendData = [...new Set(legendData)];
+    new Set(legendData).forEach(function(item){
+        legendDataList.push(item);
+    });
     return {
         title: {
             show: true,
@@ -361,7 +370,7 @@ function pie (pie, title, size) {
             show: false,
             orient: 'horizontal',
             left: 'left',
-            data: legendData
+            data: legendDataList
         },
         series: [{
             name: title,
@@ -664,9 +673,9 @@ function bosd (data) {
         }]
     };
     return {
-        option1,
-        option2,
-        option3
+        option1: option1,
+        option2: option2,
+        option3: option3
     }
 }
 
@@ -870,7 +879,7 @@ function BCGMatrix(bos, mutil) {
         symbol = ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow'];
     if (mutil) {
         legend = [bos[0].classes];
-        let tmpPoint = [];
+        var tmpPoint = [];
         bos.forEach(function(v, k) {
             var x = parseFloat(v.classcode);
             var y = parseFloat(v.value);

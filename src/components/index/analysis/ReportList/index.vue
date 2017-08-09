@@ -15,43 +15,42 @@
     </div>
     <div>
       <div class="r-bazaar">
-       <h2> —— 市场分析 ——</h2>
+       <h2> —— 市场分析 —— </h2>
        <div class="r-bazaar-title">
-         <h3>总关注趋势</h3>
-         <div class="r-bazaar-charts">
-           <TopAll :topName="topName"/>
+         <div v-if="zongguanzhuqushi.detail ? zongguanzhuqushi.detail.length > 0 : false">
+           <h3>{{zongguanzhuqushi.title}}</h3>
+           <div class="r-bazaar-charts" v-if="item != null" v-for="item in zongguanzhuqushi.detail"> 
+             <TopAll :topData="cItem" v-if="cItem != null " v-for="cItem in item" :topName="topName"/>
+           </div>
          </div>
          <el-collapse v-model="activeNames" @change="zhuyaoquyuHandleChange" class="r-bazzaar-collapse" style="">
-          <el-collapse-item ref="collapseItem" class="collapse-item" title="更多市场关注趋势" name="zhuyaoquyu">
+          <el-collapse-item ref="collapseItem" class="collapse-item" :title="moreShichangguanzhu.title" name="zhuyaoquyu">
             <div>
-              <div class="select-item" v-if="selectData !== ''">
-                <div class="title">
-                  <span>关注趋势（{{selectData}}）</span>
-                  <span></span>
+              <div class="select-item" v-if="item != null" v-for="item in moreShichangguanzhu.detail">
+                <div v-for="chItem in item" v-if="chItem != null">
+                  <div class="title">
+                    <span>{{chItem.title}}</span>
+                    <span></span>
+                  </div>
+                  <ItemCharts :chartData="chItem" :proid="id" :chartStyle="chartStyle"></ItemCharts>
                 </div>
-                <Charts :id="'selectData'" :projectType="selectDataProject[0]" :chartStyle="chartStyle"></Charts>
-              </div>
-              <div class="select-item" v-if="selectType !== ''">
-                <div class="title">
-                <span>物业类型（{{selectType}}）</span>
-                <span></span>
-                </div>
-                <Charts :id="'selectType'" :projectType="selectTypeProject[0]" :chartStyle="chartStyle"></Charts>
               </div>
             </div>
           </el-collapse-item>
         </el-collapse>
        </div>
        <div class="r-bazaar-title">
-         <h3>{{shichangfenxiTitle}}</h3>
-         <div class="r-bazaar-charts">
-            <div class="r-bazaar-charts-l">
-              <Charts :id="'shichangfenxiTitleLeft'" :projectType="shichangfenxiTitleLeftProject[0]" :chartStyle="{width: '400px', height: '400px'}"></Charts>
-            </div>
-            <div class="r-bazaar-charts-r"> 
-              <Charts :id="'shichangfenxiTitleRight'" :projectType="shichangfenxiTitleProject[0]" :chartStyle="{width: '600px', height: '400px'}"></Charts>
-            </div>
-         </div>
+          <h3>{{renqunpianhaoqushi.title}}</h3>
+          <div v-if="item != null" v-for="item in renqunpianhaoqushi.detail">
+           <div class="r-bazaar-charts">
+              <div class="r-bazaar-charts-l" v-if="chItem != null" v-for="chItem in item">
+                <ItemCharts v-if="renqunpianhaoqushi.detail" :chartData="chItem" :name="'radar'" :proid="id" :chartStyle="{width: '300px', height: '300px'}"></ItemCharts>
+              </div>
+              <!-- <div class="r-bazaar-charts-r"> 
+                <Charts :id="'shichangfenxiTitleRight'" :projectType="shichangfenxiTitleProject[0]" :chartStyle="{width: '600px', height: '400px'}"></Charts>
+              </div> -->
+           </div>
+          </div>
          <div class="r-bazaar-charts">
           <h3>{{renqunpianhaozhuyaoquyu}}</h3>
            <div class="r-bazaar-charts-child">
@@ -262,12 +261,16 @@ import Charts from '../../../Charts';
 import HotMap from '../HotMap';
 import TopAll from '../TopAll';
 import { line } from 'assets/js/charts';
+import { mapGetters } from 'vuex';
+// import topData from './top5.json';
+import ItemCharts from './itemCharts';
 export default {
   name: 'index',
   components: {
     HotMap,
     Charts,
-    TopAll
+    TopAll,
+    ItemCharts
   },
   data () {
     return {
@@ -410,13 +413,18 @@ export default {
         id: 'renqunpianhao08',
         projectList: [],
         name: '本案人群偏好评估 - 地铁'
-      }]
+      }],
+      peportList: [],
+      zongguanzhuqushi: {},
+      moreShichangguanzhu: {},
+      renqunpianhaoqushi: {}
     };
   },
   mounted () {
     window.scrollTo(0, 0);
     this.getData();
     window.addEventListener('scroll', this.handleScroll);
+    this._getReproList();
   },
   ready () {
   },
@@ -591,7 +599,54 @@ export default {
     _getCharts (id, type, style, name, dataList) {
       const url = `/api/apis/charts/getReport/areaType?id=${id}&type=${type}&style=${style}`;
       this._getDataList(url, dataList, name);
-    }
+    },
+    _getReproList () {
+      if (!this.userName()) {
+        this.$alert('请先登录', '提示信息');
+        this.$router.push('/index');
+        return;
+      }
+      this.$api.get(`/api/config/getUrl?user=${this.userName()}`)
+      .then(res => {
+        if (res.data.code === 0) {
+          this.peportList = res.data.data;
+          this._getJsonData();
+        } else {
+          this.$alert('参数错误', '提示信息');
+          this.$router.go(-1);
+        }
+      });
+    },
+    _getJsonData () {
+      // console.log(topData.data);
+      console.log(this.peportList);
+      let zongguanzhuqushi = {};
+      let moreShichangguanzhu = {};
+      let renqunpianhaoqushi = {};
+      for (let item of this.peportList) {
+        switch (item.public_title) {
+          case '总关注趋势':
+            zongguanzhuqushi = item;
+            this.zongguanzhuqushi.title = zongguanzhuqushi.dimension;
+            this.zongguanzhuqushi.detail = zongguanzhuqushi.detail;
+            break;
+          case '更多市场关注趋势':
+            moreShichangguanzhu = item;
+            this.moreShichangguanzhu.title = moreShichangguanzhu.dimension;
+            this.moreShichangguanzhu.detail = moreShichangguanzhu.detail;
+            break;
+          case '人群偏好趋势':
+            renqunpianhaoqushi = item;
+            this.renqunpianhaoqushi.title = renqunpianhaoqushi.dimension;
+            this.renqunpianhaoqushi.detail = renqunpianhaoqushi.detail;
+            break;
+        }
+      }
+      console.log(renqunpianhaoqushi);
+    },
+    ...mapGetters([
+      'userName'
+    ])
   }
 };
 </script>
@@ -682,9 +737,6 @@ export default {
       .r-bazaar-charts
         border: 1px solid #ccc
         border-top: 2px solid #20A0FF
-        margin-bottom: 40px
-        width: 1000px
-        height: 400px
         h3
           color: black
           background: white

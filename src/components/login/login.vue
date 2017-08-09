@@ -1,7 +1,7 @@
 <template>
 <div id="login">
 
-  <el-dialog title="登录" :visible.sync="dialogVisible" size="tiny" :before-close="handleClose">
+  <el-dialog title="登录" :visible.sync="flag" size="tiny" :before-close="handleClose">
   <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
     <el-form-item label="用户名" prop="user" >
       <el-input v-model.number="ruleForm2.user"></el-input>
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
 export default {
 
   name: 'login',
@@ -42,7 +43,7 @@ export default {
       callback();
     };
     return {
-      dialogVisible: this.$store.state.dialogVisible,
+      flag: this.dialogVisible(),
       ruleForm2: {
         user: 'admin.sof',
         pass: '123456'
@@ -57,43 +58,46 @@ export default {
       }
     };
   },
+  mounted () {},
   methods: {
     unLogin () {
-      this.dialogVisible = this.$store.state.dialogVisible = !this.$store.state.dialogVisible;
+      this.dialogVisibles(false);
     },
     handleClose (done) {
       this.$confirm('确认关闭？')
         .then(_ => {
           done();
-          this.$store.state.dialogVisible = false;
+          this.dialogVisibles(false);
         })
         .catch(_ => {});
     },
     submitForm (formName) {
       var that = this;
-      console.log(that.$store.state.isLogin);
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$store.state.isLogin = true;
+          that.isLogin(true);
           const url = '/api/user/login';
           const postData = {
             name: this.ruleForm2.user,
             pwd: this.ruleForm2.pass
           };
           this.$api.post(url, postData).then(function (res) {
-            if (!res.data.data) {
-              alert('返回错误');
+            if (res.data.code === 3) {
+              that.$alert(res.data.msg, '提示信息');
+              that.dialogVisibles(true);
               return false;
             }
-            if (res.status === 200) {
-              console.log(res.data.data[0]);
-              that.$store.state.isLogin = true;
-              that.$store.state.userName = res.data.data[0].nickName;
-              window.sessionStorage.username = res.data.data[0].nickName;
-              this.$store.state.dialogVisible = false;
+            if (res.data.code === 0) {
+              const nickName = res.data.data[0].nickName;
+              that.isLogin(true);
+              that.userName(nickName);
+              that.dialogVisibles(false);
+              if (window.localStorage) {
+                window.localStorage.setItem('userName', nickName);
+                window.localStorage.setItem('isLogin', true);
+              }
             };
           });
-          this.dialogVisible = this.$store.state.dialogVisible = !this.$store.state.dialogVisible;
         } else {
           console.log('登录错误!!');
           return false;
@@ -102,7 +106,15 @@ export default {
     },
     resetForm (formName) {
       this.$refs[formName].resetFields();
-    }
+    },
+    ...mapGetters([
+      'dialogVisible'
+    ]),
+    ...mapMutations({
+      dialogVisibles: 'DIOLOG_VISIBLE',
+      userName: 'USER_NAME',
+      isLogin: 'IS_LOGIN'
+    })
   }
 };
 </script>
