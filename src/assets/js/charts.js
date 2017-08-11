@@ -178,6 +178,7 @@ function selectDatas (data) {
 
 // 处理 'line' 数据option 折线图
 function option (title, legendData, xAxisData, seriesData) {
+    console.log('title', title, 'legendData', legendData, 'xAxisData', xAxisData, 'seriesData', seriesData)
     var option = {
         title: {
             top: '3%',
