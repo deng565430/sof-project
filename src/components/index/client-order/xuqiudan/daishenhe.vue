@@ -1,11 +1,11 @@
 <template>
 	<div :tab2="tabs2">
-		<el-tabs  v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick"><!-- type="border-card" -->
+		<el-tabs  v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick">
 		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs">
 
         <Search @search="search" @qingchu="qingchu"></Search>
         <!-- table -->
-		  	<TableList :xiugaibtns='xiugaibtns'  :isshanchum="isshanchum" :chakanm="chakanm" v-loading="loading2" element-loading-text="加载中" :table="table"  @services-change="servicesChange" @services-shanchu="servicesShanchu"   :shanchusuccess="shanchusuccess" @services-qurrenshanchu="servicesQurrenshanchu"  @services-chakan="servicesChakan" ></TableList><!-- :shachuzhiling="shachuzhiling" -->
+		  	<TableList :xiugaibtns='xiugaibtns'  :isshanchum="isshanchum" :chakanm="chakanm" v-loading="loading2" element-loading-text="加载中" :table="table"  @services-change="servicesChange" @services-shanchu="servicesShanchu"   :shanchusuccess="shanchusuccess" @services-qurrenshanchu="servicesQurrenshanchu"  @services-chakan="servicesChakan" ></TableList>
         
         <!-- 分页 -->
         <el-pagination
@@ -31,7 +31,6 @@ import Search from './search';
 
 const tab = [{'name': '所有', 'code': '1'}];
 export default {
-  props: ['tabs2'],
   components: {
     TableList,
     Xiugai,
@@ -50,6 +49,7 @@ export default {
       tabsisshow: true,
       tabName: '',
       loading2: true,
+      tabs2: 0,
       tabs3: this.tabs2,
       isshanchum: this.tabs2,
       chakanm: this.tabs2,
@@ -77,7 +77,7 @@ export default {
   created () {
     this.tabName = 1;
     console.log(this.tabs3);
-    this.getTable(this.tabs3, 0, 10, '', '', ''); // 获取列表
+    this.getTable(this.tabs2, 0, 10, '', '', ''); // 获取列表
     this.getcelue();// 获取策略类型
   },
   methods: {

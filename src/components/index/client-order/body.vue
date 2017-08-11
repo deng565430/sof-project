@@ -1,21 +1,19 @@
 <template>
 <div id="orderOne">
-  <com-LeftMenu id="leftMenu" :dataValue="data"  :childIsShow="childIsShow" @changechild="changechild"></com-LeftMenu>
+  <com-LeftMenu id="leftMenu" ></com-LeftMenu>
   <div id="contain" style="width:85%">
     <Gailan v-if="Gailan"></Gailan>
     <OrderIndex v-if="OrderIndex" @tiaozhuan="tiaozhuan"></OrderIndex>
     <Dinging :tabs2="tabs2" v-if="show"></Dinging>
     <Xinjian v-if="Xinjian"></Xinjian>
     <New :tabs2="tabs2" v-if="New"></New>
-
-
-    <router-view></router-view>
+     <router-view></router-view>
   </div>
 </div>
 </template>
 
 <script>
-import LeftMenu from './../../leftMenu/LeftMenu';
+import LeftMenu from './../../leftMenu/orderMenu';
 import Gailan from './xuqiudan/gailan';
 import Dinging from './xuqiudan/daishenhe';
 import OrderIndex from './xuqiudan/neworder';
@@ -38,7 +36,7 @@ export default {
         {'value': '执行单', 'all': {'url': '', 'val': '执行单'}, 'name': {'url': '', 'val': '新执行单'}, 'ing': {'url': '', 'val': '未执行的'}, 'now': {'url': '', 'val': '正在执行的'}, 'hoistory': {'url': '', 'val': '历史执行单'}, 'hoistory2': {'url': '', 'val': ''}}
       ],
       show: false,
-      Gailan: true,
+      Gailan: false,
       Xinjian: false,
       OrderIndex: false,
       Dingyue: false,
@@ -47,7 +45,7 @@ export default {
       Weizhi: false,
       Historycampaign: false,
       Campaigning: false,
-      childIsShow: false,
+      childIsShow: true,
       tabs2: 0
     };
   },

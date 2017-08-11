@@ -24,7 +24,7 @@ export default {
   methods: {
     // 获取概览
     getgl () {
-      var url = 'api/campaign/getBriefStatus';
+      var url = '/api/campaign/getBriefStatus';
       this.$api.post(url).then((res) => {
         console.log(res.data.data);
         const seriesData = [];

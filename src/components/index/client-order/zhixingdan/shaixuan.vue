@@ -59,17 +59,16 @@
             >
             {{tag.name}}
             </el-tag>
+            
             <div v-if="" style="text-align: center; padding: 10px 0">
               <el-button type="text" @click="addZhixing(parentTag, parentIndex)">添加执行单</el-button> 
-              <el-button type="primary"   @click="submitF(parentIndex,parentTag)">搜索</el-button>
+              <el-button type="primary"    @click="submitF(parentIndex,parentTag)">搜索</el-button><!-- :disabled="parentTag.length === 0" -->
             </div>
           </div>
-        </div>
-        
-        <!-- 筛选条件提交 -->
+        </div>        <!-- 筛选条件提交 -->
         <div style="text-align: center; padding-top: 20px">
           <el-button  @click="addzu">添加新组</el-button> 
-          <el-button type="primary"    @click="submit">多组搜素</el-button>
+          <el-button type="primary"     @click="submit">多组搜素</el-button><!-- :disabled="showSelectData.length<2" -->
         </div>
     </div>
 
@@ -95,15 +94,15 @@
         </el-table>
         <div v-if="table.length >= 1" style="margin-top:10px;font-size:12px">共<span style="color:#FF4949;font-size:16px;margin:0 8px;">{{table.length}}</span>条</div>
         <!-- 执行单名称 -->
-        <el-form  style="width:300px;margin-top:20px"  label-width="100px"><!-- v-if="table.length > 1 " -->
+        <!-- <el-form  style="width:300px;margin-top:20px"  label-width="100px">v-if="table.length > 1 "
           <el-form-item label="执行单名称">
             <el-input v-model="zname" ref="tiele"  :disabled="title !== ''"></el-input>
           </el-form-item>
-        </el-form>
-
+        </el-form> -->
         <!-- 执行单提交 -->
+        {{showSelectData.length}}
         <div style="text-align: left; padding: 20px 0">
-          <el-button type="primary" v-if="histroy2 !== 3"  @click="submit2">确认</el-button><!-- v-if="zname !== '' " -->
+          <el-button type="primary" v-if="histroy2 !== 3"   @click="submit2">确认</el-button> <!-- :disabled="showSelectData[0].length<1" -->
         </div>
   </div>
 
@@ -250,23 +249,19 @@ export default {
     // 分单提交
     submit2 () {
       // console.log(this.$refs.tiele);
-      if (this.zname === '') {
-        this.$confirm('执行单名称不能为空!');
-      } else {
-        if (this.$refs.tiele.disabled === false) {
-          var data = {};
-          data.selects = this.showSelectData;
-          this.datas = data;
-          var obj = {};
-          obj.tac_code = this.getcode;
-          obj.file_name = this.zname;
-          obj.child_single_num = ''; // 修改执行单时
-          obj.tags = this.showSelectData;
-          this.$emit('fendans', obj);
-        } else {
-          this.$emit('fendans', this.zname);
-        }
-      }
+      // if (this.$refs.tiele.disabled === false) {
+      //   var data = {};
+      //   data.selects = this.showSelectData;
+      //   this.datas = data;
+      //   var obj = {};
+      //   obj.tac_code = this.getcode;
+      //   obj.file_name = this.zname;
+      //   obj.child_single_num = ''; // 修改执行单时
+      //   obj.tags = this.showSelectData;
+      //   this.$emit('fendans', obj);
+      // } else {
+      //   this.$emit('fendans', this.zname);
+      // }
     },
     // 组搜索
     submitF (parentIndex, parentTag) {
