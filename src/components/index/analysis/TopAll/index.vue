@@ -1,5 +1,7 @@
 <template>
 <div>
+{{rBazaarCharts}}
+
   <Charts :id="'r-bazaar-charts'" :projectType="rBazaarCharts[0]" :chartStyle="{height: '400px'}" />
 </div>
 </template>

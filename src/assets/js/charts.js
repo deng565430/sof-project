@@ -1,37 +1,22 @@
 export function line(data, name, title) {
     switch (name) {
-        case 'topAll':
-            var topAll = topAllData(data);
-            return option(topAll.title, topAll.legendData, topAll.xAxisData, topAll.seriesData)
-            break;
         case 'line':
-            var selectData = selectDatas(data);
-            return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
-            break
-        case 'selectTypeProject':
-            var selectData = selectDatas(data);
-            return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
-            break
-        case 'shichangfenxiTitle':
+            return lines(data);
+            break;
+        case 'mutilLine':
             return mutilLine(data);
-            break
+            break;
         case 'radar':
             return radar(data);
-            break
-        case 'gengduorenqunpianhao01Left':
-            return radar(data);
-            break
+            break;
         case 'bing':
             return pie(data, null, 'large');
-            break
-        case 'yewupouxiProject':
-            return pie(data, null, 'large');
-            break    
+            break;   
         case 'yewupinggu':
             var selectData = selectDatas(data);
             return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
             break
-        case 'bosd':
+        case 'boston':
             return bosd(data);
             break
         case 'guanzhuqushi':
@@ -40,10 +25,10 @@ export function line(data, name, title) {
         case 'guanzhuzhangfubi':
             return mutilLine(data, '', 'bar', true);
             break
-        case 'quyuguanzhuliang':
+        case 'customizedPie':
             return customizedPie(data);
             break
-        case 'barStack':
+        case 'bar':
             return barStack(data);
             break
         case 'matrix':
@@ -178,7 +163,6 @@ function selectDatas (data) {
 
 // 处理 'line' 数据option 折线图
 function option (title, legendData, xAxisData, seriesData) {
-    console.log('title', title, 'legendData', legendData, 'xAxisData', xAxisData, 'seriesData', seriesData)
     var option = {
         title: {
             top: '3%',
@@ -208,7 +192,40 @@ function option (title, legendData, xAxisData, seriesData) {
     };
     return option;
 }
-
+// 处理折线图
+function lines(data) {
+    for (var i = 0; i < data.result.length; i++) {
+        data.result[i].type = 'line'
+    }
+    var option = {
+        title: {
+            top: '3%',
+            text: data.title,
+            show: false
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            top: '3%',
+            data: data.legend
+        },
+        xAxis: {
+            axisLabel: {
+                rotate: 45,
+                interval: 2
+            },
+            type: 'category',
+            boundaryGap: false,
+            data: data.date
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: data.result
+    };
+    return option;
+}
 // 处理 人群偏好 总价 折线图
 function mutilLine (data, title, type, zoom) {
     var legendData = [];
@@ -345,6 +362,7 @@ function radar (radar, title, size) {
 
 // 处理 总价偏好 饼图
 function pie (pie, title, size) {
+    console.log('pie', pie);
     var showTitle = !!title ? true : false;
     var title = pie[0].classes;
     var legendData = [];
@@ -376,7 +394,7 @@ function pie (pie, title, size) {
         series: [{
             name: title,
             type: 'pie',
-            radius: size == 'large' ? '65%' : '20%',
+            radius: size == 'large' ? '50%' : '20%',
             center: ['50%', '50%'],
             data: pie,
             label: {
@@ -410,108 +428,105 @@ function bosd (data) {
         endPoint.push(r.coord);
     });
     var option1 = {
-        baseOption: {
-            title: {
-                text: '楼盘业务评估',
-                show: true
+        title: {
+            text: '楼盘业务评估',
+            show: true
+        },
+        tooltip: {},
+        legend: {
+            left: '20%',
+            right: '4%',
+            data: echart1Name, ////显示/隐藏的btn名称，需要与下列属性相同才能显示
+            containLabel: true
+        },
+        xAxis: [{
+            'min': -150,
+            'max': 150
+        }],
+        yAxis: [{
+            'min': -150,
+            'max': 150
+        }],
+        series: [{
+            'name': '\u5353\u8d8a\u65f6\u4ee3\u5e7f\u573a\u5546\u4f4f',
+            'type': 'scatter', //显示/隐藏的btn样式
+            'label': {
+                'normal': {
+                    'show': true,
+                    'position': 'top',
+                    'formatter': '{a}'
+                }
             },
-            tooltip: {
-                //
-            },
-            legend: {
-                left: '20%',
-                right: '4%',
-                data: echart1Name, ////显示/隐藏的btn名称，需要与下列属性相同才能显示
-                containLabel: true
-            },
-            xAxis: [{
-                'min': -150,
-                'max': 150
-            }],
-            yAxis: [{
-                'min': -150,
-                'max': 150
-            }],
-            series: [{
-                'name': '\u5353\u8d8a\u65f6\u4ee3\u5e7f\u573a\u5546\u4f4f',
-                'type': 'scatter', //显示/隐藏的btn样式
-                'label': {
-                    'normal': {
-                        'show': true,
-                        'position': 'top',
-                        'formatter': '{a}'
-                    }
-                },
+            'data': [
+                ['0.00', null]
+            ],
+            'markLine': {
+                'silent': true,
                 'data': [
-                    ['0.00', null]
-                ],
-                'markLine': {
-                    'silent': true,
-                    'data': [
-                        [{
-                            'symbol': 'none',
-                            'coord': [0, 0]
-                        }, { //coord由外一点向原点划线
-                            'symbol': 'none', //两点话线
-                            'coord': [0, 0], //coord由原点向外一点划线
-                            'lineStyle': {
-                                'normal': {
-                                    'color': '#8B008B'
-                                }
-                            },
-                            'label': {
-                                'normal': {
-                                    'show': true,
-                                    'formatter': '0',
-                                    'position': 'middle'
-                                }
-                            } //formatter原点中间的内容“0”
-                        }], {
-                            'yAxis': data.businessChartOnes[0].z_line, //Y为0花一条平行于x轴的线
-                            'label': {
-                                'normal': {
-                                    'show': true,
-                                    'position': 'end', //end随着线的生成至结尾处
-                                    'formatter': '\u8f6c\u5316\u8d28\u91cf\u57fa\u51c6\u7ebf' //这条线上内容
-                                }
-                            }
-                        }, {
-                            'xAxis': data.businessChartOnes[0].g_line, //过该点垂直于Y轴直线
-                            'label': {
-                                'normal': {
-                                    'show': true,
-                                    'position': 'start',
-                                    'formatter': '\u4f9b\u7ed9\u91cf\u57fa\u51c6\u7ebf'
-                                }
+                    [{
+                        'symbol': 'none',
+                        'coord': [0, 0]
+                    }, { //coord由外一点向原点划线
+                        'symbol': 'none', //两点话线
+                        'coord': [0, 0], //coord由原点向外一点划线
+                        'lineStyle': {
+                            'normal': {
+                                'color': '#8B008B'
                             }
                         },
-                        [{
-                            'symbol': 'none',
-                            'coord': [-150, 150]
-                        }, { //同上，两点之间划线
-                            'symbol': 'none',
-                            'coord': [150, -150], //同上，两点之间划线
-                            'lineStyle': {
-                                'normal': {
-                                    'color': 'red',
-                                    'type': 'solid'
-                                }
-                            },
-                            'label': {
-                                'normal': {
-                                    'show': true,
-                                    'formatter': '\u4e1a\u52a1\u8868\u73b0\u57fa\u51c6\u7ebf'
-                                }
+                        'label': {
+                            'normal': {
+                                'show': true,
+                                'formatter': '0',
+                                'position': 'middle'
                             }
-                        }]
-                    ],
-                    'symbol': 'none'
-                }
-            }]
-        }
+                        } //formatter原点中间的内容“0”
+                    }], {
+                        'yAxis': data.businessChartOnes[0].z_line, //Y为0花一条平行于x轴的线
+                        'label': {
+                            'normal': {
+                                'show': true,
+                                'position': 'end', //end随着线的生成至结尾处
+                                'formatter': '\u8f6c\u5316\u8d28\u91cf\u57fa\u51c6\u7ebf' //这条线上内容
+                            }
+                        }
+                    }, {
+                        'xAxis': data.businessChartOnes[0].g_line, //过该点垂直于Y轴直线
+                        'label': {
+                            'normal': {
+                                'show': true,
+                                'position': 'start',
+                                'formatter': '\u4f9b\u7ed9\u91cf\u57fa\u51c6\u7ebf'
+                            }
+                        }
+                    },
+                    [{
+                        'symbol': 'none',
+                        'coord': [-150, 150]
+                    }, { //同上，两点之间划线
+                        'symbol': 'none',
+                        'coord': [150, -150], //同上，两点之间划线
+                        'lineStyle': {
+                            'normal': {
+                                'color': 'red',
+                                'type': 'solid'
+                            }
+                        },
+                        'label': {
+                            'normal': {
+                                'show': true,
+                                'formatter': '\u4e1a\u52a1\u8868\u73b0\u57fa\u51c6\u7ebf'
+                            }
+                        }
+                    }]
+                ],
+                'symbol': 'none'
+            }
+        }]
+
     };
     for (var i = 0; i < echart1Name.length; i++) {
-        option1.baseOption.series[0].markLine.data.push(
+        option1.series[0].markLine.data.push(
             [{
                 "symbol": "none",
                 "coord": beginPoint[i]
@@ -534,7 +549,7 @@ function bosd (data) {
         )
     }
     for (var i = 0; i < echart1Name.length; i++) {
-        option1.baseOption.series.push({ //加入点
+        option1.series.push({ //加入点
             name: echart1Name[i],
             type: 'scatter',
             data: [beginPoint[i]]
@@ -870,6 +885,9 @@ function barStack(data) {
 
 // 处理矩阵图
 function BCGMatrix(bos, mutil) {
+    if (bos.length < 1) {
+        return;
+    }
     var xAxis = [];
     var data = [];
     var legend = [];

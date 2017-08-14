@@ -82,7 +82,7 @@ export default {
       });
     },
     getAllList () {
-      this.$api.get('/api/apis/report?id=2')
+      this.$api.get('/api/report?id=2')
       .then(res => {
         console.log(res);
         if (res.data.code === 0) {

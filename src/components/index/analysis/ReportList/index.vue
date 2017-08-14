@@ -17,14 +17,14 @@
       <div class="r-bazaar">
        <h2> —— 市场分析 —— </h2>
        <div class="r-bazaar-title">
-         <div v-if="zongguanzhuqushi.detail ? zongguanzhuqushi.detail.length > 0 : false">
-           <h3>{{zongguanzhuqushi.title}}</h3>
+         <div >
+           <h3>{{zongguanzhuqushi.dimension}}</h3>
            <div class="r-bazaar-charts" v-if="item != null" v-for="item in zongguanzhuqushi.detail"> 
-             <TopAll :topData="cItem" v-if="cItem != null " v-for="cItem in item" :topName="topName"/>
+              <ItemCharts :chartData="cItem" v-if="cItem != null " v-for="cItem in item" :chartStyle="{width: `${1000 / item.length}` + 'px', height: '500px'}"></ItemCharts>
            </div>
          </div>
          <el-collapse v-model="activeNames" @change="zhuyaoquyuHandleChange" class="r-bazzaar-collapse" style="">
-          <el-collapse-item ref="collapseItem" class="collapse-item" :title="moreShichangguanzhu.title" name="zhuyaoquyu">
+          <el-collapse-item ref="collapseItem" class="collapse-item" :title="moreShichangguanzhu.dimension" name="zhuyaoquyu">
             <div>
               <div class="select-item" v-if="item != null" v-for="item in moreShichangguanzhu.detail">
                 <div v-for="chItem in item" v-if="chItem != null">
@@ -40,119 +40,31 @@
         </el-collapse>
        </div>
        <div class="r-bazaar-title">
-          <h3>{{renqunpianhaoqushi.title}}</h3>
+          <h3>{{renqunpianhaoqushi.dimension}}</h3>
           <div v-if="item != null" v-for="item in renqunpianhaoqushi.detail">
            <div class="r-bazaar-charts">
-              <div class="r-bazaar-charts-l" v-if="chItem != null" v-for="chItem in item">
-                <ItemCharts v-if="renqunpianhaoqushi.detail" :chartData="chItem" :name="'radar'" :proid="id" :chartStyle="{width: '300px', height: '300px'}"></ItemCharts>
+              <h3>{{item[0].title}}</h3>
+              <div class="r-bazaar-charts-child">
+                <div class="r-bazaar-charts-l" v-if="chItem != null" v-for="chItem in item">
+                 <ItemCharts v-if="renqunpianhaoqushi.detail" :chartData="chItem" :chartStyle="{width: `${1000 / item.length}` + 'px', height: '300px'}"></ItemCharts> 
+                </div>
               </div>
-              <!-- <div class="r-bazaar-charts-r"> 
-                <Charts :id="'shichangfenxiTitleRight'" :projectType="shichangfenxiTitleProject[0]" :chartStyle="{width: '600px', height: '400px'}"></Charts>
-              </div> -->
            </div>
           </div>
-         <div class="r-bazaar-charts">
-          <h3>{{renqunpianhaozhuyaoquyu}}</h3>
-           <div class="r-bazaar-charts-child">
-             <div>
-               <Charts :id="'renqunpianhaozhuyaoquyuLeft'" :projectType="renqunpianhaozhuyaoquyuProjectLeft[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-             </div>
-             <div>
-               <Charts :id="'renqunpianhaozhuyaoquyuMiddle'" :projectType="renqunpianhaozhuyaoquyuProjectMiddle[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-             </div>
-             <div>
-               <Charts :id="'renqunpianhaozhuyaoquyuRight'" :projectType="renqunpianhaozhuyaoquyuProjectRight[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-             </div>
-           </div>
-         </div>
          <el-collapse v-model="activeNames" @change="gengduopianhaoChange" class="r-bazzaar-collapse" style="">
-          <el-collapse-item style="color: #fff !import" :title="gengduorenqunpianhaoTitle" name="2" >
+          <el-collapse-item style="color: #fff !import" :title="gengduorenqunpianhao.dimension" name="2" >
             <div>
-              <div class="select-item" v-if="selectData !== ''">
-                <div class="title">
-                  <span>{{gengduorenqunpianhao01}}</span>
-                  <span></span>
-                </div>
-                <div class="r-bazaar-charts-l">
-                  <Charts :id="'gengduorenqunpianhao01Left'" :projectType="gengduorenqunpianhao01LeftProject[0]" :chartStyle="{width: '400px', height: '400px'}"></Charts>
-                </div>
-                <div class="r-bazaar-charts-r"> 
-                  <Charts :id="'gengduorenqunpianhao01Right'" :projectType="gengduorenqunpianhao01RightProject[0]" :chartStyle="{width: '600px', height: '400px'}"></Charts>
-                </div>
-              </div>
-              <div class="select-item" v-if="selectType !== ''">
-                <div class="title">
-                <span>{{gengduorenqunpianhao02}}</span>
-                <span></span>
-                </div>
-                <div class="r-bazaar-charts-child">
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao02Left'" :projectType="gengduorenqunpianhao02ProjectLeft[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao02Middle'" :projectType="gengduorenqunpianhao02ProjectMiddle[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao02Right'" :projectType="gengduorenqunpianhao02ProjectRight[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
-               </div>
-              </div>
-              <div class="select-item" v-if="selectData !== ''">
-                <div class="title">
-                  <span>{{gengduorenqunpianhao03}}</span>
-                  <span></span>
-                </div>
-                <div class="r-bazaar-charts-l">
-                  <Charts :id="'gengduorenqunpianhao03Left'" :projectType="gengduorenqunpianhao03LeftProject[0]" :chartStyle="{width: '400px', height: '400px'}"></Charts>
-                </div>
-                <div class="r-bazaar-charts-r"> 
-                  <Charts :id="'gengduorenqunpianhao03Right'" :projectType="gengduorenqunpianhao03RightProject[0]" :chartStyle="{width: '600px', height: '400px'}"></Charts>
-                </div>
-              </div>
-              <div class="select-item" v-if="selectType !== ''">
-                <div class="title">
-                  <span>{{gengduorenqunpianhao04}}</span>
-                  <span></span>
-                </div>
-                <div class="r-bazaar-charts-child">
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao04Left'" :projectType="gengduorenqunpianhao04ProjectLeft[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao04Middle'" :projectType="gengduorenqunpianhao04ProjectMiddle[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao04Right'" :projectType="gengduorenqunpianhao04ProjectRight[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
-                </div>
-              </div>
-              <div class="select-item" v-if="selectData !== ''">
-                <div class="title">
-                  <span>{{gengduorenqunpianhao05}}</span>
-                  <span></span>
-                </div>
-                <div class="r-bazaar-charts-l">
-                  <Charts :id="'gengduorenqunpianhao05Left'" :projectType="gengduorenqunpianhao05LeftProject[0]" :chartStyle="{width: '400px', height: '400px'}"></Charts>
-                </div>
-                <div class="r-bazaar-charts-r"> 
-                  <Charts :id="'gengduorenqunpianhao05Right'" :projectType="gengduorenqunpianhao05RightProject[0]" :chartStyle="{width: '600px', height: '400px'}"></Charts>
-                </div>
-              </div>
-              <div class="select-item" v-if="selectType !== ''">
-                <div class="title">
-                  <span>{{gengduorenqunpianhao06}}</span>
-                  <span></span>
-                </div>
-                <div class="r-bazaar-charts-child">
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao06Left'" :projectType="gengduorenqunpianhao06ProjectLeft[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao06Middle'" :projectType="gengduorenqunpianhao06ProjectMiddle[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
-                 <div>
-                   <Charts :id="'gengduorenqunpianhao06Right'" :projectType="gengduorenqunpianhao06ProjectRight[0]" :chartStyle="{width: '330px', height: '380px'}"></Charts>
-                 </div>
+              <div class="select-item" v-for="item in gengduorenqunpianhao.detail">
+                <div>
+                  <div class="title">
+                    <span>{{item[0].title}}</span>
+                    <span></span>
+                  </div>
+                  <div class="r-bazaar-charts-child">
+                     <div v-if="childItem != null" v-for="childItem in item">
+                        <ItemCharts :chartData="childItem" :chartStyle="{width: `${1000 / item.length}` + 'px', height: '300px'}"></ItemCharts>
+                     </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -162,68 +74,67 @@
        <h2> —— 项目分析 ——</h2>
        <div class="r-bazaar-title">
          <h3>业务评估</h3>
-         <div class="r-bazaar-charts" style="height: 490px" v-if="yewupingguTitle !== ''">
+         <div class="r-bazaar-charts" style="height: 490px" v-if="item != null" v-for="item in yewupingguData.detail">
             <div class="title">
-                <span>{{yewupingguTitle}}</span>
+                <span>{{item[0].title}}</span>
                 <span></span>
             </div>
-           <Charts :id="'yewupinggu'" :projectType="yewupinggu[0]" :chartStyle="chartStyle"></Charts>
-         </div>
-         <div class="r-bazaar-charts" style="height: 490px">
-            <div class="title">
-                <span>{{zonghepingguTitle}}</span>
-                <span></span>
+            <div class="r-bazaar-charts-child">
+                <div v-if="childItem != null" v-for="childItem in item">
+                  <ItemCharts :chartData="childItem" :chartStyle="{width: `${1000 / item.length}` + 'px', height: '400px'}"></ItemCharts>
+                </div>
             </div>
-           <Charts :id="'zonghepinggu'" :projectType="zonghepinggu[0]" :chartStyle="chartStyle"></Charts>
-         </div>
-         <div class="r-bazaar-charts" style="height: 1070px">
-          <div class="r-bazaar-charts" style="height: 490px; border-bottom: none;" v-if="yewupingguTitle !== ''">
-              <div class="title">
-                  <span>{{chengzhangxingpingguTitle}}</span>
-                  <span></span>
-              </div>
-             <Charts style="margin-left: 200px" :id="'chengzhangxingpingguTop'" :projectType="chengzhangxingpingguTopProject[0]" :chartStyle="{width: '615px', height: '590px'}"></Charts>
-             <Charts :id="'chengzhangxingpingguBottom'" :projectType="chengzhangxingpingguBottomProject[0]" :chartStyle="chartStyle"></Charts>
-           </div>
+           <!-- <Charts :id="'yewupinggu'" :projectType="yewupinggu[0]" :chartStyle="chartStyle"></Charts> -->
          </div>
        </div>
        <div class="r-bazaar-title">
          <h3>业务剖析</h3>
-         <div class="r-bazaar-charts" style="height: 490px">
+         <div class="r-bazaar-charts" style="height: 490px" v-if="item != null" v-for="item in yewupouxiData.detail">
             <div class="title">
-                <span>{{yewupouxiTitle}}</span>
+                <span>{{item[0].title}}</span>
                 <span></span>
             </div>
-           <Charts :id="'yewupouxi'" :projectType="yewupouxiProject[0]" :chartStyle="chartStyle"></Charts>
+            <div class="r-bazaar-charts-child">
+                <div v-if="childItem != null" v-for="childItem in item">
+                  <ItemCharts :chartData="childItem" :chartStyle="{width: `${1000 / item.length}` + 'px', height: '400px'}"></ItemCharts>
+                </div>
+            </div>
          </div>
          <el-collapse v-model="activeNames" @change="Top8HandleChange" class="r-bazzaar-collapse" style="">
-          <el-collapse-item title="本案人群偏好排名TOP8" name="3" style="color: #fff">
+          <el-collapse-item :title="benanrenqunpianhaopaiming.dimension" name="3" style="color: #fff">
             <div>
-                <div class="select-item" v-if="selectData !== ''" v-for="item in top8List">
+              <div class="select-item" v-for="item in benanrenqunpianhaopaiming.detail">
+                <div>
                   <div class="title">
-                    <span>{{item.benanTop}}</span>
+                    <span>{{item[0].title}}</span>
                     <span></span>
                   </div>
-                  <div class="r-bazaar-charts-l">
-                    <Charts :id="item.leftId" :projectType="item.benanTopLeftProject[0]" :chartStyle="{width: '400px', height: '500px'}"></Charts>
-                  </div>
-                  <div class="r-bazaar-charts-r"> 
-                    <Charts :id="item.rightId" :projectType="item.benanTopRightProject[0]" :chartStyle="{width: '600px', height: '500px'}"></Charts>
+                  <div class="r-bazaar-charts-child">
+                     <div v-if="childItem != null" v-for="childItem in item">
+                        <ItemCharts :chartData="childItem" :chartStyle="{width: `${1000 / item.length}` + 'px', height: '400px'}"></ItemCharts>
+                     </div>
                   </div>
                 </div>
+              </div>
             </div>
           </el-collapse-item>
         </el-collapse>
         <el-collapse v-model="activeNames" @change="renqunpianhaoHandleChange" class="r-bazzaar-collapse" style="">
-          <el-collapse-item title="本案人群偏好评估" name="4" style="color: #fff">
+          <el-collapse-item :title="benanrenqunpianhaopinggu.dimension" name="4" style="color: #fff">
             <div>
-                <div class="select-item" v-if="selectData !== ''" v-for="item in renqunpianhaoList">
+              <div class="select-item" v-for="item in benanrenqunpianhaopinggu.detail">
+                <div>
                   <div class="title">
-                    <span>{{item.name}}</span>
+                    <span>{{item[0].title}}</span>
                     <span></span>
-                    </div>
-                    <Charts :id="item.id" :projectType="item.projectList[0]" :chartStyle="chartStyle"></Charts>
                   </div>
+                  <div class="r-bazaar-charts-child">
+                     <div v-if="childItem != null" v-for="childItem in item">
+                        <ItemCharts :chartData="childItem" :chartStyle="{width: `${1000 / item.length}` + 'px', height: '400px'}"></ItemCharts>
+                     </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -231,9 +142,21 @@
        <div class="r-bazaar-title">
          <h3>营销概况</h3>
          <div class="r-bazaar-charts" style="height: 900px">
-          <div class="r-bazaar-charts" style="height: 490px; border-bottom: none" v-if="yewupingguTitle !== ''">
+           <div class="r-bazaar-charts" style="height: 490px" v-if="item != null" v-for="item in yingxiaogaikuang.detail">
               <div class="title">
-                  <span>{{guanzhuqushiTitle}}</span>
+                  <span>{{item[0].title}}</span>
+                  <span></span>
+              </div>
+              <div class="r-bazaar-charts-child">
+                  <div v-if="childItem != null" v-for="childItem in item">
+                    <ItemCharts :chartData="childItem" :chartStyle="{width: `${1000 / item.length}` + 'px', height: '400px'}"></ItemCharts>
+                  </div>
+              </div>
+           </div>
+          <div class="r-bazaar-charts" style="height: 490px; border-bottom: none" v-if="yewupingguTitle !== ''" v-for="item in yingxiaogaikuang.detail">
+          {{item}}
+              <div class="title">
+                  <span>{{item[0].title}}</span>
                   <span></span>
               </div>
              <Charts :id="'guanzhuqushi'" :projectType="guanzhuqushiProject[0]" :chartStyle="chartStyle"></Charts>
@@ -262,7 +185,7 @@ import HotMap from '../HotMap';
 import TopAll from '../TopAll';
 import { line } from 'assets/js/charts';
 import { mapGetters } from 'vuex';
-// import topData from './top5.json';
+import topData from './top5.json';
 import ItemCharts from './itemCharts';
 export default {
   name: 'index',
@@ -417,11 +340,19 @@ export default {
       peportList: [],
       zongguanzhuqushi: {},
       moreShichangguanzhu: {},
-      renqunpianhaoqushi: {}
+      renqunpianhaoqushi: {},
+      gengduorenqunpianhao: {},
+      yewupingguData: {},
+      yewupouxiData: {},
+      benanrenqunpianhaopaiming: {},
+      benanrenqunpianhaopinggu: {},
+      yingxiaogaikuang: {},
+      hotMaps: {}
     };
   },
   mounted () {
     window.scrollTo(0, 0);
+    console.log(topData);
     this.getData();
     window.addEventListener('scroll', this.handleScroll);
     this._getReproList();
@@ -432,57 +363,9 @@ export default {
   },
   methods: {
     zhuyaoquyuHandleChange (arr) {
-      if (arr.length <= 1) {
-        return;
-      }
-      if (this.selectDataProject.length > 0) {
-        return;
-      }
-      if (this.selectData !== '') {
-        const selectDataUrl = `/api/apis/subscribe/top5_tag_day_port?keywords=${this.selectData}&projectId=${this.id}`;
-        const selectDataName = 'selectData';
-        this._getDataList(selectDataUrl, this.selectDataProject, selectDataName);
-      };
-      if (this.selectTypeProject !== '') {
-        const selectTypeProjectUrl = `/api/apis/subscribe/wy_day_port?keywords=${this.selectType}&type=line&projectId=${this.id}`;
-        const selectTypeProjectName = 'selectTypeProject';
-        this._getDataList(selectTypeProjectUrl, this.selectTypeProject, selectTypeProjectName);
-      };
     },
-    gengduopianhaoChange (arr) {
-      // 更多人群偏好 面积及趋势
-      this._getCharts(this.id, 'mianj', 'total', 'gengduorenqunpianhao01Left', this.gengduorenqunpianhao01LeftProject);
-      this._getCharts(this.id, 'mianj', 'dateinfo', 'shichangfenxiTitle', this.gengduorenqunpianhao01RightProject);
-      // 面积偏好，主要区域
-      this._getCharts(this.id, 'mianj', 'dfb_area&top=1', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao02ProjectLeft);
-      this._getCharts(this.id, 'mianj', 'dfb_area&top=2', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao02ProjectMiddle);
-      this._getCharts(this.id, 'mianj', 'dfb_area&top=3', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao02ProjectRight);
-      // 户型偏好及趋势
-      this._getCharts(this.id, 'hux', 'total', 'gengduorenqunpianhao01Left', this.gengduorenqunpianhao03LeftProject);
-      this._getCharts(this.id, 'hux', 'dateinfo', 'shichangfenxiTitle', this.gengduorenqunpianhao03RightProject);
-      // 户型偏好主要区域
-      this._getCharts(this.id, 'hux', 'dfb_area&top=1', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao04ProjectLeft);
-      this._getCharts(this.id, 'hux', 'dfb_area&top=2', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao04ProjectMiddle);
-      this._getCharts(this.id, 'hux', 'dfb_area&top=3', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao04ProjectRight);
-      // 地铁偏好及趋势
-      this._getCharts(this.id, 'dit', 'total', 'gengduorenqunpianhao01Left', this.gengduorenqunpianhao05LeftProject);
-      this._getCharts(this.id, 'dit', 'dateinfo', 'shichangfenxiTitle', this.gengduorenqunpianhao05RightProject);
-      // 地铁偏好主要区域
-      this._getCharts(this.id, 'dit', 'dfb_area&top=1', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao06ProjectLeft);
-      this._getCharts(this.id, 'dit', 'dfb_area&top=2', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao06ProjectMiddle);
-      this._getCharts(this.id, 'dit', 'dfb_area&top=3', 'renqunpianhaozhuyaoquyuProject', this.gengduorenqunpianhao06ProjectRight);
-    },
-    Top8HandleChange (arr) {
-      if (arr.length <= 1) {
-        return;
-      }
-      if (this.top8List[0].benanTopLeftProject.length > 0) {
-        return;
-      }
-      for (let i = 0; i < this.top8List.length; i++) {
-        this._getDataList(`/api/apis/charts/getReport/attr?id=${this.id}&style=bar&top=${i + 1}`, this.top8List[i].benanTopLeftProject, 'renqunpianhaozhuyaoquyuProject', 'barStack', this.top8List[i].benanTopRightProject, this.top8List[i].benanTop);
-      }
-    },
+    gengduopianhaoChange (arr) {},
+    Top8HandleChange (arr) {},
     renqunpianhaoHandleChange (arr) {
       if (arr.length <= 1) {
         return;
@@ -618,31 +501,50 @@ export default {
       });
     },
     _getJsonData () {
-      // console.log(topData.data);
-      console.log(this.peportList);
-      let zongguanzhuqushi = {};
-      let moreShichangguanzhu = {};
-      let renqunpianhaoqushi = {};
       for (let item of this.peportList) {
         switch (item.public_title) {
           case '总关注趋势':
-            zongguanzhuqushi = item;
-            this.zongguanzhuqushi.title = zongguanzhuqushi.dimension;
-            this.zongguanzhuqushi.detail = zongguanzhuqushi.detail;
+            this.zongguanzhuqushi = item;
             break;
           case '更多市场关注趋势':
-            moreShichangguanzhu = item;
-            this.moreShichangguanzhu.title = moreShichangguanzhu.dimension;
-            this.moreShichangguanzhu.detail = moreShichangguanzhu.detail;
+            this.moreShichangguanzhu = item;
             break;
           case '人群偏好趋势':
-            renqunpianhaoqushi = item;
-            this.renqunpianhaoqushi.title = renqunpianhaoqushi.dimension;
-            this.renqunpianhaoqushi.detail = renqunpianhaoqushi.detail;
+            this.renqunpianhaoqushi = item;
+            break;
+          case '更多人群偏好':
+            this.gengduorenqunpianhao = item;
+            break;
+          case '业务评估':
+            this.yewupingguData = item;
+            break;
+          case '业务剖析':
+            this.yewupouxiData = item;
+            break;
+          case '本案人群偏好排名':
+            this.benanrenqunpianhaopaiming = item;
+            break;
+          case '本案人群偏好评估':
+            this.benanrenqunpianhaopinggu = item;
+            break;
+          case '营销概况':
+            this.yingxiaogaikuang = item;
+            break;
+          case '热力图':
+            this.hotMaps = item;
             break;
         }
       }
-      console.log(renqunpianhaoqushi);
+      console.log('总关注趋势', this.zongguanzhuqushi);
+      console.log('更多市场关注趋势', this.moreShichangguanzhu);
+      console.log('人群偏好趋势', this.renqunpianhaoqushi);
+      console.log('更多人群偏好', this.gengduorenqunpianhao);
+      console.log('业务评估', this.yewupingguData);
+      console.log('业务剖析', this.yewupouxiData);
+      console.log('本案人群偏好排名', this.benanrenqunpianhaopaiming);
+      console.log('本案人群偏好评估', this.benanrenqunpianhaopinggu);
+      console.log('营销概况', this.yingxiaogaikuang);
+      console.log('热力图', this.hotMaps);
     },
     ...mapGetters([
       'userName'
@@ -693,6 +595,7 @@ export default {
     .r-bazaar-title
       border-top-left-radius: 20px
       border-top-right-radius: 20px
+      margin-bottom: 20px
       overflow: hidden
       .title
         margin: 0
@@ -742,7 +645,8 @@ export default {
           background: white
           border: none
       .select-item
-        border-bottom: 1px solid #20A0FF    
+        border-bottom: 1px solid #20A0FF
+        height: 500px
   .collapse-item
     color: white
   .r-bazaar-charts-child
@@ -750,7 +654,7 @@ export default {
     widht: 1000px
     height: 360px
     >div
-      width: 33%
+      width: 100%
 .r-bazaar-charts-l
   display: inline-block
   box-sizing: border-box
