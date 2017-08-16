@@ -42,19 +42,19 @@
             </el-form-item>
          </el-col>
         </el-row>
-        <!-- 需求公司 -->
+        <!-- 需求公司 --> <!-- :disabled="!(chakanxiangs in chakanxiang2)"  -->
         <el-row :gutter="20" style="margin-top:20px">
           <el-col :span="8">
-            <el-form-item  :disabled="!(chakanxiangs in chakanxiang2)" label="需求公司" prop="compan">
+            <el-form-item  label="需求公司" prop="compan">  
               <el-input :disabled="true" v-model="form.compan" placeholder=""></el-input>
-            </el-form-item>
+            </el-form-item> 
          </el-col>
         </el-row>
-        <!-- 所需电话量 -->
+        <!-- 所需电话量 --> <!-- :disabled="!(chakanxiangs in chakanxiang2)"  -->
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item  label="所需电话量" prop="phonenum">
-              <el-input :disabled="!(chakanxiangs in chakanxiang2)" v-model="form.phonenum" placeholder=""></el-input>
+              <el-input v-model="form.phonenum" placeholder=""></el-input>
             </el-form-item>
          </el-col>
         </el-row>
@@ -66,17 +66,17 @@
             </el-form-item >
           </el-col >
         </el-row >
-        <!-- 项目描述 -->
+        <!-- 项目描述 --> <!-- :disabled="!(chakanxiangs in chakanxiang2)" -->
         <el-row :gutter="20">
           <el-col :span="16">
             <el-form-item label="项目描述" prop="miaoshu">
-              <el-input :disabled="!(chakanxiangs in chakanxiang2)"  type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
+              <el-input   type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
             </el-form-item>
          </el-col>
         </el-row>
         <!-- 操作 -->
         <el-form-item>
-          <el-button v-if="chakanxiangs in chakanxiang2" type="primary" @click="onSubmit('form')">提交</el-button>
+          <el-button  type="primary" @click="onSubmit('form')">提交</el-button> <!-- v-if="chakanxiangs in chakanxiang2" -->
           <!-- <el-button>取消</el-button> -->
           <el-button v-if="chakanxiangs in chakanxiang2" @click="resetForm('form')">重置</el-button>
           <el-button @click="fanhui">返回</el-button>
@@ -138,6 +138,7 @@ export default {
         regions: [],
         area: '',
         areas: [],
+        area_code: '',
         name: '',
         zbname: '',
         type: '',
@@ -195,6 +196,7 @@ export default {
       this.form.region = this.c.industryId;
       this.form.region = this.c.industryId;
       this.form.area = this.c.area;
+      this.form.area_code = this.c.area_code;
       this.form.zbname = this.c.tabulator;
       this.form.name = this.c.project_name;
       this.form.type = this.c.strategy;
@@ -225,7 +227,7 @@ export default {
     onSubmit (formName) {
       var b = {
         'industryId': this.form.region,
-        'area': this.form.area,
+        'area': this.form.area_code,
         'tabulator': this.form.zbname,
         'project_name': this.form.name,
         'strategy': this.form.type,

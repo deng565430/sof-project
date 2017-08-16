@@ -1,9 +1,10 @@
+import * as util from '../util/user'
 const state = {
     msg: '我是原始数据',
     dialogVisible: false,
     dialogForm: false,
-    isLogin: false,
-    userName: '',
+    isLogin: util.isLogin(),
+    userName: util.userName(),
     searchValue: {
         project: '',
         type: '',

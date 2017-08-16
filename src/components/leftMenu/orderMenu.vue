@@ -9,7 +9,7 @@
 </template>
 
 <script>
-const menue = [{path: 'neworder', name: '新建需求单'}, {path: 'orders', name: '需求单'}];
+const menue = [{path: 'neworder', name: '新建需求单'}, {path: 'orders', name: '需求单'}, {path: 'campaign', name: '执行单'}];
 export default {
   data () {
     return {

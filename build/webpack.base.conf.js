@@ -10,7 +10,15 @@ function resolve(dir) {
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: './src/main.js',
+    vendor: [
+      'vue',
+      'axios',
+      'vue-router',
+      'vuex',
+      'element-ui',
+      'echarts'
+    ],
   },
   externals: {
     'BMap': 'BMap',

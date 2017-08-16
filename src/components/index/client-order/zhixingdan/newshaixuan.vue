@@ -113,7 +113,7 @@ const num = 0;
 export default {
 
   name: 'shaixuan',
-  props: ['getcode', 'showselected', 'title', 'getZXinfo', 'btnfalse', 'cdtab', 'histroy2', 'getnum', 'getfendaninfo', 'index'],
+  props: ['getcode', 'showselected', 'title', 'getZXinfo', 'btnfalse', 'cdtab', 'histroy2', 'getnum', 'index'], /* 'getfendaninfo' */
   components: {
     ShowTag
   },
@@ -248,7 +248,7 @@ export default {
     },
     // 分单提交
     submit2 () {
-      if ('tac_code' in this.getfendaninfo) {
+      /* if ('tac_code' in this.getfendaninfo) {
         this.$emit('back', {value: this.showSelectData, index: this.index});
       } else {
         var nums = 1;
@@ -270,7 +270,26 @@ export default {
         obj.child_single_num = ''; // 修改执行单时
         obj.tags = this.showSelectData;
         this.$emit('fendans', obj);
+      } */
+      var nums = 1;
+      for (var i = 0; i < this.getnum.value.length; i++) {
+        console.log('this.getnum.code', this.getnum.code);
+        console.log(this.getnum.value[i].tac_code);
+        if (this.getnum.value[i].tac_code === this.getnum.code) {
+          nums = this.getnum.value[i].fendan.length;
+          console.log(nums);
+        }
       }
+      console.log('this.index', this.getnum);
+      var data = {};
+      data.selects = this.showSelectData;
+      this.datas = data;
+      var obj = {};
+      obj.tac_code = this.getcode;
+      obj.file_name = nums;
+      obj.child_single_num = ''; // 修改执行单时
+      obj.tags = this.showSelectData;
+      this.$emit('fendans', obj);
     },
     // 组搜索
     submitF (parentIndex, parentTag) {

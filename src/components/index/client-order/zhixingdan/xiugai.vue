@@ -8,7 +8,7 @@
       </div>
       <!-- 需求单信息 -->
       <el-collapse style="width:100%;margin-bottom:20px">
-        <el-collapse-item title="需求单信息" name="1" style="padding:10px 10px 0 10px">
+        <el-collapse-item title="需求单信息" name="1" style="background:#ccc">
           <div >
             <div class="xuqiutitle" style="display:flex">
               <p><span>需求单编号:</span><span>{{hanginfo.order_num}}</span></p>
@@ -33,25 +33,25 @@
         <el-radio v-for="i in radios" :label="i.code">{{i.name}}</el-radio>
       </el-radio-group>
       <!-- 分单 -->
-     <div style="margin-top:30px;display:flex">
-        <el-card v-for="(i,index) in radio" class="box-card" v-if="i.fendan.length > 0">
+    <div style="margin-top:30px;display:flex">
+        <el-card v-for="(i,index) in radio" class="box-card" > <!-- v-if="i.fendan.length > 0" -->
           <div slot="header" class="clearfix">
             <span style="line-height: 36px;">{{i.tac_name}}分单</span>
           </div>
 
-          <div v-for="(index,o) in i.fendan" ref="tagss"   :code="o"  :key="o" class="text item">
+          <div v-for="(indexs,o) in i.fendan" ref="tagss"   :code="o"  :key="o" class="text item">
             <span class="el-icon-circle-close" style="float:left;color:#E5E9F2" @click="delet(i,o)"></span>
-            <span>{{ index.file_name}}</span>
-            <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn(i,o)" >查看</el-button>
+            <span>{{ o+1}}</span>
+            <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn(i,o, index)" >查看</el-button>
           </div>
         </el-card>
-      </div>
+    </div>
       <!-- 提交 -->
       <div style="text-align:left;margin-top:30px">
-        <el-button type="primary" v-if="histroy !== 3" @click="sureBtn">修改</el-button></div>
+        <el-button type="primary"  @click="sureBtn">修改</el-button></div>
       </div>
     <!-- 筛选条件 -->
-    <Shaixuan v-if="Shaixuan" :getZXinfo="getZXinfo"  :getcode="getcode" @fendans="fendans" @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse" :histroy2='histroy2'></Shaixuan><!--  -->
+    <Shaixuan v-if="Shaixuan" :getZXinfo="getZXinfo" :getnum="getnum" :getfendaninfo="getfendaninfo"  :getcode="getcode" @fendans="fendans" @back="back2" :index="indexNum" :showselected="showselected" :title="title" :btnfalse="btnfalse" ></Shaixuan>
   </div>
 </template>
 
@@ -59,7 +59,7 @@
 import Shaixuan from './shaixuan';
 export default {
   name: 'zhixingdan',
-  props: ['hanginfo', 'getxginfo', 'tabtoggle', 'histroy'],
+  props: ['hanginfo', 'getxginfo', 'tabtoggle'],
   components: {
     Shaixuan
   },
@@ -71,6 +71,7 @@ export default {
       radio: [],
       radios: [],
       getcode: '',
+      indexNum: 0,
       showselected: [],
       fendan: [],
       fendan1: '',
@@ -86,12 +87,13 @@ export default {
       getZXinfo: {},
       btnfalse: '',
       loading2: false,
-      histroy2: this.histroy
+      histroy2: this.histroy,
+      getnum: {},
+      getfendaninfo: {}
     };
   },
   watch: {
-    getxginfo (val) {
-      console.log(val);
+    getxginfo (val, old) {
       this.radio = val;
     },
     tabtoggle (val) {
@@ -101,19 +103,27 @@ export default {
       this.Shaixuan = false;
       this.first = true;
     },
+    radio (val) {
+      console.log('radio', val);
+    },
     histroy (val) {
       console.log(val);
     }
   },
   created () {
     this.getlabel();
-    console.log(this.histroy);
-    // this.radio = this.getxginfo.subunit;
+    this.radio = this.getxginfo.subunit;
+    console.log(this.hanginfo);
   },
   methods: {
     getlabel () {
       this.loading2 = true;
-      this.$api.get('/api/campaign/getdatatype').then((res) => {
+      /* this.$api.get('/api/campaign/getdatatype').then((res) => {
+        this.loading2 = false;
+        this.radios = res.data.data;
+      }); */
+      var code = this.hanginfo.single_num;
+      this.$api.get('/api/campaign/getchildalltaccode/' + code).then((res) => {
         this.loading2 = false;
         this.radios = res.data.data;
       });
@@ -121,28 +131,41 @@ export default {
     handleChecked (val) {
       this.getZXinfo = this.hanginfo;
       this.btnfalse = '0';
-      console.log(val);
+      var obj = {};
+      obj.code = val;
+      obj.value = this.radio;
+      this.getnum = obj;
       this.getcode = val;
       this.first = false;
       this.Shaixuan = true;
       this.showselected = [];
-      this.title = '';
-      this.showselected2 = [];
-      this.title2 = '';
-      this.showselected3 = [];
-      this.title3 = '';
+      // this.title = '';
+      // this.showselected2 = [];
+      // this.title2 = '';
+      // this.showselected3 = [];
+      // this.title3 = '';
     },
     // 返回
     backs () {
       this.$emit('back', 'back');
     },
-    back2 () {
+    back2 (val) {
+      // this.getcode = '';
+      console.log('val', val);
+      console.log('this.radio', this.radio);
+      // this.radio[i]
+      // this.showselected = val;
+      this.getfendaninfo = {};
       this.radio2 = '';
+      /* if (this.radio[val.index.index.fendan[val.index.o]] === undefined) {
+        this.radio[val.index.index.fendan[val.index.o]] = [];
+      }
+      this.radio[val.index.index.fendan[val.index.o]] = val.value; */
       this.Shaixuan = false;
       this.first = true;
     },
     fendans (val) {
-      console.log(val);
+      console.log('val', val);
       if (typeof val === 'number') {
         this.Shaixuan = false;
         this.first = true;
@@ -150,23 +173,23 @@ export default {
         this.radio2 = '';
         this.Shaixuan = false;
         this.first = true;
+        console.log('val', val.tac_code);
         for (var i = 0; i < this.radio.length; i++) {
+          console.log('this.radio[i].tac_code', this.radio);
           if (val.tac_code === this.radio[i].tac_code) {
             console.log(1);
             delete val.tac_code;
             delete val.child_single_num;
             console.log(this.radio[i]);
             for (var s = 0; s < this.radio[i].fendan.length; s++) {
-              console.log(this.radio[i].fendan[s].file_name);
               if (val.file_name === this.radio[i].fendan[s].file_name) {
                 this.chongfu = 'chongfu';
               }
             }
             this.radio[i].fendan.push(val);
           } else {
-            console.log(333);
+            console.log('this.radio[i].tac_code', this.radio);
             for (var q = 0; q < this.radios.length; q++) {
-              console.log(this.radios[q]);
               if (val.tac_code === this.radios[q].code) {
                 var obj = {};
                 obj.fendan = [];
@@ -174,19 +197,18 @@ export default {
                 obj.tac_name = this.radios[q].name;
                 delete val.tac_code;
                 obj.fendan.push(val);
-                console.log(obj);
                 this.radio.push(obj);
+                console.log('this.radio[i].tac_code', this.radio);
               }
             }
           }
+          return this.radio;
         }
-        console.log(this.radio);
       }
     },
     // 提交执行单
     sureBtn () {
       this.loading2 = true;
-      console.log(this.radio);
       var obj = {};
       obj.order_num = this.hanginfo.order_num;
       obj.single_num = this.getxginfo.single_num;
@@ -212,17 +234,26 @@ export default {
             console.log(res);
           });
         })
-        .catch(_ => {});
+        .catch(_ => {
+          this.loading2 = false;
+        });
     },
     // 查看
-    seeBtn (i, o) {
+    seeBtn (i, o, index) {
+      console.log(this.radio);
+      console.log('i', i);
+      console.log('o', o);
+      console.log('i.fendan[o].tags', i.fendan[o].tags);
       this.getZXinfo = this.hanginfo;
       this.getcode = i.tac_code;
+      this.indexNum = {
+        index,
+        o
+      };
       this.first = false;
       this.Shaixuan = true;
       this.btnfalse = '1';
-      console.log(i, o);
-      console.log(i.fendan[o]);
+      this.getfendaninfo = i;
       this.showselected = i.fendan[o].tags;
       this.title = i.fendan[o].file_name;
     },

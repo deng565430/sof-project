@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     line (pie, tit, size) {
-      this.$api.get(`/api/apis/subscribe/type_day?keywords=${encodeURI(this.topName)}`)
+      this.$api.get(`${this.topData.url}?${this.topData.param1}=${encodeURI(this.topData.value1)}`)
       .then(res => {
         if (res.data.code === 0) {
           const data = res.data.data;
@@ -40,6 +40,10 @@ export default {
     topName: {
       type: String,
       default: '上海楼盘'
+    },
+    topData: {
+      type: Object,
+      default: {}
     }
   }
 };

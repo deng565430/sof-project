@@ -1,10 +1,20 @@
 <template>
-	<div :tab2="tabs2">
+	<div >
 		<el-tabs type="border-card" v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick">
   		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs">
             <el-tabs  v-model="activeName2" v-if="tabsisshow"  @tab-click="handleClick2">
                 <el-tab-pane v-for="s in hangye" :label="s.name" :name="s.code" >
-                    <Search @search="search" @qingchu="qingchu"></Search>
+                    <div style="display:flex">
+                      <el-select v-model="value" clearable placeholder="请选择" style="width:120px;margin-right:10px" @change='searchChange(value)'>
+                        <el-option
+                          v-for="item in options"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                    </el-select>
+                      <Search @search="search" @qingchu="qingchu"></Search>
+                    </div>
                     <!-- table -->
                     <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhixingbtns="zhixingbtns" @services-zhixingxiugai="servicesZhixingxiugai"  :zhiixngxiugais="zhiixngxiugais"  @services-zhixing="servicesZhixing" @services-zhixingchakan="servicesZhixingchakan"></TableList>
                     <!-- 分页 -->
@@ -22,23 +32,22 @@
   		  </el-tab-pane>
 		</el-tabs>
     <!-- 新建需求单 -->
-    <Xinjian v-if="Xinjian" @back="back" :hanginfo="hanginfo" :tabtoggle="tabtoggle"></Xinjian>
+    <Xinjian v-if="Xinjian" @addnewcampaign="addnewcampaign" :hanginfo="hanginfo" :tabtoggle="tabtoggle" @xinajianback="xinajianback"></Xinjian>
     <!-- 修改需求单 -->
-    <Xiugai v-if="zhixiugai" @back="back" :hanginfo="hanginfo" :histroy="histroy" :getxginfo="getxginfo" :tabtoggle="tabtoggle"></Xiugai>
+    <Xiugai v-if="zhixiugai" @back="back" :hanginfo="hanginfo"  :getxginfo="getxginfo" :tabtoggle="tabtoggle"></Xiugai>
 	</div>
 </template>
 
 <script>
-import TableList from './../tableList';
-import Search from './../xuqiudan/search';
+import TableList from './zhixingList';
+import Search from './../xuqiudan/zhuangtaisearch';
 import Xinjian from './xinjian';
 import Xiugai from './xiugai';
 // import { line } from 'assets/js/charts';
 
-const tab = [{'name': '所有', 'code': '1'}];
-const hangye = [{'name': '所有', 'code': '1'}];
+// const tab = [{'name': '所有', 'code': '1'}];
+// const hangye = [{'name': '所有', 'code': '1'}];
 export default {
-  props: ['tabs2'],
   components: {
     TableList,
     Search,
@@ -49,7 +58,7 @@ export default {
     return {
       activeName: '1',
       activeName2: '1',
-      tabs: tab,
+      tabs: [],
       table: [],
       currentPage4: 1,
       total: 0,
@@ -59,46 +68,54 @@ export default {
       tabsisshow: true,
       tabName: '',
       loading2: true,
-      tabs3: this.tabs2,
-      hangye: hangye,
+      tabs3: '',
+      addlisn: '',
+      hangye: [],
       zhiixngxiugais: this.tabs2,
-      zhixingbtns: this.tabs2,
+      zhixingbtns: '',
       hanyetab: '',
       Xinjian: false,
       zhixiugai: false,
       hanginfo: {},
       getxginfo: {},
-      tabtoggle: ''
+      tabtoggle: '',
+      options: [{
+        value: '0',
+        label: '新执行单'
+      }, {
+        value: '1',
+        label: '未执行'
+      }, {
+        value: '2',
+        label: '执行中'
+      }, {
+        value: '3',
+        label: '历史执行单'
+      }],
+      value: ''
     };
   },
-  watch: {
-    tabs2 (val) {
-      this.tabs3 = val;
-      this.tabtoggle = val;
-      this.activeName = '1';
-      this.tabName = 1;
-      this.currentPage4 = 1;
-      this.pageSize = 10;
-      this.getNewList(val, '', '0', '10', '', '', '');// 新增xiugai的watch，监听变更并同步到c上
-      this.zhiixngxiugais = val;
-      this.Xinjian = false;
-      this.zhixiugai = false;
-      this.tabsisshow = true;
-    },
-    tabs (val) {
-      console.log(val);
-    }
-  },
   created () {
-    console.log(this.tabs2);
+    this.tabs2 = 0;
+    this.tabs3 = 0;
+    this.zhixingbtns = this.tabs3;
     this.tabName = 1;
+    this.activeName = 'pol01';
+    this.activeName2 = 'i01';
+    this.value = this.options[0].value;
     this.hanyetab = 1;
     this.getcelue();// 获取策略类型
     this.getHangyeList();// 获取行业
     this.getNewList(this.tabs2, '', '0', '10', '', '', ''); // 获取新建  所有
-    this.getgl();
   },
   methods: {
+    searchChange (val) {
+      if (val !== '') {
+        this.tabs3 = val;
+        this.zhixingbtns = this.tabs3;
+        this.getNewList(this.tabs3, this.activeName2, 0, 10, this.activeName, '');
+      }
+    },
     // 获取行业
     getHangyeList () {
       var url = '/api/brief/getBriefSelect';
@@ -213,6 +230,7 @@ export default {
       this.$api.get(url).then((res) => {
         var all = this.tabs.concat(res.data.data);
         this.tabs = all;
+        console.log(this.tabs);
       });
     },
     // 获取新建列表
@@ -237,36 +255,13 @@ export default {
     // 每页条数
     handleSizeChange (val) {
       // console.log(`每页 ${val} 条`);
-      this.currentPage4 = 1;
       this.pageSize = val;
-      console.log(this.tabName, this.hanyetab);
-      if (this.tabName === 1 && this.hanyetab === 1) {
-        this.getNewList(this.tabs2, '', '0', val, '', '', '');
-      } else if (this.tabName !== 1 && this.hanyetab === 1) {
-        this.getNewList(this.tabs2, '', '0', val, this.tabName, '', '');
-      } else if (this.tabName !== 1 && this.hanyetab !== 1) {
-        this.getNewList(this.tabs2, this.hanyetab, '0', val, this.tabName, '', '');
-      } else if (this.tabName === 1 && this.hanyetab !== 1) {
-        this.getNewList(this.tabs2, '', '0', val, this.tabName, '', '');
-      }
+      this.getNewList(this.tabs3, this.activeName2, this.currentPage4 - 1, this.pageSize, this.activeName, '');
     },
     // 第几页
     handleCurrentChange (val) {
       this.currentPage4 = val;
-      this.pageSize = 10;
-      if (this.tabName === 1 && this.hanyetab === 1) {
-        console.log(1);
-        this.getNewList(this.tabs2, '', val - 1, 10, '', '', '');
-      } else if (this.tabName !== 1 && this.hanyetab === 1) {
-        console.log(2);
-        this.getNewList(this.tabs2, '', val - 1, 10, this.tabName, '', '');
-      } else if (this.tabName !== 1 && this.hanyetab !== 1) {
-        console.log(3);
-        this.getNewList(this.tabs2, this.hanyetab, val - 1, 10, this.tabName, '', '');
-      } else if (this.tabName === 1 && this.hanyetab !== 1) {
-        console.log(4);
-        this.getNewList(this.tabs2, '', val - 1, 10, this.tabName, '', '');
-      }
+      this.getNewList(this.tabs3, this.activeName2, this.currentPage4 - 1, this.pageSize, this.activeName, '');
     },
     // 获取详情
     getXgai (Id) {
@@ -283,47 +278,19 @@ export default {
     },
     // 切换策略列表
     handleClick (tab, event) {
-      // console.log(tab, event);
+      console.log(this.addlisn);
+      this.addlisn = this.addlisn;
       this.pageSize = 10;
       this.currentPage4 = 1;
-      this.tabName = tab.name;
-      console.log(typeof this.hanyetab);
-      if (tab.name === 1 || tab.name === '1') {
-        this.tabName = '';
-        if (this.hanyetab === '1' || this.hanyetab === 1) {
-          this.getNewList(this.tabs3, '', 0, 10, this.tabName, '');
-        } else {
-          this.getNewList(this.tabs3, this.hanyetab, 0, 10, this.tabName, '');
-        }
-      } else {
-        if (this.hanyetab === '1' || this.hanyetab === 1) {
-          this.getNewList(this.tabs3, '', 0, 10, tab.name, '');
-        } else {
-          this.getNewList(this.tabs3, this.hanyetab, 0, 10, tab.name, '');
-        }
-      };
+      this.activeName = tab.name;
+      this.getNewList(this.tabs3, this.activeName2, 0, 10, this.activeName, '');
     },
     // 切换行业列表
     handleClick2 (tab, event) {
-      console.log(tab.name);
       this.pageSize = 10;
       this.currentPage4 = 1;
-      this.hanyetab = tab.name;
-      console.log(typeof this.hanyetab);
-      if (this.tabName === 1 || this.tabName === '1') {
-        if (this.hanyetab === '1' || this.hanyetab === 1) {
-          this.getNewList(this.tabs3, '', 0, 10, '', '');
-        } else {
-          this.getNewList(this.tabs3, this.hanyetab, 0, 10, '', '');
-        }
-      } else {
-        console.log(this.hanyetab);
-        if (this.hanyetab === '1' || this.hanyetab === 1) {
-          this.getNewList(this.tabs3, '', 0, 10, this.tabName, '');
-        } else {
-          this.getNewList(this.tabs3, this.hanyetab, 0, 10, this.tabName, '');
-        }
-      };
+      this.activeName2 = tab.name;
+      this.getNewList(this.tabs3, this.activeName2, 0, 10, this.activeName, '');
     },
     // 返回
     back (val) {
@@ -331,6 +298,18 @@ export default {
       this.Xinjian = false;
       this.zhixiugai = false;
       this.tabsisshow = true;
+    },
+    xinajianback (val) {
+      console.log(val);
+      this.Xinjian = false;
+      this.zhixiugai = false;
+      this.tabsisshow = true;
+    },
+    addnewcampaign () {
+      this.Xinjian = false;
+      this.zhixiugai = false;
+      this.tabsisshow = true;
+      this.getNewList(this.tabs3, this.activeName2, 0, 10, this.activeName, '');
     }
   }
 };

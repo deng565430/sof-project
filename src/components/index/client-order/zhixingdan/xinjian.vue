@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <div v-loading="loading2">
     <div v-if="first">
       <!-- 返回 -->
       <div style="text-align:left;margin-bottom:30px">
         <span  class="el-icon-arrow-left" style="font-size:14px;color:#20A0FF"></span>
-        <el-button type="text" @click="back">返回</el-button>
+        <el-button type="text" @click="xinajianback">返回</el-button>
       </div>
       <!-- 需求单信息 -->
       <el-collapse style="width:100%;margin-bottom:20px">
-        <el-collapse-item title="需求单信息" name="1" style="padding:10px 10px 0 10px">
+        <el-collapse-item title="需求单信息" name="1" style="background:#ccc">
           <div >
             <div class="xuqiutitle" style="display:flex">
               <p><span>需求单编号:</span><span>{{hanginfo.order_num}}</span></p>
@@ -41,8 +41,8 @@
 
           <div v-for="(index,o) in i.fendan" ref="tagss"   :code="o"  :key="o" class="text item">
             <span class="el-icon-circle-close" style="float:left;color:#E5E9F2" @click="delet(i,o)"></span>
-            <span>{{ index.file_name}}</span>
-            <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn(i,o)" >查看</el-button>
+            <span>{{ o + 1}}</span>
+            <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn(i,o, index)" >查看</el-button>
           </div>
         </el-card>
       </div>
@@ -52,12 +52,12 @@
         <el-button type="primary" @click="sureBtn">提交</el-button></div>
       </div>
     <!-- 筛选条件 -->
-    <Shaixuan :cdtab="cdtab" v-if="Shaixuan" :getZXinfo="getZXinfo"  :getcode="getcode" @fendans="fendans" @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan>
+    <Shaixuan :cdtab="cdtab" v-if="Shaixuan" :getnum="getnum" :getZXinfo="getZXinfo" @fendans="fendans" :index="indexNum"  :getcode="getcode"  @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan> <!--  -->
   </div>
 </template>
 
 <script>
-import Shaixuan from './shaixuan';
+import Shaixuan from './newshaixuan';
 export default {
   name: 'zhixingdan',
   props: ['hanginfo', 'tabtoggle'],
@@ -85,7 +85,9 @@ export default {
       title: '',
       getZXinfo: {},
       btnfalse: '',
-      cdtab: this.tabtoggle
+      cdtab: this.tabtoggle,
+      getnum: {},
+      loading2: false
     };
   },
   watch: {
@@ -118,20 +120,24 @@ export default {
     handleChecked (val) {
       this.getZXinfo = this.hanginfo;
       this.btnfalse = '0';
-      console.log(val);
+      var obj = {};
+      obj.code = val;
+      obj.value = this.radio;
+      this.getnum = obj;
       this.getcode = val;
       this.first = false;
       this.Shaixuan = true;
       this.showselected = [];
-      this.title = '';
-      this.showselected2 = [];
-      this.title2 = '';
-      this.showselected3 = [];
-      this.title3 = '';
+      console.log('this.getcode', this.getcode);
+      // this.title = '';
+      // this.showselected2 = [];
+      // this.title2 = '';
+      // this.showselected3 = [];
+      // this.title3 = '';
     },
     // 返回
-    back () {
-      this.$emit('back', 'back');
+    xinajianback () {
+      this.$emit('xinajianback');
     },
     back2 () {
       this.radio2 = '';
@@ -162,6 +168,7 @@ export default {
     },
     // 提交执行单
     sureBtn () {
+      this.loading2 = true;
       var obj = {};
       obj.order_num = this.hanginfo.order_num;
       obj.city = this.hanginfo.city;
@@ -176,12 +183,12 @@ export default {
       }
       console.log(obj);
       this.$api.post('/api/campaign/addCampaign', obj).then((res) => {
-        console.log(res);
+        this.loading2 = false;
         if (res.status === 200) {
           if (res.data.code === 0) {
             this.$confirm('添加成功！')
               .then(_ => {
-                this.$emit('back', 'back');
+                this.$emit('addnewcampaign');
               });
           } else {
             this.$confirm('添加失败！');
@@ -192,26 +199,41 @@ export default {
       });
     },
     // 查看
-    seeBtn (i, o) {
+    seeBtn (i, o, index) {
+      // this.first = false;
+      // this.Shaixuan = true;
+      // this.btnfalse = '1';
+      // this.getcode = i.tac_code;
+      // console.log(i, o);
+      // console.log(i.fendan[o]);
+      // this.showselected = i.fendan[o].tags;
+      // this.title = i.fendan[o].file_name;
+      console.log(this.radio);
+      console.log('i', i);
+      console.log('o', o);
+      console.log('i.fendan[o].tags', i.fendan[o].tags);
+      this.getZXinfo = this.hanginfo;
+      this.getcode = i.code;
+      this.indexNum = {
+        index,
+        o
+      };
       this.first = false;
       this.Shaixuan = true;
       this.btnfalse = '1';
-      console.log(i, o);
-      console.log(i.fendan[o]);
+      this.getfendaninfo = i;
       this.showselected = i.fendan[o].tags;
       this.title = i.fendan[o].file_name;
     },
     // 删除分单
     delet (index, o) {
       console.log(index, o);
-      for (var i = 0; i < index.fendan.length; i++) {
-        index.fendan.splice(o, 1);
-      }
+      index.fendan.splice(o, 1);
       console.log(this.radio);
       var that = this;
       that.radio = that.radio.filter(function (item) {
         console.log(that.radio);
-        return item;
+        return that.radio;
       });
     }
   }

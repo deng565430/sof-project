@@ -13,6 +13,7 @@ const ClientManagement = r => require.ensure([], () => r(require('../components/
 
 const newxuqiu = r => require.ensure([], () => r(require('../components/index/client-order/xuqiudan/neworder')), 'newxuqiu');
 const orders = r => require.ensure([], () => r(require('../components/index/client-order/xuqiudan/daishenhe')), 'daishenhe');
+const newzhixing = r => require.ensure([], () => r(require('../components/index/client-order/zhixingdan/allzhixing')), 'newzhixing');
 
 
 const Report = r => require.ensure([], () => r(require('../components/index/analysis/ReportList')), 'reportlist');
@@ -60,6 +61,9 @@ const router = new Router({
     }, {
       path: '/orders',
       component: orders
+    }, {
+      path: '/campaign',
+      component: newzhixing
     }]
   }, {
     path: '/phone',

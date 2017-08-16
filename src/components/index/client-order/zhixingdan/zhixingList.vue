@@ -7,12 +7,12 @@
     	max-height="350"
 	    :default-sort = "{prop: 'date', order: 'descending'}"
 	    > 
-        <!-- <el-table-column
+        <el-table-column
           prop="single_num"
-          v-if="zhiixngxiugais > 0"
+          v-if="zhixingbtns > 0"
           label="执行单编号"
           width="180">
-        </el-table-column> -->
+        </el-table-column> 
 	    	<el-table-column
 		      fixed
 		      prop="order_num"
@@ -59,7 +59,9 @@
 		      width="100"
 		      >
 		      <template scope="scope">
-            <el-button  type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
+            <el-button  v-if="zhixingbtns == 0" type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >新建</el-button>
+            <el-button v-if="zhixingbtns < 3 && zhixingbtns > 0" type="text" size="small"  @click.native.prevent="zhiixng2(scope.$index, table)" >修改</el-button>
+            <el-button  v-if="zhixingbtns == 3" type="text" size="small"  @click.native.prevent="zhiixng3(scope.$index, table)" >查看</el-button>
 		        <!-- <el-button v-if="xiugaibtns in xiugaibtn" type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
              <el-button v-if="shanchuque == isshanchum" type="text" size="small"  @click.native.prevent="deleteRow(scope.$index, table)" >删除</el-button>
              <el-button v-if="chakan == chakanm" type="text" size="small"  @click="chakanxiqngiqng" >查看</el-button>
@@ -76,7 +78,7 @@
 
 <script>
 export default {
-  props: ['table'], // , 'isshanchum', 'chakanm', 'xiugaibtns', 'zhixingbtns', 'zhiixngxiugais'
+  props: ['table', 'zhixingbtns'], // , 'isshanchum', 'chakanm', 'xiugaibtns', 'zhixingbtns', 'zhiixngxiugais'
   data () {
     return {
       shanchuque: 0,
@@ -101,8 +103,8 @@ export default {
     xiugaibtns (val) {
       console.log(val);
     },
-    zhiixng (val) {
-      // console.log(val);
+    zhixingbtns (val) {
+      console.log(val);
     },
     zhiixngxiugais () {
       console.log(this.zhiixngxiugais);
@@ -111,18 +113,16 @@ export default {
     }
   },
   created () {
-    // console.log(this.chakanm);
+    console.log(this.zhixingbtns);
     // console.log(this.shachuzhiling);
   },
   methods: {
     // 跳转执行
     zhiixng (index, rows) {
-      console.log(rows[index].id);
       this.$emit('services-zhixing', rows[index]);
     },
     // 跳转执行单修改
     zhiixng2 (index, rows) {
-      console.log(rows[index].id);
       this.$emit('services-zhixingxiugai', rows[index]);
     },
     // 跳转执行单查看
@@ -137,7 +137,7 @@ export default {
     },
     handleClick (index, rows) {
       console.log(rows[index].id);
-      this.$emit('services-change', rows[index].id);
+      this.$emit('services-zhixing', rows[index]);
     },
     // 删除行
     deleteRow (index, rows) {

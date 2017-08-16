@@ -31,10 +31,6 @@ export default {
   },
   data () {
     return {
-      data: [
-        {'value': '需求单', 'all': {'url': '', 'val': '需求单'}, 'name': {'url': '', 'val': '新建需求单'}, 'ing': {'url': '', 'val': '待审核'}, 'now': {'url': '', 'val': '待执行'}, 'hoistory': {'url': '', 'val': '执行中'}, 'hoistory2': {'url': '', 'val': '已完成'}},
-        {'value': '执行单', 'all': {'url': '', 'val': '执行单'}, 'name': {'url': '', 'val': '新执行单'}, 'ing': {'url': '', 'val': '未执行的'}, 'now': {'url': '', 'val': '正在执行的'}, 'hoistory': {'url': '', 'val': '历史执行单'}, 'hoistory2': {'url': '', 'val': ''}}
-      ],
       show: false,
       Gailan: false,
       Xinjian: false,

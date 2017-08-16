@@ -2,10 +2,12 @@
 	<div :tab2="tabs2">
 		<el-tabs  v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick">
 		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs">
-
-        <Search @search="search" @qingchu="qingchu"></Search>
+        <div style="display:flex">
+          <Search @zhuangtai="zhuangtai"></Search>
+          <SearchTwo @search="search" @qingchu="qingchu"></SearchTwo>
+        </div>
         <!-- table -->
-		  	<TableList :xiugaibtns='xiugaibtns'  :isshanchum="isshanchum" :chakanm="chakanm" v-loading="loading2" element-loading-text="加载中" :table="table"  @services-change="servicesChange" @services-shanchu="servicesShanchu"   :shanchusuccess="shanchusuccess" @services-qurrenshanchu="servicesQurrenshanchu"  @services-chakan="servicesChakan" ></TableList>
+		  	<TableList v-loading="loading2" element-loading-text="加载中" :table="table"  @services-change="servicesChange" ></TableList> <!--:xiugaibtns='xiugaibtns'  :isshanchum="isshanchum" :chakanm="chakanm"   @services-shanchu="servicesShanchu"   :shanchusuccess="shanchusuccess" @services-qurrenshanchu="servicesQurrenshanchu"  @services-chakan="servicesChakan" -->
         
         <!-- 分页 -->
         <el-pagination
@@ -28,13 +30,15 @@
 import TableList from './../tableList';
 import Xiugai from './xiugai';
 import Search from './search';
+import SearchTwo from './zhuangtaisearch';
 
 const tab = [{'name': '所有', 'code': '1'}];
 export default {
   components: {
     TableList,
     Xiugai,
-    Search
+    Search,
+    SearchTwo
   },
   data () {
     return {
@@ -76,11 +80,18 @@ export default {
   },
   created () {
     this.tabName = 1;
-    console.log(this.tabs3);
+    this.tabs3 = 0;
     this.getTable(this.tabs2, 0, 10, '', '', ''); // 获取列表
     this.getcelue();// 获取策略类型
   },
   methods: {
+    zhuangtai (val) {
+      console.log(val);
+      if (val !== '') {
+        this.tabs3 = val;
+        this.getTable(val, 0, 10, '', '', ''); // 获取列表
+      }
+    },
     // 查看行
     servicesChakan (val) {
       console.log(val);
@@ -126,6 +137,7 @@ export default {
     isshow () {
       this.Xiugais = false;
       this.tabsisshow = true;
+      this.getTable(this.tabs3, 0, 10, '', '', '');
     },
     // 修改返回
     isshow2 () {
@@ -161,6 +173,7 @@ export default {
       // console.log(`每页 ${val} 条`);
       this.currentPage4 = 1;
       this.pageSize = val;
+      console.log(this.tabName);
       if (this.tabName === 1) {
         this.getTable(this.tabs3, 0, val, '', '', '');
       } else {
