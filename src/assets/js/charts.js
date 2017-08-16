@@ -11,31 +11,19 @@ export function line(data, name, title) {
             break;
         case 'bing':
             return pie(data, null, 'large');
-            break;   
-        case 'yewupinggu':
-            var selectData = selectDatas(data);
-            return option(title, selectData.top5LegendData, selectData.xAxisData, selectData.top5seriesData);
-            break
+            break;
         case 'boston':
             return bosd(data);
-            break
-        case 'guanzhuqushi':
-            return subscribe(data);
-            break
-        case 'guanzhuzhangfubi':
-            return mutilLine(data, '', 'bar', true);
             break
         case 'customizedPie':
             return customizedPie(data);
             break
         case 'bar':
             return barStack(data);
+            // return mutilLine(data, null, 'bar', true);
             break
         case 'matrix':
             return BCGMatrix(data);
-            break
-        case 'longbos':
-            return BCGMatrix(data, true);
             break
         default:
             // statements_def
@@ -43,155 +31,6 @@ export function line(data, name, title) {
     }
 };
 
-// 处理 总关注趋势 数据 折线图
-function topAllData (data) {
-    var k = [];
-    var c = [];
-    var b = [];
-    var d = [];
-    var i = 0;
-    data.forEach(function(item) {
-        k[i] = item['date'];
-        b[i] = item['indname'];
-        c[i] = item['typename'];
-        d[i] = Number(item['total_view_count']);
-        i = i + 1;
-    });
-    var title = data[0]['typename'];
-    var markLineOpt = {
-        animation: false,
-        lineStyle: {
-            normal: {
-                type: 'dashed'
-            }
-        },
-        tooltip: {
-            formatter: 'y = 0.5 * x + 3'
-        },
-        label: {
-            normal: {
-                show: true,
-                formatter: '{b}: {c}'
-            }
-        },
-        data: [{
-            name: '平均线',
-            type: 'average',
-            symbol: 'none'
-        }]
-    };
-    var legendData = [title];
-    var seriesData = [{
-        name: title,
-        type: 'line',
-        data: d,
-        markLine: markLineOpt
-    }];
-    return {
-        title: title,
-        legendData: legendData,
-        xAxisData: k,
-        seriesData: seriesData
-    }
-}
-// 处理 更多市场关注趋势 数据 折线图
-function selectDatas (data) {
-    var top5LegendData = data.tagname;
-    var xAxisData = [];
-    var seriesData0 = [];
-    var seriesData1 = [];
-    var seriesData2 = [];
-    var seriesData3 = [];
-    var seriesData4 = [];
-    var seriesData5 = [];
-    data.result.forEach(function(item, index) {
-        item.forEach(function(childItem, childIndex) {
-            switch (childItem.tagname ? childItem.tagname : childItem.name) {
-                case top5LegendData[0]:
-                    seriesData0.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
-                    break;
-                case top5LegendData[1]:
-                    xAxisData.push(childItem.date);
-                    seriesData1.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
-                    break;
-                case top5LegendData[2]:
-                    seriesData2.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
-                    break;
-                case top5LegendData[3]:
-                    seriesData3.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
-                    break;
-                case top5LegendData[4]:
-                    seriesData4.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
-                    break;    
-                default:
-                    seriesData5.push(childItem.total_view_count ? childItem.total_view_count : childItem.value);
-                    break;
-            }
-        });
-    });
-    var top5seriesData = [{
-        name: top5LegendData[0],
-        type: 'line',
-        data: seriesData0
-    }, {
-        name: top5LegendData[1],
-        type: 'line',
-        data: seriesData1
-    }, {
-        name: top5LegendData[2],
-        type: 'line',
-        data: seriesData2
-    }, {
-        name: top5LegendData[3],
-        type: 'line',
-        data: seriesData3
-    }, {
-        name: top5LegendData[4],
-        type: 'line',
-        data: seriesData4
-    }, {
-        name: top5LegendData[5],
-        type: 'line',
-        data: seriesData5
-    }];
-    return {
-        top5LegendData: top5LegendData,
-        xAxisData: xAxisData,
-        top5seriesData: top5seriesData
-    }
-};
-
-// 处理 'line' 数据option 折线图
-function option (title, legendData, xAxisData, seriesData) {
-    var option = {
-        title: {
-            top: '3%',
-            text: title,
-            show: false
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            top: '3%',
-            data: legendData
-        },
-        xAxis: {
-            axisLabel: {
-                rotate: 45,
-                interval: 2
-            },
-            type: 'category',
-            boundaryGap: false,
-            data: xAxisData
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: seriesData
-    };
-    return option;
-}
 // 处理折线图
 function lines(data) {
     for (var i = 0; i < data.result.length; i++) {
@@ -362,7 +201,6 @@ function radar (radar, title, size) {
 
 // 处理 总价偏好 饼图
 function pie (pie, title, size) {
-    console.log('pie', pie);
     var showTitle = !!title ? true : false;
     var title = pie[0].classes;
     var legendData = [];
@@ -695,68 +533,6 @@ function bosd (data) {
     }
 }
 
-// 处理 关注趋势
-function subscribe (data) {
-    var xAxisData = [];
-    var seriesData = [];
-    data.result[0].forEach(function(item) {
-        xAxisData.push(item.date);
-    })
-    data.result.forEach(function(item, index) {
-        seriesData.push({
-            data: item,
-            name: item[index].name,
-            type: 'line'
-        })
-    })
-    var markLineOpt = {
-        animation: false,
-        lineStyle: {
-            normal: {
-                type: 'dashed'
-            }
-        },
-        tooltip: {},
-        data: [
-            {
-                name: '平均线',
-                type: 'average',
-                symbol: 'none'
-            }
-        ]
-    };
-
-    var option = {
-        title: {
-            text: '本案及竞品关注变化趋势',
-            show: false
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            left: '20%',
-            right: '4%',
-            data: data['tagname'],
-            containLabel: true
-        },
-        xAxis: {
-            axisLabel: {
-                rotate: 45,
-                interval: 2
-            },
-            type: 'category',
-            boundaryGap: false,
-            data: xAxisData
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: seriesData
-    };
-    return option;
-}
-
 // 处理 自定义饼图
 function customizedPie(data) {
     var markLineOpt = {
@@ -828,11 +604,35 @@ function customizedPie(data) {
 function barStack(data) {
     var title = data[0].classes;
     var xAxisData = [];
+    var xAxisDataList = [];
     var seriesData = [];
+    var legendData = [];
+    var seriesDataList = [];
+    var legendDataList = [];
     data.forEach(function(item) {
         xAxisData.push(item.name);
         seriesData.push(item.value);
+        legendData.push(item.classes);
     })
+    new Set(legendData).forEach(function(item){
+        legendDataList.push(item);
+    });
+    new Set(xAxisData).forEach(function(item){
+        xAxisDataList.push(item);
+    });
+    for (var i = 0; i < legendDataList.length; i++) {
+        var datas = [];
+        data.forEach(function(item, index) {
+            if (item.classes === legendDataList[i]) {
+                datas.push(item.value);
+            }
+        })
+        seriesDataList.push({
+            name: legendDataList[i],
+            type: 'bar',
+            data: datas
+        })
+    }
     return {
         title: {
             show: false,
@@ -842,7 +642,7 @@ function barStack(data) {
             trigger: 'axis'
         },
         legend: {
-            data: [title]
+            data: legendDataList
         },
         toolbox: {
             show: true,
@@ -867,19 +667,15 @@ function barStack(data) {
         xAxis: [{
             type: 'category',
             axisLabel: {
-                rotate: 45,
+                rotate: 27,
                 interval: 0
             },
-            data: xAxisData
+            data: xAxisDataList
         }],
         yAxis: [{
             type: 'value'
         }],
-        series: [{
-            name: title,
-            type: 'bar',
-            data: seriesData
-        }]
+        series: seriesDataList
     };
 }
 

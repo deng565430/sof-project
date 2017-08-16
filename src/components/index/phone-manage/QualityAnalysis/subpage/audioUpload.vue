@@ -29,9 +29,6 @@
 
 <script>
 export default {
-
-  name: 'audioUpload',
-
   data () {
     return {
       options: [{

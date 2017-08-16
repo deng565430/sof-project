@@ -28,8 +28,6 @@ import DataSearch from '../../DataSearch/DataSearch';
 import Charts from '../../../../Charts';
 import DataSearchContrast from '../../DataSearch/DataSearchContrast';
 export default {
-
-  name: 'speechAnalysis',
   components: {
     DataSearch,
     Charts,

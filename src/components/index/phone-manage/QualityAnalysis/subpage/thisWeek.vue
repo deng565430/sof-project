@@ -5,7 +5,7 @@
  </div>
  <div>
    <el-row>
-    <el-col :span="4" v-for="(o, index) in phoneList" :key="o"  style="padding: 40px 0;">
+    <el-col :span="4" v-for="(o, index) in phoneList" :key="index"  style="padding: 40px 0;">
       <div class="borderDataList">
         <p>{{o.title}}</p>
         <div>
@@ -30,8 +30,6 @@
 <script>
 import Charts from '../../../../Charts';
 export default {
-
-  name: 'thisWeek',
   components: {
     Charts
   },

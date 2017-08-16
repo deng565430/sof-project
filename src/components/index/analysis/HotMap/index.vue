@@ -21,14 +21,12 @@ export default {
   data () {
     return {
       style: {width: window.innerWidth + 'px', height: '800px'},
-      map: null
+      map: null,
+      HotMapList: []
     };
   },
   mounted () {
-    this.$nextTick(() => {
-      this.charts(this.id, this.projectType);
-      this.showReli();
-    });
+    this._getData();
   },
   created () {},
   methods: {
@@ -75,18 +73,41 @@ export default {
     },
     showReli () {
       this.map.clearOverlays();
-      this.reli(this.map, this.projectType);
+      this.reli(this.map, this.HotMapList);
     },
     showMadian () {
-      const func = this.data(this.projectType);
+      const func = this.data(this.HotMapList);
       this.map.clearOverlays();
-      this.madian(this.map, func.points, this.projectType);
+      this.madian(this.map, func.points, this.HotMapList);
     },
     showAll () {
-      const func = this.data(this.projectType);
+      const func = this.data(this.HotMapList);
       this.map.clearOverlays();
-      this.reli(this.map, this.projectType);
-      this.madian(this.map, func.points, this.projectType);
+      this.reli(this.map, this.HotMapList);
+      this.madian(this.map, func.points, this.HotMapList);
+    },
+    _getData () {
+      const fuhao = this.projectType.url.indexOf('?') > -1 ? '&' : '?';
+      const param1 = this.projectType.param1 != null ? `${this.projectType.param1}=${encodeURI(this.projectType.value1)}` : '';
+      const param2 = this.projectType.param2 != null ? `${param1 !== '' ? '&' : '' + this.projectType.param2}=${this.id}` : '';
+      const param3 = this.projectType.param3 != null ? `${'&' + this.projectType.param3}=${encodeURI(this.projectName)}` : '';
+      const selectDataUrl = `${this.projectType.url}${fuhao}${param1}${param2}${param3}`;
+      this.$api.get(selectDataUrl)
+        .then(res => {
+          console.log(res);
+          if (res.data.code === 0) {
+            res.data.data.forEach(item => {
+              let point = item.value.split('|');
+              this.HotMapList.push({
+                lng: point[0],
+                lat: point[1],
+                count: point[2]
+              });
+            });
+            this.charts(this.id, this.HotMapList);
+            this.showReli();
+          }
+        });
     }
   },
   props: ['id', 'projectType', 'chartStyle']
@@ -98,7 +119,7 @@ export default {
   width: 100%
   overflow: hidden
   position: relative
-  height: 1000px
+  height: 800px
 .btn-group
   position: absolute
   top: 0
