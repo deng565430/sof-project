@@ -76,7 +76,7 @@
         </el-row>
         <!-- 操作 -->
         <el-form-item>
-          <el-button  type="primary" @click="onSubmit('form')">提交</el-button> <!-- v-if="chakanxiangs in chakanxiang2" -->
+          <el-button  type="primary" @click="onSubmit('form')" v-if="ishistory !== '3'">提交</el-button> <!-- v-if="chakanxiangs in chakanxiang2" -->
           <!-- <el-button>取消</el-button> -->
           <el-button v-if="chakanxiangs in chakanxiang2" @click="resetForm('form')">重置</el-button>
           <el-button @click="fanhui">返回</el-button>
@@ -121,7 +121,7 @@
 import Time from '../../../timeSelect/index';
 
 export default {
-  props: ['xiugai', 'chakanxiang'],
+  props: ['xiugai', 'chakanxiang', 'ishistory'],
   components: {
     Time
   },
@@ -188,7 +188,7 @@ export default {
   watch: {
     chakanxiang (val) {
       console.log(val);
-      console.log(this.chakanxiangs);
+      console.log(this.ishistory);
     },
     xiugai (val) {
       this.c = val;// 新增xiugai的watch，监听变更并同步到c上
@@ -212,7 +212,7 @@ export default {
   },
   created () {
     this.getbriefinfo();// 获取需求单信息
-    console.log(this.chakanxiangs);
+    console.log(this.ishistory);
   },
   methods: {
     // 返回

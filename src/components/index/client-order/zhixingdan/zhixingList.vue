@@ -62,12 +62,6 @@
             <el-button  v-if="zhixingbtns == 0" type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >新建</el-button>
             <el-button v-if="zhixingbtns < 3 && zhixingbtns > 0" type="text" size="small"  @click.native.prevent="zhiixng2(scope.$index, table)" >修改</el-button>
             <el-button  v-if="zhixingbtns == 3" type="text" size="small"  @click.native.prevent="zhiixng3(scope.$index, table)" >查看</el-button>
-		        <!-- <el-button v-if="xiugaibtns in xiugaibtn" type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
-             <el-button v-if="shanchuque == isshanchum" type="text" size="small"  @click.native.prevent="deleteRow(scope.$index, table)" >删除</el-button>
-             <el-button v-if="chakan == chakanm" type="text" size="small"  @click="chakanxiqngiqng" >查看</el-button>
-                       <el-button v-if="zhiixngbtn == zhiixngxiugais" type="text" size="small"  @click.native.prevent="zhiixng(scope.$index, table)" >执行</el-button>
-                    <el-button  v-if="zhiixngxiugai == zhiixngxiugais" type="text" size="small"  @click.native.prevent="zhiixng2(scope.$index, table)" >修改</el-button>
-                     <el-button  v-if="zhiixngxiugais == 3" type="text" size="small"  @click.native.prevent="zhiixng3(scope.$index, table)" >查看</el-button> -->
 		      </template> 
 		    </el-table-column>
         
@@ -101,19 +95,19 @@ export default {
       // console.log(this.table);
     },
     xiugaibtns (val) {
-      console.log(val);
+      // console.log(val);
     },
     zhixingbtns (val) {
-      console.log(val);
+      // console.log(val);
     },
     zhiixngxiugais () {
-      console.log(this.zhiixngxiugais);
-      console.log(this.zhiixngbtn);
-      console.log(this.zhiixngxiugai);
+      // console.log(this.zhiixngxiugais);
+      // console.log(this.zhiixngbtn);
+      // console.log(this.zhiixngxiugai);
     }
   },
   created () {
-    console.log(this.zhixingbtns);
+    // console.log(this.zhixingbtns);
     // console.log(this.shachuzhiling);
   },
   methods: {
@@ -127,21 +121,17 @@ export default {
     },
     // 跳转执行单查看
     zhiixng3 (index, rows) {
-      console.log(rows[index].id);
-      this.$emit('services-zhixingchakan', rows[index]);
+      this.$emit('services-zhixingchakan', rows[index], 3);
     },
     // 跳转到查看
     chakanxiqngiqng (val) {
-      console.log(this.table[0].id);
       this.$emit('services-chakan', this.table[0].id);
     },
     handleClick (index, rows) {
-      console.log(rows[index].id);
       this.$emit('services-zhixing', rows[index]);
     },
     // 删除行
     deleteRow (index, rows) {
-      console.log(rows[index].id);
       this.rowid = rows[index].id;
       this.$emit('services-shanchu', rows[index].id);
       this.$confirm('此操作将永久删此条, 是否继续?', '提示', {

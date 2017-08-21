@@ -18,7 +18,7 @@
             <ul class="tanchu">
               <li><div>所属行业</div><div>{{hanginfo.ind_name}}</div></li>
               <li><div>所属区域</div><div>{{hanginfo.prov_name}}<b v-if="hanginfo.city_name">/{{hanginfo.city_name}}</b></div></li>
-              <li><div>项目名称</div><div>{{hanginfo.phone_demand}}</div></li>
+              <li><div>项目名称</div><div>{{hanginfo.project_name}}</div></li>
               <li><div>策略类型</div><div>{{hanginfo.strategy}}</div></li>
               <li><div>需求公司</div><div>{{hanginfo.demand_side}}</div></li>
               <li><div>所需电话量/天</div><div>{{hanginfo.phone_demand}}</div></li>
@@ -41,7 +41,7 @@
 
           <div v-for="(index,o) in i.fendan" ref="tagss"   :code="o"  :key="o" class="text item">
             <span class="el-icon-circle-close" style="float:left;color:#E5E9F2" @click="delet(i,o)"></span>
-            <span>{{ o + 1}}</span>
+            <span>分单{{ o + 1}}</span>
             <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn(i,o, index)" >查看</el-button>
           </div>
         </el-card>
@@ -52,7 +52,7 @@
         <el-button type="primary" @click="sureBtn">提交</el-button></div>
       </div>
     <!-- 筛选条件 -->
-    <Shaixuan :cdtab="cdtab" v-if="Shaixuan" :getnum="getnum" :getZXinfo="getZXinfo" @fendans="fendans" :index="indexNum"  :getcode="getcode"  @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan> <!--  -->
+    <Shaixuan :cdtab="cdtab" v-if="Shaixuan" :getnum="getnum" :getZXinfo="getZXinfo" @fendans="fendans" :index="indexNum"  :getcode="getcode" :getfendaninfo="getfendaninfo"  @back="back2" :showselected="showselected" :title="title" :btnfalse="btnfalse"></Shaixuan> <!--  -->
   </div>
 </template>
 
@@ -87,15 +87,13 @@ export default {
       btnfalse: '',
       cdtab: this.tabtoggle,
       getnum: {},
-      loading2: false
+      loading2: false,
+      indexNum: 0,
+      getfendaninfo: {}
     };
   },
   watch: {
-    getxginfo (val) {
-      console.log(val);
-    },
     tabtoggle (val) {
-      console.log(val);
       this.cdtab = val;
       this.radio2 = '';
       this.Shaixuan = false;
@@ -107,14 +105,14 @@ export default {
   },
   methods: {
     getlabel () {
-      this.$api.get('/api/campaign/getdatatype').then((res) => {
+      var code = this.hanginfo.industryId;
+      this.$api.get('/api/campaign/getdatatype/' + code).then((res) => {
         this.radio = res.data.data;
         for (var i = 0; i < this.radio.length; i++) {
           var data = [];
           this.radio[i].fendan = data;
           this.fendan = this.radio[i].fendan;
         }
-        console.log(this.radio);
       });
     },
     handleChecked (val) {
@@ -128,7 +126,6 @@ export default {
       this.first = false;
       this.Shaixuan = true;
       this.showselected = [];
-      console.log('this.getcode', this.getcode);
       // this.title = '';
       // this.showselected2 = [];
       // this.title2 = '';
@@ -139,13 +136,13 @@ export default {
     xinajianback () {
       this.$emit('xinajianback');
     },
-    back2 () {
+    back2 (val) {
       this.radio2 = '';
+      this.getfendaninfo = {};
       this.Shaixuan = false;
       this.first = true;
     },
     fendans (val) {
-      console.log(val);
       this.radio2 = '';
       this.Shaixuan = false;
       this.first = true;
@@ -154,9 +151,7 @@ export default {
           // this.fen1 = true;
           delete val.tac_code;
           delete val.child_single_num;
-          console.log(this.radio[i]);
           for (var s = 0; s < this.radio[i].fendan.length; s++) {
-            console.log(this.radio[i].fendan[s].file_name);
             if (val.file_name === this.radio[i].fendan[s].file_name) {
               this.chongfu = 'chongfu';
             }
@@ -164,7 +159,6 @@ export default {
           this.radio[i].fendan.push(val);
         }
       }
-      console.log(this.radio);
     },
     // 提交执行单
     sureBtn () {
@@ -181,7 +175,6 @@ export default {
         obj2.fendan = this.radio[i].fendan;
         obj.subunit.push(obj2);
       }
-      console.log(obj);
       this.$api.post('/api/campaign/addCampaign', obj).then((res) => {
         this.loading2 = false;
         if (res.status === 200) {
@@ -208,10 +201,6 @@ export default {
       // console.log(i.fendan[o]);
       // this.showselected = i.fendan[o].tags;
       // this.title = i.fendan[o].file_name;
-      console.log(this.radio);
-      console.log('i', i);
-      console.log('o', o);
-      console.log('i.fendan[o].tags', i.fendan[o].tags);
       this.getZXinfo = this.hanginfo;
       this.getcode = i.code;
       this.indexNum = {
@@ -227,12 +216,9 @@ export default {
     },
     // 删除分单
     delet (index, o) {
-      console.log(index, o);
       index.fendan.splice(o, 1);
-      console.log(this.radio);
       var that = this;
       that.radio = that.radio.filter(function (item) {
-        console.log(that.radio);
         return that.radio;
       });
     }

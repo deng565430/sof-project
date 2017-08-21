@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="first"  v-loading="loading2">
+    <div v-if="first"  v-loading="loading2" element-loading-text="加载中，请稍后..">
       <!-- 返回 -->
       <div style="text-align:left;margin-bottom:30px">
         <span  class="el-icon-arrow-left" style="font-size:14px;color:#20A0FF"></span>
@@ -12,13 +12,14 @@
           <div >
             <div class="xuqiutitle" style="display:flex">
               <p><span>需求单编号:</span><span>{{hanginfo.order_num}}</span></p>
+              <p><span>执行单编号:</span><span>{{hanginfo.single_num}}</span></p>
               <p><span>制单人:</span><span>{{hanginfo.tabulator}}</span></p>
               <p><span>制单时间:</span><span>{{hanginfo.create_time}}</span></p>
             </div>
             <ul class="tanchu">
               <li><div>所属行业</div><div>{{hanginfo.ind_name}}</div></li>
               <li><div>所属区域</div><div>{{hanginfo.prov_name}}<b v-if="hanginfo.city_name">/{{hanginfo.city_name}}</b></div></li>
-              <li><div>项目名称</div><div>{{hanginfo.phone_demand}}</div></li>
+              <li><div>项目名称</div><div>{{hanginfo.project_name}}</div></li>
               <li><div>策略类型</div><div>{{hanginfo.strategy}}</div></li>
               <li><div>需求公司</div><div>{{hanginfo.demand_side}}</div></li>
               <li><div>所需电话量/天</div><div>{{hanginfo.phone_demand}}</div></li>
@@ -32,7 +33,7 @@
       <el-radio-group v-model="radio2"    @change="handleChecked"     style="text-align:left;width:100%">
         <el-radio v-for="i in radios" :label="i.code">{{i.name}}</el-radio>
       </el-radio-group>
-      <!-- 分单 -->
+<!-- 分单 -->
     <div style="margin-top:30px;display:flex">
         <el-card v-for="(i,index) in radio" class="box-card" > <!-- v-if="i.fendan.length > 0" -->
           <div slot="header" class="clearfix">
@@ -41,13 +42,13 @@
 
           <div v-for="(indexs,o) in i.fendan" ref="tagss"   :code="o"  :key="o" class="text item">
             <span class="el-icon-circle-close" style="float:left;color:#E5E9F2" @click="delet(i,o)"></span>
-            <span>{{ o+1}}</span>
+            <span>分单{{ o+1}}</span>
             <el-button style="float: right;padding:0;margin:0" type="text" size="small" @click="seeBtn(i,o, index)" >查看</el-button>
           </div>
         </el-card>
     </div>
       <!-- 提交 -->
-      <div style="text-align:left;margin-top:30px">
+      <div style="text-align:left;margin-top:30px" v-if="ishistory !== 3">
         <el-button type="primary"  @click="sureBtn">修改</el-button></div>
       </div>
     <!-- 筛选条件 -->
@@ -59,7 +60,7 @@
 import Shaixuan from './shaixuan';
 export default {
   name: 'zhixingdan',
-  props: ['hanginfo', 'getxginfo', 'tabtoggle'],
+  props: ['hanginfo', 'getxginfo', 'tabtoggle', 'ishistory'],
   components: {
     Shaixuan
   },
@@ -113,15 +114,11 @@ export default {
   created () {
     this.getlabel();
     this.radio = this.getxginfo.subunit;
-    console.log(this.hanginfo);
+    console.log(this.ishistory);
   },
   methods: {
     getlabel () {
       this.loading2 = true;
-      /* this.$api.get('/api/campaign/getdatatype').then((res) => {
-        this.loading2 = false;
-        this.radios = res.data.data;
-      }); */
       var code = this.hanginfo.single_num;
       this.$api.get('/api/campaign/getchildalltaccode/' + code).then((res) => {
         this.loading2 = false;
@@ -139,33 +136,18 @@ export default {
       this.first = false;
       this.Shaixuan = true;
       this.showselected = [];
-      // this.title = '';
-      // this.showselected2 = [];
-      // this.title2 = '';
-      // this.showselected3 = [];
-      // this.title3 = '';
     },
     // 返回
     backs () {
       this.$emit('back', 'back');
     },
     back2 (val) {
-      // this.getcode = '';
-      console.log('val', val);
-      console.log('this.radio', this.radio);
-      // this.radio[i]
-      // this.showselected = val;
       this.getfendaninfo = {};
       this.radio2 = '';
-      /* if (this.radio[val.index.index.fendan[val.index.o]] === undefined) {
-        this.radio[val.index.index.fendan[val.index.o]] = [];
-      }
-      this.radio[val.index.index.fendan[val.index.o]] = val.value; */
       this.Shaixuan = false;
       this.first = true;
     },
     fendans (val) {
-      console.log('val', val);
       if (typeof val === 'number') {
         this.Shaixuan = false;
         this.first = true;
@@ -173,22 +155,13 @@ export default {
         this.radio2 = '';
         this.Shaixuan = false;
         this.first = true;
-        console.log('val', val.tac_code);
         for (var i = 0; i < this.radio.length; i++) {
-          console.log('this.radio[i].tac_code', this.radio);
           if (val.tac_code === this.radio[i].tac_code) {
-            console.log(1);
             delete val.tac_code;
             delete val.child_single_num;
-            console.log(this.radio[i]);
-            for (var s = 0; s < this.radio[i].fendan.length; s++) {
-              if (val.file_name === this.radio[i].fendan[s].file_name) {
-                this.chongfu = 'chongfu';
-              }
-            }
             this.radio[i].fendan.push(val);
-          } else {
-            console.log('this.radio[i].tac_code', this.radio);
+            return;
+          }/* else {
             for (var q = 0; q < this.radios.length; q++) {
               if (val.tac_code === this.radios[q].code) {
                 var obj = {};
@@ -201,17 +174,15 @@ export default {
                 console.log('this.radio[i].tac_code', this.radio);
               }
             }
-          }
-          return this.radio;
+          } */
         }
       }
     },
     // 提交执行单
     sureBtn () {
-      this.loading2 = true;
       var obj = {};
       obj.order_num = this.hanginfo.order_num;
-      obj.single_num = this.getxginfo.single_num;
+      obj.single_num = this.hanginfo.single_num;
       obj.city = this.hanginfo.city;
       obj.ind_code = this.hanginfo.industryId;
       obj.prov = this.hanginfo.area;
@@ -226,12 +197,23 @@ export default {
         obj2.fendan = this.radio[i].fendan;
         obj.subunit.push(obj2);
       }
-      console.log(obj);
       this.$confirm('修改后将无法撤回,确认修改?')
         .then(_ => {
+          this.loading2 = true;
           this.$api.post('/api/campaign/modifyCampaign', obj).then((res) => {
             this.loading2 = false;
-            console.log(res);
+            if (res.status === 200) {
+              if (res.data.code === 0) {
+                this.$confirm('修改成功！')
+                  .then(_ => {
+                    this.$emit('xiugaichenggong');
+                  });
+              } else {
+                this.$confirm('修改失败！');
+              }
+            } else {
+              this.$confirm('服务器出错,请重试！');
+            }
           });
         })
         .catch(_ => {
@@ -240,10 +222,6 @@ export default {
     },
     // 查看
     seeBtn (i, o, index) {
-      console.log(this.radio);
-      console.log('i', i);
-      console.log('o', o);
-      console.log('i.fendan[o].tags', i.fendan[o].tags);
       this.getZXinfo = this.hanginfo;
       this.getcode = i.tac_code;
       this.indexNum = {
@@ -259,14 +237,11 @@ export default {
     },
     // 删除分单
     delet (index, o) {
-      console.log(i, o);
       for (var i = 0; i < index.fendan.length; i++) {
         index.fendan.splice(o, 1);
       }
-      console.log(this.radio);
       var that = this;
       that.radio = that.radio.filter(function (item) {
-        console.log(that.radio);
         return item;
       });
     }

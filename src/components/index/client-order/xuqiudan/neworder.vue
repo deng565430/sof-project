@@ -1,7 +1,7 @@
 <template>
   <div @click="" id="">
     <!-- 表单内容 -->
-    <el-form v-loading.body="loading" element-loading-text="拼命加载中" class="xuqiuform" :label-position="labelPosition" :rules="rules" ref="form"   :model="form" label-width="110px">
+    <el-form v-loading.body="loading" element-loading-text="加载中,请稍后..." class="xuqiuform" :label-position="labelPosition" :rules="rules" ref="form"   :model="form" label-width="110px">
         <!-- 行业选择 区域选择 -->
         <el-row :gutter="20" style="border-bottom:1px solid #f3f3f3">
           <el-col :span="6">
@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import Time from '../../../timeSelect/index';
+import Time from '../../../timeSelect/ordertime';
 export default {
   components: {
     Time
@@ -156,29 +156,7 @@ export default {
         phonenum: '',
         miaoshu: '',
         stratime: '',
-        endtime: '',
-        pickerOptions1: {
-          shortcuts: [{
-            text: '今天',
-            onClick (picker) {
-              picker.$emit('pick', new Date());
-            }
-          }, {
-            text: '昨天',
-            onClick (picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit('pick', date);
-            }
-          }, {
-            text: '一周前',
-            onClick (picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', date);
-            }
-          }]
-        }
+        endtime: ''
       },
       rules: {
         region: [
@@ -235,7 +213,7 @@ export default {
   methods: {
     // 区域选择
     handleChange (value) {
-      console.log(value);
+      // console.log(value);
     },
     dataEvent (val) {
       this.form.stratime = val.minbatch;
@@ -243,6 +221,7 @@ export default {
     },
     // 提交需求单
     onSubmit (formName) {
+      console.log(this.form.selectedOptions2.length);
       var city;
       if (this.form.selectedOptions2.length < 2) {
         city = '';
@@ -262,7 +241,6 @@ export default {
         'end_date': new Date(this.form.endtime).toLocaleDateString(),
         'project_description': this.form.miaoshu
       };
-      console.log(b);
       var url = '/api/brief/addbrief';
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -270,7 +248,6 @@ export default {
           this.$api.post(url, b).then((res) => {
             this.loading = false;
             this.queren = res.data.data;
-            console.log(this.form.options);
             for (var i = 0; i < this.form.options.length; i++) {
               if (res.data.data.area === this.form.options[i].value) {
                 if (res.data.data.city === '') {
@@ -299,7 +276,8 @@ export default {
               showCancelButton: false,
               type: 'success'
             }).then(() => {
-              this.dialogVisible = true;
+              // this.dialogVisible = true;
+              location.reload();
             });
           });
         } else {
@@ -314,7 +292,6 @@ export default {
       // this.form.data = ''; // 清空数据
       this.$refs[formName].resetFields(); // 清空数据
       this.$emit('tiaozhuan');
-      console.log(this.form.dates);
       this.form.selectedOptions2 = [];
       location.reload();
     },
@@ -339,15 +316,13 @@ export default {
               obj2.value = res.data.data.city[i].city[s].code;
               obj2.label = res.data.data.city[i].city[s].name;
               obj.children[s] = obj2;
-              if (obj.children[0].value === '') {
-                delete obj.children;
-              }
-              console.log(obj);
             }
             data[i] = obj;
+            if (data[i].children.length < 1) {
+              delete data[i].children;
+            }
           }
           this.form.options = data;
-          console.log(this.form.options);
           this.industry = res.data.data.industry;
           this.strategy = res.data.data.strategy;
           this.form.regions = res.data.data.industry;

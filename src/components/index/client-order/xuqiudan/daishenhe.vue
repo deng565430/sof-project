@@ -7,7 +7,7 @@
           <SearchTwo @search="search" @qingchu="qingchu"></SearchTwo>
         </div>
         <!-- table -->
-		  	<TableList v-loading="loading2" element-loading-text="加载中" :table="table"  @services-change="servicesChange" ></TableList> <!--:xiugaibtns='xiugaibtns'  :isshanchum="isshanchum" :chakanm="chakanm"   @services-shanchu="servicesShanchu"   :shanchusuccess="shanchusuccess" @services-qurrenshanchu="servicesQurrenshanchu"  @services-chakan="servicesChakan" -->
+		  	<TableList v-loading="loading2" element-loading-text="加载中" :table="table" :ishistory="ishistory"  @services-change="servicesChange" @services-chakan="servicesChakan"></TableList> <!--:xiugaibtns='xiugaibtns'  :isshanchum="isshanchum" :chakanm="chakanm"   @services-shanchu="servicesShanchu"   :shanchusuccess="shanchusuccess" @services-qurrenshanchu="servicesQurrenshanchu"  @services-chakan="servicesChakan" -->
         
         <!-- 分页 -->
         <el-pagination
@@ -22,7 +22,7 @@
 		  </el-tab-pane>
 		</el-tabs>
     <!-- 修改需求单 -->
-    <Xiugai v-if="Xiugais" :chakanxiang="chakanxiang" :xiugai="xiugai" @isshow='isshow' @isshow2="isshow2"></Xiugai>
+    <Xiugai v-if="Xiugais" :chakanxiang="chakanxiang" :xiugai="xiugai" @isshow='isshow' @isshow2="isshow2" :ishistory="ishistory"></Xiugai>
 	</div>
 </template>
 
@@ -32,7 +32,7 @@ import Xiugai from './xiugai';
 import Search from './search';
 import SearchTwo from './zhuangtaisearch';
 
-const tab = [{'name': '所有', 'code': '1'}];
+// const tab = [{'name': '所有', 'code': '1'}];
 export default {
   components: {
     TableList,
@@ -42,8 +42,8 @@ export default {
   },
   data () {
     return {
-      activeName: '1',
-      tabs: tab,
+      activeName: 'pol01',
+      tabs: [],
       table: [],
       currentPage4: 1,
       total: 0,
@@ -60,7 +60,8 @@ export default {
       xiugaibtns: this.tabs2,
       shanchuque: true,
       shanchusuccess: '',
-      chakanxiang: this.tabs2
+      chakanxiang: this.tabs2,
+      ishistory: 0
     };
   },
   watch: {
@@ -70,7 +71,6 @@ export default {
       this.chakanm = this.tabs3;
       this.xiugaibtns = this.tabs3;
       this.chakanxiang = this.tabs3;
-      console.log(this.chakanxiang);
       this.activeName = '1';
       this.tabName = 1;
       this.currentPage4 = 1;
@@ -86,15 +86,14 @@ export default {
   },
   methods: {
     zhuangtai (val) {
-      console.log(val);
       if (val !== '') {
         this.tabs3 = val;
+        this.ishistory = val;
         this.getTable(val, 0, 10, '', '', ''); // 获取列表
       }
     },
     // 查看行
     servicesChakan (val) {
-      console.log(val);
       this.tabsisshow = false;
       this.Xiugais = true;
       this.getXgai(val);
@@ -105,10 +104,8 @@ export default {
     },
     // 确认删除窗
     servicesQurrenshanchu (val) {
-      console.log(val);
       var url = '/api/brief/delBrief/' + val;
       this.$api.get(url).then((res) => {
-        console.log(res);
         if (res.status === 200) {
           if (res.data.code === 1) {
             this.$alert('未登录!');
@@ -148,8 +145,8 @@ export default {
     getcelue () {
       var url = '/api/brief/getStrategy';
       this.$api.get(url).then((res) => {
-        var all = this.tabs.concat(res.data.data);
-        this.tabs = all;
+        // var all = this.tabs.concat(res.data.data);
+        this.tabs = res.data.data;
       });
     },
     // 获取列表
@@ -173,7 +170,6 @@ export default {
       // console.log(`每页 ${val} 条`);
       this.currentPage4 = 1;
       this.pageSize = val;
-      console.log(this.tabName);
       if (this.tabName === 1) {
         this.getTable(this.tabs3, 0, val, '', '', '');
       } else {

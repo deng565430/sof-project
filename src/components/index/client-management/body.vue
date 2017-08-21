@@ -1,8 +1,9 @@
 <template>
 <div class="content">
-  <Search @search="search" ></Search>
+  <!-- <Search @search="search" ></Search>
   <Tables :searchValue="searchValue"></Tables>
-  <Waterfall></Waterfall>
+  <Waterfall></Waterfall> -->
+  <searchkehu></searchkehu>
 </div>
 </template>
 
@@ -10,13 +11,15 @@
 import Tables from './../../table/managementTable';
 import Waterfall from './waterfall';
 import Search from './search';
+import searchkehu from './searchkehu';
 export default {
 
   name: 'clientManagement',
   components: {
     Tables,
     Waterfall,
-    Search
+    Search,
+    searchkehu
   },
   data () {
     return {

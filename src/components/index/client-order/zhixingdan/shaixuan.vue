@@ -44,7 +44,7 @@
     </el-dialog>
 
     <!-- 已选tag -->
-    <div v-loading="loading2" class="tiaojian"  element-loading-text="拼命加载中">
+    <div  class="tiaojian" >
         <div class="show-tag" ref="showtag"  v-for="(parentTag, parentIndex) in showSelectData" style="margin-top:10px;height:100px;width:100%" >
           <span class="el-icon-close" @click="deletezu(parentIndex,parentTag)"></span>
           <div>
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <div class="jieguo">
+    <div class="jieguo" v-loading="loading2" element-loading-text="加载中，请稍后..">
     <!-- 搜索结果表格展示 -->
         <el-table
           :data="table"
@@ -141,17 +141,11 @@ export default {
       surnum: 0
     };
   },
-  watch: {
-    cdtab (val) {
-      console.log(val);
-    }
-  },
   created () {
     // 获取展示数据
     this.getTab();
     this.showSelectData = this.showselected;
     this.zname = this.title;
-    console.log(this.index);
   },
   methods: {
     addzu () {
@@ -185,7 +179,6 @@ export default {
     },
     // 删除组
     deletezu (parentIndex, parentTag) {
-      console.log(parentIndex, parentTag);
       this.showSelectData.splice(parentIndex, 1);
     },
     getTab () {
@@ -207,7 +200,6 @@ export default {
     },
     // 获取所有数据并更新数组
     addZhixing (parentTag, parentIndex) {
-      console.log(parentTag, parentIndex);
       this.surnum = parentIndex;
       this.fourthArrName = [];
       this.fourthArrCode = [];
@@ -240,7 +232,6 @@ export default {
           } else {
             this.table = res.data.data;
           }
-          console.log(res);
         } else {
           this.$confirm('请求出错!');
         }
@@ -253,14 +244,10 @@ export default {
       } else {
         var nums = 1;
         for (var i = 0; i < this.getnum.value.length; i++) {
-          console.log('this.getnum.code', this.getnum.code);
-          console.log(this.getnum.value[i].tac_code);
           if (this.getnum.value[i].tac_code === this.getnum.code) {
             nums = this.getnum.value[i].fendan.length;
-            console.log(nums);
           }
         }
-        console.log('this.index', this.getnum);
         var data = {};
         data.selects = this.showSelectData;
         this.datas = data;
@@ -274,14 +261,12 @@ export default {
     },
     // 组搜索
     submitF (parentIndex, parentTag) {
-      console.log(parentIndex, parentTag);
       this.loading2 = true;
       var data = {};
       data.prov = this.getZXinfo.area;
       data.city = this.getZXinfo.city;
       data.ind_code = this.getZXinfo.industryId;
       data.selects = [parentTag];
-      console.log(data);
       this.datas = data;
       this.$api.post('/api/campaign/getCampaignToView', data)
       .then(res => {
@@ -292,7 +277,6 @@ export default {
           } else {
             this.table = res.data.data;
           }
-          console.log(res);
         } else {
           this.$confirm('请求出错!');
         }
@@ -325,22 +309,19 @@ export default {
       this.showSelectTag = true;
       this.childShowTag = tag;
       this.showDialogVisible = true;
-      console.log(tag);
     },
     removeClose (tag, parentTag, parentIndex, index) {
       var _this = this;
       for (var i = 0; i < _this.showSelectData.length; i++) {
         for (var s = 0; s < _this.showSelectData[i].length; s++) {
           if (tag.code === _this.showSelectData[i][s].code) {
-            console.log(1);
             _this.showSelectData[i].splice(index, 1);
             _this.showSelectData = _this.showSelectData.filter(function (item) {
-              console.log(_this.showSelectData);
               return item;
             });
             return;
           } else {
-            console.log(2);
+            // console.log(2);
           }
         }
       }

@@ -5,6 +5,7 @@
             <el-tabs  v-model="activeName2" v-if="tabsisshow"  @tab-click="handleClick2">
                 <el-tab-pane v-for="s in hangye" :label="s.name" :name="s.code" >
                     <div style="display:flex">
+
                       <el-select v-model="value" clearable placeholder="请选择" style="width:120px;margin-right:10px" @change='searchChange(value)'>
                         <el-option
                           v-for="item in options"
@@ -16,7 +17,7 @@
                       <Search @search="search" @qingchu="qingchu"></Search>
                     </div>
                     <!-- table -->
-                    <TableList  v-loading="loading2" element-loading-text="加载中" :table="table" :zhixingbtns="zhixingbtns" @services-zhixingxiugai="servicesZhixingxiugai"  :zhiixngxiugais="zhiixngxiugais"  @services-zhixing="servicesZhixing" @services-zhixingchakan="servicesZhixingchakan"></TableList>
+                    <TableList  v-loading="loading2" element-loading-text="加载中，请稍后.." :table="table" :zhixingbtns="zhixingbtns" @services-zhixingxiugai="servicesZhixingxiugai"  :zhiixngxiugais="zhiixngxiugais"  @services-zhixing="servicesZhixing" @services-zhixingchakan="servicesZhixingchakan"></TableList>
                     <!-- 分页 -->
                     <el-pagination
                       @size-change="handleSizeChange"
@@ -34,7 +35,7 @@
     <!-- 新建需求单 -->
     <Xinjian v-if="Xinjian" @addnewcampaign="addnewcampaign" :hanginfo="hanginfo" :tabtoggle="tabtoggle" @xinajianback="xinajianback"></Xinjian>
     <!-- 修改需求单 -->
-    <Xiugai v-if="zhixiugai" @back="back" :hanginfo="hanginfo"  :getxginfo="getxginfo" :tabtoggle="tabtoggle"></Xiugai>
+    <Xiugai v-if="zhixiugai" @back="back" :hanginfo="hanginfo" @xiugaichenggong="xiugaichenggong"  :getxginfo="getxginfo" :tabtoggle="tabtoggle" :ishistory="ishistory"></Xiugai>
 	</div>
 </template>
 
@@ -43,10 +44,7 @@ import TableList from './zhixingList';
 import Search from './../xuqiudan/zhuangtaisearch';
 import Xinjian from './xinjian';
 import Xiugai from './xiugai';
-// import { line } from 'assets/js/charts';
 
-// const tab = [{'name': '所有', 'code': '1'}];
-// const hangye = [{'name': '所有', 'code': '1'}];
 export default {
   components: {
     TableList,
@@ -92,7 +90,8 @@ export default {
         value: '3',
         label: '历史执行单'
       }],
-      value: ''
+      value: '',
+      ishistory: 0
     };
   },
   created () {
@@ -106,7 +105,7 @@ export default {
     this.hanyetab = 1;
     this.getcelue();// 获取策略类型
     this.getHangyeList();// 获取行业
-    this.getNewList(this.tabs2, '', '0', '10', '', '', ''); // 获取新建  所有
+    this.getNewList(this.tabs2, this.activeName2, '0', '10', this.activeName, '', ''); // 获取新建  所有
   },
   methods: {
     searchChange (val) {
@@ -114,7 +113,9 @@ export default {
         this.tabs3 = val;
         this.zhixingbtns = this.tabs3;
         this.getNewList(this.tabs3, this.activeName2, 0, 10, this.activeName, '');
+        return;
       }
+      return;
     },
     // 获取行业
     getHangyeList () {
@@ -127,30 +128,28 @@ export default {
       });
     },
     servicesZhixingxiugai (val) {
-      console.log(val);
       this.tabsisshow = false;
+      this.Xinjian = false;
       this.zhixiugai = true;
       this.hanginfo = val;
       this.$api.post('/api/campaign/getcampaigndata/' + val.single_num + '').then((res) => {
-        console.log(res);
         this.getxginfo = res.data.data;
       });
     },
     // 历史执行单查看
-    servicesZhixingchakan (val) {
-      console.log(val);
+    servicesZhixingchakan (val, val1) {
+      console.log(val, val1);
       this.tabsisshow = false;
       this.zhixiugai = true;
       this.hanginfo = val;
+      this.ishistory = val1;
       this.$api.post('/api/campaign/getcampaigndata/' + val.single_num + '').then((res) => {
-        console.log(res);
         this.getxginfo = res.data.data;
         this.histroy = this.tabs2;
       });
     },
     // 查看行
     servicesChakan (val) {
-      console.log(val);
       this.tabsisshow = false;
       this.Xiugais = true;
       this.getXgai(val);
@@ -161,17 +160,14 @@ export default {
     },
     // 新建执行单 执行
     servicesZhixing (val) {
-      console.log(val);
       this.tabsisshow = false;
       this.Xinjian = true;
       this.hanginfo = val;
     },
     // 确认删除窗
-    servicesQurrenshanchu (val) {
-      console.log(val);
+    /* servicesQurrenshanchu (val) {
       var url = '/api/brief/delBrief/' + val;
       this.$api.get(url).then((res) => {
-        console.log(res);
         if (res.status === 200) {
           if (res.data.code === 1) {
             this.$alert('未登录!');
@@ -187,12 +183,13 @@ export default {
           this.$alert('删除失败!');
         }
       });
-    },
+    }, */
     // 搜索查询
     search (val, val2) {
       console.log(val, val2);
+      this.getNewList(this.tabs3, this.activeName2, this.currentPage4 - 1, this.pageSize, this.activeName, val, val2);
       // this.getNewList(0, this.hanyetab, 0, 10, '', val, val2);
-      if (this.tabName === 1 && this.hanyetab === 1) {
+      /* if (this.tabName === 1 && this.hanyetab === 1) {
         this.getNewList(this.tabs2, '', '0', 10, '', val, val2);
       } else if (this.tabName !== 1 && this.hanyetab === 1) {
         this.getNewList(this.tabs2, '', '0', 10, this.tabName, val, val2);
@@ -200,19 +197,12 @@ export default {
         this.getNewList(this.tabs2, this.hanyetab, '0', 10, this.tabName, val, val2);
       } else if (this.tabName === 1 && this.hanyetab !== 1) {
         this.getNewList(this.tabs2, '', '0', 10, this.tabName, val, val2);
-      }
+      } */
     },
     // 清除查询
     qingchu (val) {
-      if (this.tabName === 1 && this.hanyetab === 1) {
-        this.getNewList(this.tabs2, '', '0', 10, '', val, '');
-      } else if (this.tabName !== 1 && this.hanyetab === 1) {
-        this.getNewList(this.tabs2, '', '0', 10, this.tabName, val, '');
-      } else if (this.tabName !== 1 && this.hanyetab !== 1) {
-        this.getNewList(this.tabs2, this.hanyetab, '0', 10, this.tabName, val, '');
-      } else if (this.tabName === 1 && this.hanyetab !== 1) {
-        this.getNewList(this.tabs2, '', '0', 10, this.tabName, val, '');
-      }
+      console.log(val);
+      this.getNewList(this.tabs3, this.activeName2, this.currentPage4 - 1, this.pageSize, this.activeName, '', '');
     },
     // 修改提交
     isshow () {
@@ -230,7 +220,6 @@ export default {
       this.$api.get(url).then((res) => {
         var all = this.tabs.concat(res.data.data);
         this.tabs = all;
-        console.log(this.tabs);
       });
     },
     // 获取新建列表
@@ -278,7 +267,6 @@ export default {
     },
     // 切换策略列表
     handleClick (tab, event) {
-      console.log(this.addlisn);
       this.addlisn = this.addlisn;
       this.pageSize = 10;
       this.currentPage4 = 1;
@@ -294,18 +282,23 @@ export default {
     },
     // 返回
     back (val) {
-      console.log(val);
+      this.ishistory = 0;
       this.Xinjian = false;
       this.zhixiugai = false;
       this.tabsisshow = true;
     },
     xinajianback (val) {
-      console.log(val);
       this.Xinjian = false;
       this.zhixiugai = false;
       this.tabsisshow = true;
     },
     addnewcampaign () {
+      this.Xinjian = false;
+      this.zhixiugai = false;
+      this.tabsisshow = true;
+      this.getNewList(this.tabs3, this.activeName2, 0, 10, this.activeName, '');
+    },
+    xiugaichenggong () {
       this.Xinjian = false;
       this.zhixiugai = false;
       this.tabsisshow = true;

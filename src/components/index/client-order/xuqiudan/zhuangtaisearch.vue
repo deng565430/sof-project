@@ -46,7 +46,7 @@ export default {
   methods: {
     qingchu () {
       this.formInline.com = '';
-      // this.value = '';
+      this.value = '';
       this.$emit('qingchu', this.value);
     },
     onfocus () {

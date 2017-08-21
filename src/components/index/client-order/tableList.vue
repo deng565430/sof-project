@@ -59,7 +59,8 @@
 		      width="100"
 		      >
 		      <template scope="scope">
-            <el-button  type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
+            <el-button v-if="ishistory != 3"  type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
+            <el-button  v-if="ishistory == 3" type="text" size="small"  @click.native.prevent="zhiixng3(scope.$index, table)" >查看</el-button>
 		        <!-- <el-button v-if="xiugaibtns in xiugaibtn" type="text" size="small"  @click.native.prevent="handleClick(scope.$index, table)" >修改</el-button>
              <el-button v-if="shanchuque == isshanchum" type="text" size="small"  @click.native.prevent="deleteRow(scope.$index, table)" >删除</el-button>
              <el-button v-if="chakan == chakanm" type="text" size="small"  @click="chakanxiqngiqng" >查看</el-button>
@@ -76,7 +77,7 @@
 
 <script>
 export default {
-  props: ['table'], // , 'isshanchum', 'chakanm', 'xiugaibtns', 'zhixingbtns', 'zhiixngxiugais'
+  props: ['table', 'ishistory'], // , 'isshanchum', 'chakanm', 'xiugaibtns', 'zhixingbtns', 'zhiixngxiugais'
   data () {
     return {
       shanchuque: 0,
@@ -128,7 +129,7 @@ export default {
     // 跳转执行单查看
     zhiixng3 (index, rows) {
       console.log(rows[index].id);
-      this.$emit('services-zhixingchakan', rows[index]);
+      this.$emit('services-chakan', rows[index].id);
     },
     // 跳转到查看
     chakanxiqngiqng (val) {
