@@ -41,7 +41,6 @@ import Charts from '../../../../Charts';
 import ContrastTable from '../../contrastTable/contrastTable';
 import PhonalyzrChild from './PhonalyzrChild/PhonalyzrChild';
 export default {
-  name: 'phonalyzr',
   components: {
     DataSearch,
     Charts,

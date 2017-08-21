@@ -32,9 +32,6 @@
 
 <script>
 export default {
-
-  name: 'contrastTable',
-
   data () {
     return {
       currentPage: 1,

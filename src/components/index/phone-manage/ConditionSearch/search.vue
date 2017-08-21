@@ -35,8 +35,6 @@
 <script>
 import TimeSelect from '../../../timeSelect';
 export default {
-
-  name: ' ',
   components: {
     TimeSelect
   },

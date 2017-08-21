@@ -8,7 +8,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="电话类型分析" name="second">
-          <div>
+          <div v-if="secondFlag">
             <ProjectType/>
           </div>
         </el-tab-pane>
@@ -38,6 +38,7 @@ export default {
   data () {
     return {
       isShow: false,
+      secondFlag: false,
       activeName: 'first'
     };
   },
@@ -46,7 +47,10 @@ export default {
   methods: {
     clicks () {
     },
-    handleClick (tab, event) {
+    handleClick (e) {
+      if (e.name === 'second') {
+        this.secondFlag = true;
+      }
     }
   }
 };

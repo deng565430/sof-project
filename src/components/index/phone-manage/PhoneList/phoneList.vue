@@ -63,10 +63,10 @@
             @change="selectChange"
             placeholder="所有类型">
             <el-option
-              v-for="item in scope.row.types"
+              v-for="(item, index) in scope.row.types"
               :key="item.count"
               :label="item.type"
-              :value="item">
+              :value="JSON.stringify(item)">
             </el-option>
           </el-select>
           </template>
@@ -250,7 +250,7 @@ export default {
         let type = '';
         if (v.numAllType.length) {
           for (var i = 0; i < v.numAllType.length; i++) {
-            type += `${v.numAllType[i].type},`;
+            type += `${JSON.parse(v.numAllType[i]).type},`;
           }
         } else {
           type = 'all';

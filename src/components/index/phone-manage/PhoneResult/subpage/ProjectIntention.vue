@@ -3,8 +3,11 @@
   <div>
     <Search :projectOptions="{projectOptions}" :searchIsShow="{searchIsShow}" @listenToChildEvent="listenToChildEvent"></Search>
   </div>
-  <div id="echarts">
+  <div id="echarts" v-if="flag">
     <Charts :id="id" :projectType="projectType"></Charts>
+  </div>
+  <div v-else>
+    暂时没有数据
   </div>
 </div>
 </template>
@@ -25,7 +28,8 @@ export default {
       projectOptions: [],
       SearchData: '',
       projectType: {},
-      searchIsShow: true
+      searchIsShow: true,
+      flag: true
     };
   },
   watch: {
@@ -55,6 +59,7 @@ export default {
       });
     },
     getTelByPB (project, minbatch, maxbatch) {
+      this.flag = true;
       const postData = {
         project: project,
         maxbatch: maxbatch,
@@ -116,7 +121,7 @@ export default {
             }]
           };
         } else {
-          this.$alert('没有展示项目', '提示信息');
+          this.flag = false;
         }
         console.log(this.projectType);
       });

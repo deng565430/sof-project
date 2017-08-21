@@ -52,10 +52,10 @@ export default {
       val.forEach((item, index) => {
         data.push({
           label: item.tagname,
-          key: {
+          key: JSON.stringify({
             name: item.tagname,
             value: ''
-          },
+          }),
           jingp: this.filterSelectData[index].tagname
         });
       });

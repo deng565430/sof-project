@@ -1,43 +1,32 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-const Index = r => require.ensure([], () => r(require('../components/index/index')), 'index');
-const Login = r => require.ensure([], () => r(require('../components/login/login')), 'login');
-const AllIndustry = r => require.ensure([], () => r(require('../components/allIndustry/allIndustry')), 'allIndustry');
-
-
-const ClientOrder = r => require.ensure([], () => r(require('../components/index/client-order/body')), 'alientOrder');
-const PhoneManage = r => require.ensure([], () => r(require('../components/index/phone-manage')), 'phoneManage');
-const Analysis = r => require.ensure([], () => r(require('../components/index/analysis')), 'analysis');
-const ClientManagement = r => require.ensure([], () => r(require('../components/index/client-management/body')), 'clientManagement');
-
-const newxuqiu = r => require.ensure([], () => r(require('../components/index/client-order/xuqiudan/neworder')), 'newxuqiu');
-const orders = r => require.ensure([], () => r(require('../components/index/client-order/xuqiudan/daishenhe')), 'daishenhe');
-const newzhixing = r => require.ensure([], () => r(require('../components/index/client-order/zhixingdan/allzhixing')), 'newzhixing');
-
-
-const Report = r => require.ensure([], () => r(require('../components/index/analysis/ReportList')), 'reportlist');
-const AddProjectList = r => require.ensure([], () => r(require('../components/index/analysis/AddProjectList')), 'addprojectlist');
-
 Vue.use(Router);
 
 
-const scrollBehavior = (to, from, savedPosition) => {
-  if (savedPosition) {
-    // savedPosition is only available for popstate navigations.
-    return savedPosition
-  } else {
-    const position = {};
-    if (to.hash) {
-      position.selector = to.hash
-    }
-    if (to.matched.some(m => m.meta.scrollToTop)) {
-      position.x = 0;
-      position.y = 0;
-    }
-    return position;
-  }
-};
+const Index = r => require.ensure([], () => r(require('components/index/index')), 'index');
+const Login = r => require.ensure([], () => r(require('components/login/login')), 'login');
+const AllIndustry = r => require.ensure([], () => r(require('components/allIndustry/allIndustry')), 'allIndustry');
+
+
+const ClientOrder = r => require.ensure([], () => r(require('components/index/client-order/body')), 'alientOrder');
+const PhoneManage = r => require.ensure([], () => r(require('components/index/phone-manage')), 'phoneManage');
+const Analysis = r => require.ensure([], () => r(require('components/index/analysis')), 'analysis');
+const ClientManagement = r => require.ensure([], () => r(require('components/index/client-management/body')), 'clientManagement');
+
+const newxuqiu = r => require.ensure([], () => r(require('components/index/client-order/xuqiudan/neworder')), 'newxuqiu');
+const orders = r => require.ensure([], () => r(require('components/index/client-order/xuqiudan/daishenhe')), 'daishenhe');
+const newzhixing = r => require.ensure([], () => r(require('components/index/client-order/zhixingdan/allzhixing')), 'newzhixing');
+
+
+const PhoneList = r => require.ensure([], () => r(require('components/index/phone-manage/PhoneList/PhoneList')), 'PhoneList');
+const PhoneResult = r => require.ensure([], () => r(require('components/index/phone-manage/PhoneResult/PhoneResult')), 'phoneResult');
+const Quality = r => require.ensure([], () => r(require('components/index/phone-manage/QualityAnalysis/QualityAnalysis')), 'quality');
+
+
+const Report = r => require.ensure([], () => r(require('components/index/analysis/ReportList')), 'reportlist');
+const AddProjectList = r => require.ensure([], () => r(require('components/index/analysis/AddProjectList')), 'addprojectlist');
+
 
 const router = new Router({
   routes: [{
@@ -67,8 +56,17 @@ const router = new Router({
     }]
   }, {
     path: '/phone',
-    name: 'phoneManage',
-    component: PhoneManage
+    component: PhoneManage,
+    children: [{
+      path: 'phoneList',
+      component: PhoneList
+    }, {
+      path: 'phoneResult',
+      component: PhoneResult
+    }, {
+      path: 'quality',
+      component: Quality
+    }]
   }, {
     path: '/management',
     name: 'management',
@@ -81,7 +79,7 @@ const router = new Router({
       path: 'addprojectlist',
       component: AddProjectList
     }, {
-      path: 'report/:project/:proid/:id',
+      path: 'report/:project/:updatatime/:id',
       component: Report,
       meta: { scrollToTop: true }
     }]
@@ -96,6 +94,9 @@ router.beforeEach((to, from, next) => {
   }
   if (to.path == '/analysis') {
     next('/analysis/addprojectlist')
+  }
+  if (to.path == '/phone') {
+    next('/phone/phoneList')
   }
   next()
 })

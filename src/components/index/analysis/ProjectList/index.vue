@@ -41,7 +41,7 @@
               <p>下期报告 <span v-html="desc.nextCycle === true ? '已完成' : '未完成'"></span><i :class="desc.nextCycle === true ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i></p>
             </div>
             <div class="show-btn">
-              <router-link :to="'/analysis/report/'+ desc.tagname + '/' + desc.userid + '/' + desc.id" ><el-button type="primary" >查看订阅 ></el-button></router-link>
+              <router-link :to="`/analysis/report/${encodeURI(desc.tagname)}/${desc.updatedAt.split(' ')[0]}/${desc.id}`" ><el-button type="primary" >查看订阅 ></el-button></router-link>
             </div>
           </div>
         </div>

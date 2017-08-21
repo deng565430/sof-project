@@ -1,70 +1,25 @@
 <template>
 <div id="orderOne">
   <div id="leftMenu">
-    <LeftMenu :dataValue="data" :childIsShow="childIsShow" @childEventIsShow="childEventIsShow"/>
+    <left-menu/></left-menu>
   </div>
   <div id="contain">
-    <AllIndustry v-if="flag" />
-    <PhoneList v-if="PhoneList" />
-    <PhoneResult v-if="PhoneResult" />
-    <Quality v-if="quality" />
+    <router-view></router-view>
   </div>
 </div>
 </template>
 
 <script>
 import LeftMenu from './../../leftMenu/LeftMenu';
-import AllIndustry from './../../allIndustry/AllIndustry';
-import PhoneList from './phoneList/phoneList';
-import PhoneResult from './phoneResult/phoneResult';
-import Quality from './QualityAnalysis/QualityAnalysis';
 export default {
   components: {
-    LeftMenu,
-    AllIndustry,
-    PhoneList,
-    PhoneResult,
-    Quality
+    LeftMenu
   },
   data () {
-    return {
-      data: [
-        {'value': '电销系统', 'name': {'url': '', 'val': '电话清单'}, 'ing': {'url': '', 'val': '电话效果分析'}, 'now': {'url': '', 'val': '电话质量分析'}, 'hoistory': {'url': '', 'val': '已完成'}}
-      ],
-      flag: false,
-      childIsShow: false,
-      PhoneList: true,
-      PhoneResult: false,
-      quality: false
-    };
+    return {};
   },
   created () {},
-  methods: {
-    childEventIsShow (data) {
-      switch (data) {
-        case '电话清单':
-          this.PhoneList = true;
-          this.PhoneResult = false;
-          this.quality = false;
-          this.flag = false;
-          break;
-        case '电话效果分析':
-          this.PhoneResult = true;
-          this.PhoneList = false;
-          this.quality = false;
-          this.flag = false;
-          break;
-        case '电话质量分析':
-          this.quality = true;
-          this.PhoneResult = false;
-          this.PhoneList = false;
-          this.flag = false;
-          break;
-        case '4':
-          break;
-      }
-    }
-  }
+  methods: {}
 };
 </script>
 

@@ -22,8 +22,6 @@
 <script>
 import Charts from '../../../../../Charts';
 export default {
-
-  name: 'phonalyzrChild',
   components: {
     Charts
   },
@@ -33,8 +31,7 @@ export default {
   data () {
     return {
       tableData: [{
-        date: '',
-        name: ''
+        date: ''
       }],
       chartsData: [],
       id: 'pnonalyzrChild',

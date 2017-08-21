@@ -3,7 +3,7 @@
      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
       <el-menu-item index="/index"><router-link class="itemWdith" to="">上富科技</router-link></el-menu-item>
       <el-menu-item index="/client"><router-link class="itemWdith" to="">客户下单系统</router-link></el-menu-item>
-      <el-menu-item index="/phone"><router-link class="itemWdith" to="">电话管理</router-link></el-menu-item>
+      <el-menu-item index="/phone/phoneList"><router-link class="itemWdith" to="">电话管理</router-link></el-menu-item>
       <el-menu-item index="/analysis/addprojectlist"><router-link class="itemWdith" to="">分析报告</router-link></el-menu-item>
       <el-menu-item index="/management"><router-link class="itemWdith" to="">客户管理</router-link></el-menu-item>
       <el-menu-item index="" v-if="isLogin.msg" @click="admin" style="float:right">欢迎你：{{isLogin.name}}</el-menu-item>

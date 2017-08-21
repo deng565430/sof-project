@@ -171,7 +171,7 @@ export default {
   mounted () {},
   methods: {
     getProjectData () {
-      this.$api.get('/api/apis/getTags?indcode=fangc-xf')
+      this.$api.get('/api/getTags?indcode=fangc-xf')
       .then(res => {
         console.log(res);
         if (res.data) {
@@ -187,12 +187,12 @@ export default {
         this.$alert('请选择楼盘', '提示信息');
         return;
       }
-      this.$api.post('/api/apis/getJingp', this.radio)
+      this.$api.post('/api/getJingp', this.radio)
       .then(res => {
         this.defaultData = res.data.data;
       });
       if (this.filterSelectData.length === 0) {
-        this.$api.post('/api/apis/getAllloupan', this.radio)
+        this.$api.post('/api/getAllloupan', this.radio)
         .then(res => {
           this.filterSelectData = res.data.data;
         });
@@ -234,7 +234,6 @@ export default {
       console.log(this.searchInput);
     },
     confirm () {
-      console.log(this.childfilterData);
       if (this.startTime === '') {
         this.$alert('请选择订阅开始时间');
         return;
@@ -243,6 +242,9 @@ export default {
         this.$alert('请选择订阅周期');
         return;
       }
+      this.childfilterData.filter((item, index) => {
+        this.childfilterData[index] = JSON.parse(item);
+      });
       const data = {
         region: this.optionsValue,
         startTime: this.startTime,
@@ -254,7 +256,7 @@ export default {
         rdto: this.radio
       };
       const self = this;
-      this.$api.post('/api/apis/subscribe/0', data)
+      this.$api.post('/api/subscribe/0', data)
       .then(res => {
         console.log(res);
         if (res.data.code === 0) {
@@ -263,14 +265,14 @@ export default {
           this.$alert(res.data.msg, '提示信息', {
             confirmButtonText: '确定',
             callback: action => {
-              window.location.reload();
+              // window.location.reload();
             }
           });
         } else {
           this.$alert(res.data.msg, '提示信息', {
             confirmButtonText: '确定',
             callback: action => {
-              window.location.reload();
+              // window.location.reload();
             }
           });
         }
