@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import Time from '../../../timeSelect/index';
+import Time from '../../../timeSelect/ordertime';
 
 export default {
   props: ['xiugai', 'chakanxiang', 'ishistory'],

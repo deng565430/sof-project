@@ -1,21 +1,24 @@
 <template>
-<div class="content">
-  <!-- <Search @search="search" ></Search>
-  <Tables :searchValue="searchValue"></Tables>
-  <Waterfall></Waterfall> -->
-  <searchkehu></searchkehu>
+<div style="display:flex">
+  <LeftMenu></LeftMenu>
+  <div class="content">
+  <router-view></router-view>
+  </div>
 </div>
 </template>
 
 <script>
+import LeftMenu from './../../leftMenu/managementMenu';
 import Tables from './../../table/managementTable';
 import Waterfall from './waterfall';
 import Search from './search';
 import searchkehu from './searchkehu';
+import {scrollBarInit} from 'assets/js/dataslider';
 export default {
 
   name: 'clientManagement',
   components: {
+    LeftMenu,
     Tables,
     Waterfall,
     Search,
@@ -23,10 +26,23 @@ export default {
   },
   data () {
     return {
-      searchValue: []
+      searchValue: [],
+      value4: 1,
+      max: 31,
+      min: 1
     };
   },
   methods: {
+    formatTooltip (val) {
+      val = this.value4;
+      var datas = scrollBarInit();
+      if (val < 10) {
+        val = '0' + val;
+      }
+      val = datas + val;
+      console.log(val);
+      return val;
+    },
     // 搜索查询
     search (val, val2) {
       // this.getTable(this.tabs3, this.currentPage4 - 1, this.pageSize, this.tabName, val, val2);
@@ -42,5 +58,6 @@ body{
 .content{
 	width:80%;
 	margin:0 auto;
+  margin: 20px 
 }
 </style>

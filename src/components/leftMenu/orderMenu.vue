@@ -2,7 +2,7 @@
   <div id='leftMenu'>
     <el-menu mode="vertical" :default-active="index" class="el-menu-vertical-demo" style="width: 200px" @select="handleSelect"   theme="dark" >
         <el-menu-item-group  v-for="i in indexs">
-          <el-menu-item :index="i.name"><router-link :to="{ path: i.path }">{{i.name}}</router-link></el-menu-item>
+          <router-link :to="{ path: i.path }"><el-menu-item :index="i.name">{{i.name}}</el-menu-item></router-link>
         </el-menu-item-group>
     </el-menu>
   </div>
@@ -28,7 +28,6 @@ export default {
 
 <style lang="css" scoped>
 #leftMenu a{
-  display: inline-block;
   color:#bfcbd9;
 }
 #leftMenu a:active{

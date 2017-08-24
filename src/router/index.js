@@ -9,11 +9,17 @@ const Login = r => require.ensure([], () => r(require('components/login/login'))
 const AllIndustry = r => require.ensure([], () => r(require('components/allIndustry/allIndustry')), 'allIndustry');
 
 
-const ClientOrder = r => require.ensure([], () => r(require('components/index/client-order/body')), 'alientOrder');
+const ClientOrder = r => require.ensure([], () => r(require('components/index/client-order')), 'alientOrder');
 const PhoneManage = r => require.ensure([], () => r(require('components/index/phone-manage')), 'phoneManage');
 const Analysis = r => require.ensure([], () => r(require('components/index/analysis')), 'analysis');
 const ClientManagement = r => require.ensure([], () => r(require('components/index/client-management/body')), 'clientManagement');
 
+const Personas = r => require.ensure([], () => r(require('components/index/client-management/searchkehu')), 'Personas');
+const Allcustomer = r => require.ensure([], () => r(require('components/index/client-management/allcustomer/index')), 'allcustomer');
+const Projectcustomer= r => require.ensure([], () => r(require('components/index/client-management/Projectcustomer/index')), 'Projectcustomer');
+const VIPcustomer = r => require.ensure([], () => r(require('components/index/client-management/VIPcustomer/index')), 'VIPcustomer');
+
+const Ordergailan = r => require.ensure([], () => r(require('components/index/client-order/body')), 'alientOrder');
 const newxuqiu = r => require.ensure([], () => r(require('components/index/client-order/xuqiudan/neworder')), 'newxuqiu');
 const orders = r => require.ensure([], () => r(require('components/index/client-order/xuqiudan/daishenhe')), 'daishenhe');
 const newzhixing = r => require.ensure([], () => r(require('components/index/client-order/zhixingdan/allzhixing')), 'newzhixing');
@@ -45,6 +51,9 @@ const router = new Router({
     name: 'body',
     component: ClientOrder,
     children: [{
+      path: '/order',
+      component: Ordergailan
+    }, {
       path: '/neworder',
       component: newxuqiu
     }, {
@@ -70,7 +79,20 @@ const router = new Router({
   }, {
     path: '/management',
     name: 'management',
-    component: ClientManagement
+    component: ClientManagement,
+    children: [{
+      path: '/allcustomer',
+      component: Allcustomer
+    }, {
+      path: '/projectcustomer',
+      component: Projectcustomer
+    }, {
+      path: '/VIPcustomer',
+      component: VIPcustomer
+    }, {
+      path: '/personas',
+      component: Personas
+    }]
   },{
     path: '/analysis',
     name: 'analysis',
