@@ -1,5 +1,6 @@
 <template>
-  <div @click="" id="">
+  <div style="margin-left:30px;">
+  <h2>新建需求单</h2>
     <!-- 表单内容 -->
     <el-form v-loading.body="loading" element-loading-text="加载中,请稍后..." class="xuqiuform" :label-position="labelPosition" :rules="rules" ref="form"   :model="form" label-width="110px">
         <!-- 行业选择 区域选择 -->
@@ -58,7 +59,7 @@
          </el-col>
         </el-row>
         <!-- 所需电话量 -->
-        <el-row :gutter="20">
+        <el-row :gutter="20" style="margin-top:20px">
           <el-col :span="8">
             <el-form-item label="所需电话量/天" prop="phonenum">
               <el-input v-model="form.phonenum" placeholder=""></el-input>
@@ -67,7 +68,7 @@
          </el-col>
         </el-row>
         <!-- 所需周期 -->
-        <el-row :gutter="20">
+        <el-row :gutter="20" style="margin-top:20px">
           <el-col :span="16">
             <el-form-item label="所需周期"  required>
               <Time  :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Time>
@@ -75,7 +76,7 @@
           </el-col>
         </el-row>
         <!-- 项目描述 -->
-        <el-row :gutter="20">
+        <el-row :gutter="20" style="margin-top:20px;min-height:64px;margin-bottom:26px;">
           <el-col :span="16">
             <el-form-item label="项目描述" prop="miaoshu">
               <el-input type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
@@ -381,5 +382,30 @@ export default {
   padding-left: 8px;
   word-wrap: break-word;
   overflow: hidden;
+}
+h2{
+  height: 28px;
+  line-height: 28px;
+  text-align: left;
+  font-size: 18px;
+  color: #007bf8;
+  border-left: 4px solid #007bf8;
+  padding-left: 18px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+.el-row{
+  height: 46px;
+  background: #f2f3f4
+}
+.el-button--primary{
+  background-color: #007bf8;
+    border-color: #007bf8;
+}
+.el-button{
+  border-color: #007bf8;
+}
+.el-tabs__nav div:nth-child(1){
+  margin-left: 30px;
 }
 </style>

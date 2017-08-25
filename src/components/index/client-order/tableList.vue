@@ -3,6 +3,7 @@
 		<el-table
 	    :data="table"
 	    border
+      :stripe="stripe"
 	    style="width:100%;margin-bottom:20px"
     	max-height="350"
 	    :default-sort = "{prop: 'date', order: 'descending'}"
@@ -89,7 +90,8 @@ export default {
       zhiixngxiugai: 1,
       chakanm: this.chakanm,
       id: this.table.id,
-      tables: this.table
+      tables: this.table,
+      stripe: true
     };
   },
   watch: {

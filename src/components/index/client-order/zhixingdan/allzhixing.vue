@@ -1,8 +1,8 @@
 <template>
-	<div >
-		<el-tabs type="border-card" v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick">
-  		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs">
-            <el-tabs  v-model="activeName2" v-if="tabsisshow"  @tab-click="handleClick2">
+	<div class="contain">
+		<el-tabs type="card" v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick" class="tabs" >
+  		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs" >
+            <el-tabs type="card"  v-model="activeName2" v-if="tabsisshow"  @tab-click="handleClick2" class="tabs2">
                 <el-tab-pane v-for="s in hangye" :label="s.name" :name="s.code" >
                     <div style="display:flex">
 
@@ -309,5 +309,54 @@ export default {
 </script>
 
 <style>
-	
+.contain{
+  background: #e9e9e9
+}
+.tabs > .el-tabs__header .el-tabs__nav div:first-child{
+  margin-left: 30px;
+}	
+.tabs{
+    margin-top: 28px;
+  }
+  .el-tabs--card>.el-tabs__header .el-tabs__item{
+    height: 36px;
+    line-height: 36px;
+    border: 0;
+    padding: 0 30px;
+    margin-right: 10px;
+    background: url('./bgk_03.png');
+    background-size: contain;
+    color: #fff;
+    border-radius: 10px 10px 0 0 ;
+  }
+  .el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
+    border: 0;
+    border-radius: 4px 4px 0 0;
+    background: #fff;
+    color: #3395f9;
+    border-radius: 10px 10px 0 0 ;
+    box-shadow: 0 0 10px #888
+  }
+  .el-tabs__content{
+    background: #fff;
+    padding:0 20px
+  }
+  .tabs > .el-tabs__header {
+    margin: 0
+  }
+  .tabs > .el-tabs__content{
+    padding-top:10px;
+  }
+  .tabs2{
+    box-shadow: 0 0 10px #888;
+    padding-top:30px;
+  }
+  .tabs2 .el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
+    border: 0;
+    border-radius: 4px 4px 0 0;
+    background: #fff;
+    color: #3395f9;
+    border-radius: 10px 10px 0 0 ;
+    box-shadow: 0 0 10px #888
+  }
 </style>

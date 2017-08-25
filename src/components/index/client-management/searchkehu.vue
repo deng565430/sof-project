@@ -1,9 +1,11 @@
 <template>
-<div class="content">
-  <el-form ref="form" :model="form" label-width="100px">
-  <div style="display:flex">
+<div class="contents">
+
+  <h2>条件搜索</h2>
+  <el-form ref="form" :model="form" label-width="100px" class="forms">
+  <div style="display:flex;margin-bottom:15px">
     <el-form-item label="行业选择">
-    <el-select v-model="form.region"  placeholder="请选行业">
+    <el-select v-model="form.region" @change="hangyechange"  placeholder="请选行业">
       <el-option 
       v-for="item in options"
       :key="item.value"
@@ -12,6 +14,14 @@
       {{item.label}}
       </el-option>
     </el-select>
+  </el-form-item>
+  <el-form-item label="区域选择" >
+    <el-cascader
+      expand-trigger="hover"
+      :options="form.options"
+      v-model="form.selectedOptions2"
+      @change="handleChange">
+    </el-cascader>
   </el-form-item>
   <el-form-item label="项目名称">
     <el-select
@@ -27,12 +37,12 @@
   </el-select>
   </el-form-item>
   <el-row :gutter="20">
-          <el-col :span="16">
-            <el-form-item label="选择时间"  required>
-              <Time  :dates="form.dates" v-model='form.data' ></Time>
-            </el-form-item>
-          </el-col>
-        </el-row>
+    <el-col :span="16">
+      <el-form-item label="选择时间"  required>
+        <Time  :dates="form.dates" v-model='form.data' ></Time>
+      </el-form-item>
+    </el-col>
+  </el-row>
 
   </div>
   
@@ -40,16 +50,23 @@
     <el-radio-group v-model="form.resource" @change="qiehuan(form.resource)">
       <el-radio label="按阶段分类"></el-radio>
       <el-radio label="按属性分类"></el-radio>
+      <el-radio label="按具体ID"></el-radio>
     </el-radio-group>
   </el-form-item>
-  <el-form-item label="QQ号" v-if="phone">
-    <el-input v-model="form.phone" placeholder="格式:电话号码 / QQ号"></el-input>
+  <div v-if="phone">
+  <el-form-item label="QQ号" >
+    <el-input v-model="form.phone" placeholder="格式:QQ号 / QQ号"></el-input>
     <span>（格式：如您需要多个搜索,号码之间请用"/"隔开）</span>
   </el-form-item>
-  <el-form-item label="手机号" v-if="phone">
-    <el-input v-model="form.phones" placeholder="格式:电话号码 / QQ号"></el-input>
+  <el-form-item label="手机号">
+    <el-input v-model="form.phones" placeholder="格式:电话号码 / 电话号码"></el-input>
     <span>（格式：如您需要多个搜索,号码之间请用"/"隔开）</span>
   </el-form-item>
+  <el-form-item label="微信号">
+    <el-input v-model="form.phones" placeholder="格式:微信号 / 微信号"></el-input>
+    <span>（格式：如您需要多个搜索,号码之间请用"/"隔开）</span>
+  </el-form-item>
+  </div>
   <el-form-item label="" v-if="kehuyuan">
     <el-radio-group v-model="form.kehuyuan">
       <el-radio label="动机"></el-radio>
@@ -58,20 +75,33 @@
     </el-radio-group>
   </el-form-item>
   <el-form-item >
+  <div v-if="shaixuan"  style="margin-bottom:20px">
+    <Saixuan></Saixuan>
+   </div>
     <div style="text-align:center">
     <el-button type="primary" @click="onSubmit">搜索</el-button>
     <el-button>取消</el-button>
     </div>
   </el-form-item>
 </el-form>
+
+<div>  
+</div >
+
+
+  
+
+
 </div>
 </template>
 
 <script>
 import Time from '../../timeSelect/ordertime';
+import Saixuan from './search/shaixuan';
 export default {
   components: {
-    Time
+    Time,
+    Saixuan
   },
   name: 'clientManagement',
   data () {
@@ -87,13 +117,15 @@ export default {
         type: [],
         resource: '',
         desc: '',
-        kehuyuan: ''
+        kehuyuan: '',
+        options: []
       },
       phone: false,
       kehuyuan: false,
       options: [],
       projectname: [],
-      loading: false
+      loading: false,
+      shaixuan: false
     };
   },
   created () {
@@ -109,10 +141,20 @@ export default {
       if (val === '按阶段分类') {
         this.phone = false;
         this.kehuyuan = true;
+        this.shaixuan = false;
+      } else if (val === '按具体ID') {
+        this.kehuyuan = false;
+        this.phone = true;
+        this.shaixuan = false;
       } else {
         this.kehuyuan = false;
         this.phone = false;
+        this.shaixuan = true;
       }
+    },
+    hangyechange () {
+      console.log(this.form.region);
+      this.getarea(this.form.region);
     },
     // 获取行业
     gethangye () {
@@ -127,6 +169,15 @@ export default {
             datas[i] = obj;
           }
           _this.options = datas;
+        }
+      });
+    },
+    // 获取行业对应的区域
+    getarea (val) {
+      var indcode = val;
+      this.$api.get('/api/clientbehavior/getcity/' + indcode).then(function (res) {
+        if (res.data.code === 0) {
+          console.log(res.data.data);
         }
       });
     },
@@ -169,12 +220,29 @@ export default {
 body{
 	position: relative;
 }
-.content{
-	width:90%;
+.contents{
+	width:100%;
 	margin:0 auto;
-  margin-top: 30px
 }
 .el-form-item__content{
   text-align:center
+}
+.forms{
+  border: 1px solid #ccc;
+  padding:20px;
+}
+.el-form-item{
+  margin-bottom: 15px
+}
+h2{
+  text-align: left;
+  line-height: 35px;
+  background: #00b52f;
+  color:#fff;
+  padding-left: 10px;
+}
+h2 span{
+  font-size: 20px;
+  margin-right:5px;
 }
 </style>

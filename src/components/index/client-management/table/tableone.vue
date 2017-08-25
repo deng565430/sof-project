@@ -1,8 +1,8 @@
 <template>
-<div style="">
+<div style="margin:20px">
   <el-table
     :data="tableData2"
-    style="margin:20px;margin-top:5px"
+    style=""
      :row-click="rowclick">
     <el-table-column
       prop="name"
@@ -22,6 +22,9 @@ export default {
   data () {
     return {
       tableData2: [{
+        name: '王小虎',
+        phone: '18544574458'
+      }, {
         name: '王小虎',
         phone: '18544574458'
       }]

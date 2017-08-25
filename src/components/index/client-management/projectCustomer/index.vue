@@ -1,5 +1,5 @@
 <template>
-<div style="margin-left:20px;margin-top:20px">
+<div >
 <div v-if="tableishow">
 	<div class="btns">
 		<el-button type="primary">新增项目客户</el-button>

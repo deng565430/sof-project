@@ -14,7 +14,7 @@
           <router-link to="projectcustomer"><el-menu-item index="1-3">我的项目客户</el-menu-item></router-link>
         </el-menu-item-group>
       </el-submenu>
-      <router-link to="personas"><el-menu-item index="2">客户画像</el-menu-item></router-link>
+      <router-link to="personas"><el-menu-item index="2">客户搜索</el-menu-item></router-link>
     </el-menu>
   </div>
 </template>

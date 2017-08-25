@@ -1,4 +1,5 @@
 <template>
+<div>
   <el-select v-model="value" clearable placeholder="请选择" style="width:120px;margin-right:10px" @change='searchChange(value)'>
     <el-option
       v-for="item in options"
@@ -7,6 +8,7 @@
       :value="item.value">
     </el-option>
   </el-select>
+  </div>
 </template>
 
 <script>
