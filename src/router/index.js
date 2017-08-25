@@ -64,16 +64,16 @@ const router = new Router({
       component: newzhixing
     }]
   }, {
-    path: '/phone',
+    path: '/phoneAll',
     component: PhoneManage,
     children: [{
-      path: 'phoneList',
+      path: '/phone',
       component: PhoneList
     }, {
-      path: 'phoneResult',
+      path: '/phoneResult',
       component: PhoneResult
     }, {
-      path: 'quality',
+      path: '/quality',
       component: Quality
     }]
   }, {
@@ -94,14 +94,14 @@ const router = new Router({
       component: Personas
     }]
   },{
-    path: '/analysis',
+    path: '/analysisAll',
     name: 'analysis',
     component: Analysis,
     children: [{
-      path: 'addprojectlist',
+      path: '/analysis',
       component: AddProjectList
     }, {
-      path: 'report/:project/:updatatime/:id',
+      path: '/report/:project/:updatatime/:id',
       component: Report,
       meta: { scrollToTop: true }
     }]
@@ -114,11 +114,11 @@ router.beforeEach((to, from, next) => {
   if (to.path == '/') {
     next('/index')
   }
-  if (to.path == '/analysis') {
-    next('/analysis/addprojectlist')
+  if (to.path == '/analysisAll') {
+    next('/analysis')
   }
-  if (to.path == '/phone') {
-    next('/phone/phoneList')
+  if (to.path == '/phoneAll') {
+    next('/phone')
   }
   next()
 })

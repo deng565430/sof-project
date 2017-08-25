@@ -9,10 +9,12 @@ export const brieid = function(state) {
     data.brieid = state.brieid;
     return data;
 }
-export const yimeicampaignmsg = function(state) {
-    return state.yimeicampaignmsg;
-}
+export const yimeicampaignmsg = state => state.yimeicampaignmsg;
 
 export const userName = state => state.userName;
 
 export const dialogVisible = state => state.dialogVisible;
+
+export const getMenu = state => state.menu;
+
+export const getJurisdiction = state => state.jurisdiction;

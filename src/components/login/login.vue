@@ -45,7 +45,7 @@ export default {
     return {
       flag: this.dialogVisible(),
       ruleForm2: {
-        user: 'admin.sof',
+        user: 'admin.sof', // operation.sof
         pass: '123456'
       },
       rules2: {
@@ -89,17 +89,20 @@ export default {
             }
             if (res.data.code === 0) {
               const nickName = res.data.data.nickName;
+              const menu = res.data.data.menu;
               that.isLogin(true);
               that.userName(nickName);
               that.dialogVisibles(false);
+              that.unMenu(menu);
               if (window.localStorage) {
-                window.localStorage.setItem('userName', nickName);
-                window.localStorage.setItem('isLogin', true);
+                // window.localStorage.setItem('userName', nickName);
+                // window.localStorage.setItem('isLogin', true);
               }
+              // window.location.reload();
             };
           });
         } else {
-          console.log('登录错误!!');
+          this.$alert('登录错误', '提示信息');
           return false;
         }
       });
@@ -113,7 +116,8 @@ export default {
     ...mapMutations({
       dialogVisibles: 'DIOLOG_VISIBLE',
       userName: 'USER_NAME',
-      isLogin: 'IS_LOGIN'
+      isLogin: 'IS_LOGIN',
+      unMenu: 'MENU'
     })
   }
 };

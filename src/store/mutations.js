@@ -16,6 +16,12 @@ const mutations = {
   },
   [types.IS_LOGIN](state, flag) {
     state.isLogin = flag
+  },
+  [types.MENU](state, menu) {
+    state.menu = menu
+  },
+  [types.JURISDICTION](state, data) {
+    state.jurisdiction = data
   }
 };
 

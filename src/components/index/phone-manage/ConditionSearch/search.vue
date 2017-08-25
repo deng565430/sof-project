@@ -23,7 +23,7 @@
           <div id="btn">
             <div class="block">
               <span class="wrapper">
-                <el-button type="warning" id="btnWidth" v-on:click="search">搜索</el-button>
+                <el-button type="primary" id="btnWidth" v-on:click="search">搜索</el-button>
             </span>
             </div>
           </div>

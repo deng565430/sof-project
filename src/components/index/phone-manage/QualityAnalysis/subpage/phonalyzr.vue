@@ -413,6 +413,7 @@ export default {
   display: flex
   margin-bottom: 90px
   width: 1000px
+  height: 500px
 #phonalyzrChild
   position: fixed
   top:0

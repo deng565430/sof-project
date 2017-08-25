@@ -52,7 +52,7 @@ export default {
     margin-top: 100px
     padding: 10px 150px
     color: white
-    display: none
+    display: block
     height: 40px
     background: #424242
     transition:height 1s

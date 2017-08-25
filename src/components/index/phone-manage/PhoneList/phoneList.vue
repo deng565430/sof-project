@@ -316,12 +316,14 @@ export default {
 .title
   text-align: left
   font-size: 24px
-  height: 45px
-  border-bottom: 1px solid #e9e9fa
+  height: 24px
+  border-left: 4px solid #007df2
   span
     display: inline-block
     height: 45px
-    border-bottom: 1px solid #2495d4
+    padding-left: 30px
+    color: #007df2
+    font-weight: 100
 #selectData
   padding-top: 30px
   padding-bottom: 30px

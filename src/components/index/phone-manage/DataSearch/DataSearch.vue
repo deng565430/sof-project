@@ -38,7 +38,7 @@
     </div>
   </div>
   <div class="block" style="text-align: left">
-    <el-button type="warning" icon="search" @click="dataSearch">搜索</el-button>
+    <el-button type="primary" icon="search" @click="dataSearch">搜索</el-button>
   </div>
 </div>
   

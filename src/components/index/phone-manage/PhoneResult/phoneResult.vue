@@ -1,7 +1,7 @@
 <template>
 <div>
-    <div id="title">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+    <div id="phoneTabTitle">
+      <el-tabs v-model="activeName" @tab-click="handleClick" >
         <el-tab-pane label="项目分析" name="first">
           <div>
             <ProjectIntention/>
@@ -56,7 +56,7 @@ export default {
 };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="stylus" rel="stylesheet/stylus" >
   #echarts
     width: 500px
     height: 500px

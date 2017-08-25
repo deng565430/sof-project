@@ -5,9 +5,11 @@
 </template>
 
 <script>
+import { isLoginMixin } from 'assets/js/mixin';
 export default {
 
   name: 'analysis',
+  mixins: [isLoginMixin],
   data () {
     return {
       analysis: true
@@ -17,7 +19,4 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-#analysis
-  width: 900px
-  margin: 0 auto
 </style>

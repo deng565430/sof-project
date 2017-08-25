@@ -1,12 +1,10 @@
 <template>
   <div>
-  <div id="allProject">
-      <el-button size="small">已有全部订阅</el-button>
-  </div>
-    <div style="text-align: left;" >
+    <div class="add-project">
       <el-button type="danger" @click="addProject">添加订阅</el-button>
     </div>
-    <el-dialog
+    <div id="addProjectList">
+      <el-dialog
       title="添加订阅"
       :visible.sync="dialogVisible"
       size="tiny"
@@ -103,6 +101,7 @@
         </div>
       </div>
     </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -306,13 +305,12 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-#allProject
-  text-align: left
-  height: 30px
-  border: 1px solid #e4e4e4
-  margin: 10px 0
-  padding: 15px 10px
-  background: #f4f4f4
+.add-project
+  position:relative
+  width: 100%
+  top: 60px
+  right: 30px
+  text-align: right
 .add-type
   display: flex
   height: 50px
@@ -324,6 +322,20 @@ export default {
     display: flex
 .add-type-bottom
   border-bottom: 1px solid #ccc
+#addProjectList
+  .el-dialog__header
+    height: 40px
+    background: linear-gradient(to right, #007bf7 0%,#63c652 100%)
+    span
+      float: left
+      font-size: 20px
+      color: #fff
+      font-weight: 100
+    .el-dialog__headerbtn
+      i
+        color #fff !important
+        font-weight: 900
+        font-size: 15px
 #addProject
   width: 100%
   height: 400px

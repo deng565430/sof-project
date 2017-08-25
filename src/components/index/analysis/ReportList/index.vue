@@ -1,14 +1,10 @@
 <template>
-<div>
+<div id="reportList">
   <div id="report-all">
     <div id="report-title">
-      <div class="r-xian"></div>
-      <div class="r-yuan"></div>
       <div class="r-title">
         <h1>{{project}}</h1>
       </div>
-      <div class="r-yuan"></div>
-      <div class="r-xian"></div>
     </div>
     <div id="report-time">
       <p>数据更新时间： {{updataTime}}</p>
@@ -347,6 +343,8 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+#reportList
+  margin-bottom: 200px
 #report-all
   width: 1002px
   margin: 30px auto
@@ -354,31 +352,25 @@ export default {
     display: flex
     margin: 20px 0
     justify-content: space-around
-    .r-yuan
-      height: 10px
-      width: 10px
-      background: #ff6600
-      border-radius: 50%
-      margin: 20px 2px
-    .r-xian
-      border-top: 2px solid #ff6600  
-      width: 27%
-      margin: 24px 3px
     .r-title
-      background: #ff6600
+      background: linear-gradient(to right, #027df6 0%,#62c45d 100%);
       height: 50px
-      border-radius: 50px
-      padding:0 30px
+      border-radius: 5px
+      padding:5px 40px
       margin:0 18px
+      transform: skew(-15deg);
+      box-shadow: 5px 5px 3px #ccc
       h1
         font-size: 28px
         color: white
         font-weight: 900
         line-height: 45px
+        transform: skew(15deg);
   #report-time
-    color: #ff6600
+    color: black
     height: 70px
-    border-bottom: 1px solid #ccc
+    p
+      line-height: 40px
   .text-msg
     p
       line-height: 100px
@@ -388,7 +380,8 @@ export default {
     h2
       color: #1D8CE0
       font-size: 27px
-      height: 50px 
+      height: 50px
+      font-weight: 900
     .r-bazaar-title
       border-top-left-radius: 20px
       border-top-right-radius: 20px

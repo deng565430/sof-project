@@ -1,6 +1,5 @@
 import * as util from '../util/user'
 const state = {
-    msg: '我是原始数据',
     dialogVisible: false,
     dialogForm: false,
     isLogin: util.isLogin(),
@@ -31,7 +30,12 @@ const state = {
         endtime: ''
     },
     yimeicampaignmsg: '',
-    commitIs: false
+    commitIs: false,
+    menu: [],
+    jurisdiction: {
+        code: -1,
+        path: '/index'
+    }
 };
 
 export default state;

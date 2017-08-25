@@ -104,9 +104,9 @@ export default {
                 count: point[2]
               });
             });
-            this.charts(this.id, this.HotMapList);
-            this.showReli();
           }
+          this.charts(this.id, this.HotMapList);
+          this.showReli();
         });
     }
   },

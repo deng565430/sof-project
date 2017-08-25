@@ -1,16 +1,19 @@
 <template>
 <div>
-  <div id="searchIpt">
-  <Search @searchValue="searchValue" :placeholder="'点击搜索,如：楼盘名称'"/>
+<div id="allProject">
+      <el-button size="small">已有全部订阅</el-button>
+    <div id="searchIpt">
+      <Search @searchValue="searchValue" :placeholder="'点击搜索,如：楼盘名称'"/>
+    </div>
   </div>
   <div id="projectList">
     <div class="border">
-       <el-tag class="borderData">订阅列表</el-tag>
+      <h3>订阅列表</h3>
      </div>
-    <div v-for="item in project">
-      <h3 style="text-align: right; color: #4272e3; line-height: 50px; font-size: 20px;background:#f3f3f3">{{item.name}}</h3>
+    <div v-for="item in project" class="project-list">
+      <h3 class="list-title" style="">{{item.name}}</h3>
       <div class="project-list-clild" v-for="desc in item.dimUserSubscribeListDtos">
-        <div>
+        <div class="list-top">
           <span><i class="el-icon-time" style="color: #8dd1e2;"></i> 订阅开始日期： {{desc.date}}</span>
           <span>订阅时长： {{desc.duration === '实时' ? desc.duration : desc.duration + '个月'}}</span>
           <span><i class="el-icon-document" style="color: #8dd1e2;"></i> 订阅截止日期： {{desc.targetDate}}</span>
@@ -41,7 +44,7 @@
               <p>下期报告 <span v-html="desc.nextCycle === true ? '已完成' : '未完成'"></span><i :class="desc.nextCycle === true ? 'el-icon-check' : 'el-icon-information'" style="color: #8dd1e2;"></i></p>
             </div>
             <div class="show-btn">
-              <router-link :to="`/analysis/report/${encodeURI(desc.tagname)}/${desc.updatedAt.split(' ')[0]}/${desc.id}`" ><el-button type="primary" >查看订阅 ></el-button></router-link>
+              <router-link :to="`/report/${encodeURI(desc.tagname)}/${desc.updatedAt.split(' ')[0]}/${desc.id}`" ><el-button type="primary" >查看订阅 ></el-button></router-link>
             </div>
           </div>
         </div>
@@ -121,57 +124,62 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+#allProject
+  text-align: left
+  height: 30px
+  border: 1px solid #e4e4e4
+  margin: 10px 0
+  padding: 15px 10px
+  background: #f4f4f4
 #searchIpt
-  width: 500px
+  width: 600px
   position: relative
-  top: -35px
-  right: -500px
+  top: -30px
+  right: -200px
 #projectList
   width: 1000px
   margin: 0 auto
+  margin-bottom: 220px
   text-align: left
   .border
-    border: 1px solid #e3e3e3
-    padding: 4px
-    text-align: left
     overflow: hidden
-    margin: 10px 0
-    .borderData
-      background: #a7a7a7
-      border-radius: 0
-      padding: 5px 20px
-      height:35px
-      position: relative
-    :after
-      content: ''
-      display: inline-block
-      position: absolute
-      width: 15px
-      height: 15px 
-      background: white
-      transform: rotate(44deg)
-      top:30px
-      left: 35px
+    background: #009bff
+    border-radius: 8px 8px 0 0
+    h3
+     color: white
+     line-height: 50px
+     font-size: 20px
+     padding-left: 50px
+     font-weight: 100
+  .project-list
+    color: #ccc
+    .list-title
+      font-weight: 100
+      text-align: center
+      color: #139fff
+      line-height: 80px
+      font-size: 20px
+      background:#f3f3f3
   h1
     font-size: 20px
     font-weight: 900
-  h3
-    font-size: 15px
-    font-weight: 900
   .project-list-clild
-    border-left: 5px solid #2ca8e3
-    >div:first-child
-      border: 1px solid #ccc
-      height: 40px
+    border: 1px solid #139fff
+    border-radius: 8px
+    box-sizing: border-box
+    margin-bottom: 10px
+    .list-top
       span
+        color: #7e7e7e 
         display: inline-block
         width: 220px
         font-size: 13px
         text-align: center
         line-height: 40px
+    >div:first-child
+      border-bottom: 1px solid #139fff
+      height: 40px
     >div:last-child
-      border: 1px solid #ccc
-      border-top: none
       height: 100px
       display: flex
       .project-list-left
@@ -192,7 +200,6 @@ export default {
           color: #6b6b6b
       .project-list-right
         height: 100%
-        border-left: 1px solid #ccc
         display: flex
         >div:first-child
           padding-top: 30px
@@ -204,10 +211,9 @@ export default {
             span
               color: #397748
       .show-btn
-        width: 100px
+        width: 130px
         height: 100%
+        padding: 30px 10px
         float: right
-        button
-          width: 100%
-          height: 100%
+        box-sizing: border-box
 </style>

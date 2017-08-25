@@ -1,25 +1,25 @@
 <template>
   <div id="app">
-    <Header/>
-    <Login v-if="this.$store.state.dialogVisible" />
+    <sof-header/>
+    <sof-login v-if="this.$store.state.dialogVisible" />
     <router-view></router-view>
-    <Alert/>
-    <Footer/>
+    <sof-alert/>
+    <sof-footer/>
   </div>
 </template>
 
 <script>
-import Header from './components/header/Header';
-import Footer from './components/footer/Footer';
-import Login from './components/login/login';
-import Alert from './components/alert/alert';
+import SofHeader from './components/header/Header';
+import SofFooter from './components/footer/Footer';
+import SofLogin from './components/login/login';
+import SofAlert from './components/alert/alert';
 
 export default {
   components: {
-    Header,
-    Footer,
-    Login,
-    Alert
+    SofHeader,
+    SofFooter,
+    SofLogin,
+    SofAlert
   },
   data () {
     return {
