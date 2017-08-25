@@ -309,12 +309,12 @@ export default {
 </script>
 
 <style>
-.contain{
+/* .contain{
   background: #e9e9e9
 }
 .tabs > .el-tabs__header .el-tabs__nav div:first-child{
   margin-left: 30px;
-}	
+}  
 .tabs{
     margin-top: 28px;
   }
@@ -358,5 +358,5 @@ export default {
     color: #3395f9;
     border-radius: 10px 10px 0 0 ;
     box-shadow: 0 0 10px #888
-  }
+  } */
 </style>

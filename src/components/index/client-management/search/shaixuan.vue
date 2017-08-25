@@ -74,7 +74,7 @@ export default {
     getTag () {
       var prov = 'sh';
       var city = 'sh';
-      var indcode = 'i01';
+      var indcode = 'i03';
       this.$api.get('/api/clientbehavior/getBehaviorOption?prov=' + prov + '&city=' + city + '&ind_code=' + indcode).then((res) => {
         console.log(res.data.data);
         this.tabTitle = res.data.data;

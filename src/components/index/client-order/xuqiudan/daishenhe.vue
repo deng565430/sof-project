@@ -217,38 +217,38 @@ export default {
 };
 </script>
 
-<style >
-	.el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
-    border: 0;
-    border-radius: 4px 4px 0 0;
-    background: #fff;
-    color: #3395f9;
-    border-radius: 10px 10px 0 0 ;
-    box-shadow: 0px -1px 15px #cacdcf
-  }
-  .el-tabs--card>.el-tabs__header .el-tabs__item{
-    height: 36px;
-    line-height: 36px;
-    border: 0;
-    padding: 0 30px;
-    margin-right: 10px;
-    background: url('./bgk_03.png');
-    background-size: contain;
-    color: #fff;
-    border-radius: 10px 10px 0 0 ;
-  }
-  .el-tabs__content{
-    background: #fff;
-    padding:0 30px
-  }
-  .el-tabs__header{
-    margin: 0;
-    border: 0
-  }
-  .el-tab-pane{
-    margin-top: 28px;
-  }
-  .el-tabs__nav div:nth-child(1){
-  margin-left: 30px;
-}
+<style lang="css" scoped>
+	/* .el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
+      border: 0;
+      border-radius: 4px 4px 0 0;
+      background: #fff;
+      color: #3395f9;
+      border-radius: 10px 10px 0 0 ;
+      box-shadow: 0px -1px 15px #cacdcf
+    }
+    .el-tabs--card>.el-tabs__header .el-tabs__item{
+      height: 36px;
+      line-height: 36px;
+      border: 0;
+      padding: 0 30px;
+      margin-right: 10px;
+      background: url('./bgk_03.png');
+      background-size: contain;
+      color: #fff;
+      border-radius: 10px 10px 0 0 ;
+    }
+    .el-tabs__content{
+      background: #fff;
+      padding:0 30px
+    }
+    .el-tabs__header{
+      margin: 0;
+      border: 0
+    }
+    .el-tab-pane{
+      margin-top: 28px;
+    }
+    .el-tabs__nav div:nth-child(1){
+    margin-left: 30px;
+  } */
 </style>

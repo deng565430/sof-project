@@ -336,7 +336,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="css" scoped>
 .el-col el-col-11{
   padding-left: 0px !important;
   padding-right: 0px !important;
@@ -394,7 +394,7 @@ h2{
   margin-top: 15px;
   margin-bottom: 20px;
 }
-.el-row{
+/* .el-row{
   height: 46px;
   background: #f2f3f4
 }
@@ -407,5 +407,5 @@ h2{
 }
 .el-tabs__nav div:nth-child(1){
   margin-left: 30px;
-}
+} */
 </style>
