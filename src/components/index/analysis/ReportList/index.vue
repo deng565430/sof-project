@@ -355,17 +355,17 @@ export default {
     .r-title
       background: linear-gradient(to right, #027df6 0%,#62c45d 100%);
       height: 50px
-      border-radius: 5px
+      border-radius: 7px
       padding:5px 40px
       margin:0 18px
-      transform: skew(-15deg);
+      transform: skew(-8deg);
       box-shadow: 5px 5px 3px #ccc
       h1
         font-size: 28px
         color: white
         font-weight: 900
         line-height: 45px
-        transform: skew(15deg);
+        transform: skew(8deg);
   #report-time
     color: black
     height: 70px

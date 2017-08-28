@@ -4,7 +4,7 @@ import Router from 'vue-router';
 Vue.use(Router);
 
 
-const Index = r => require.ensure([], () => r(require('components/index/index')), 'index');
+const Index = r => require.ensure([], () => r(require('components/index/index/index')), 'index');
 const Login = r => require.ensure([], () => r(require('components/login/login')), 'login');
 const AllIndustry = r => require.ensure([], () => r(require('components/allIndustry/allIndustry')), 'allIndustry');
 

@@ -49,6 +49,7 @@ export default {
         transition: all, .3s
         &:hover
           cursor:pointer
+          background: linear-gradient(to right, #0078e6 0%,#02c9dc 100%)
       .active
         color: #fff
         background: linear-gradient(to right, #0078e6 0%,#02c9dc 100%)

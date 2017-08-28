@@ -45,15 +45,10 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus">
   #footer
     z-index:99999
-    position: fixed
-    left: 0
-    right: 0
-    bottom: 0
-    margin-top: 100px
     padding: 10px 150px
     color: white
     display: block
-    height: 40px
+    height: 200px
     background: #424242
     transition:height 1s
     >:first-child
@@ -81,6 +76,4 @@ export default {
       :last-child
         p
           line-height: 100px
-  #footer:hover
-    height:200px
 </style>
