@@ -4,7 +4,7 @@
 		<div class="img">
 			<ul ref="switch">
 				<li v-for="(item, i) in data" @click="selectImg(i)">
-					<img :src="item.url" alt="">
+					<img :src="item.img" alt="">
 				</li>
 			</ul>
 		</div>
@@ -29,11 +29,11 @@ export default {
       time: 5000,
       timer: null,
       data: [{
-        img: '1'
+        img: require('assets/img/index_switch01.jpg')
       }, {
-        img: '1'
+        img: require('assets/img/index_switch01.jpg')
       }, {
-        img: '1'
+        img: require('assets/img/index_switch01.jpg')
       }]
     };
   },
@@ -73,7 +73,6 @@ export default {
 	min-width: 1000px
 	.switch
 		height: 650px
-		border: 1px solid red
 		overflow: hidden
 		position: relative
 		.img

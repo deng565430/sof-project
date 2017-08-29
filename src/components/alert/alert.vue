@@ -1,5 +1,7 @@
 <template>
-  <el-button type="text" ></el-button>
+  <div id="sofAlert">
+  	<el-button type="text" ></el-button>
+  </div>
 </template>
 
 <script>
@@ -15,5 +17,5 @@ export default {
 };
 </script>
 
-<style lang="css" scoped>
+<style lang="stylus" rel="stylesheet/stylus">
 </style>

@@ -2,42 +2,54 @@
 <div id="indexMiddle">
 	<div class="title">
 		<div class="top"><p>PRODUCT CENTER</p></div>
-		<div><p>_____________</p></div>
-		<div class="bottom"><p>服务项目</p></div>
+		<div><p>_______________________</p></div>
+		<div class="bottom"><p>服 务 项 目</p></div>
 	</div>
 	<div class="middle-img">
-		<div class="top">
+		<router-link to="/order" class="top">
 			<div class="left">
-				<div></div>
+				<div>
+					<img :src="imgTopLeft" alt="">
+				</div>
 				<h2>观象</h2>
 				<p>客若繁星，天运无穷。</p>
 				<p>寻观象之秒理，得应时之能成。</p>
 				<p>摘星奉之，行运千里。</p>
 				<h2>拓客营销</h2>
 			</div>
-			<div class="right"></div>
-		</div>
-		<div class="middle">
-			<div class="left"></div>
 			<div class="right">
-				<div></div>
+				<img :src="imgTopRight" alt="">
+			</div>
+		</router-link>
+		<router-link to="/analysis" class="middle">
+			<div class="left">
+				<img :src="imgMiddleLeft" alt="">
+			</div>
+			<div class="right">
+				<div>
+					<img :src="imgMiddleRight" alt="">
+				</div>
 				<h2>问道</h2>
 				<p>问道者更正，闻道者更容。</p>
 				<p>问天运知道，解行事之惑。</p>
 				<h2>分析报告</h2>
 			</div>
-		</div>
-		<div class="bottom">
+		</router-link>
+		<router-link to="/allcustomer" class="bottom">
 			<div class="left">
-				<div></div>
+				<div>
+					<img :src="imgBottomLeft" alt="">
+				</div>
 				<h2>循迹</h2>
 				<p>客迹无常，探网而寻。</p>
 				<p>亦步亦趋，常伴左右。</p>
 				<p>洞若观火，无微不至。</p>
 				<h2>客户线索</h2>
 			</div>
-			<div class="right"></div>
-		</div>
+			<div class="right">
+				<img :src="imgBottomRight" alt="">
+			</div>
+		</router-link>
 	</div>
 	<div class="bottom-msg">
 		<div class="top">
@@ -57,7 +69,12 @@ export default {
 
   data () {
     return {
-
+      imgTopRight: require('assets/img/index_top_right.jpg'),
+      imgMiddleLeft: require('assets/img/index_middle_left.jpg'),
+      imgBottomRight: require('assets/img/index_bottom_right.jpg'),
+      imgTopLeft: require('assets/img/index_top.png'),
+      imgMiddleRight: require('assets/img/index_middle.png'),
+      imgBottomLeft: require('assets/img/index__bottom.png')
     };
   }
 };
@@ -67,22 +84,23 @@ export default {
 #indexMiddle
   .title
   	min-width: 1000px
+  	padding: 50px 0
   	div
   		margin: 0 auto
   		color: #0042ab	
   	.top
   		p
-  			font-size: 30px
-	  		line-height: 50px
+  			font-size: 40px
+	  		line-height: 70px
 	  		font-weight: 100
   	.bottom
   		p
-  			line-height: 60px
-  			font-size: 20px
+  			line-height: 100px
+  			font-size: 30px
   .middle-img
   	min-width: 1000px
-  	>div
-  		height: 800px
+  	.top, .middle, .bottom
+  		height: 750px
   	.top
   		display: flex
   		.left
@@ -91,6 +109,10 @@ export default {
   			color: #fff
   			div
   				height: 300px
+  				padding-top: 80px
+  				box-sizing: border-box
+  				img
+  					width: 23%
   			h2
   				font-size: 50px
   				line-height: 100px
@@ -99,16 +121,28 @@ export default {
   				line-height: 30px
   		.right
   			width: 53%
+  			overflow: hidden
+  			img
+  				width: 100%
+  				height: 100%
   	.middle
   		display: flex
   		.left
   			width: 53%
+  			overflow: hidden
+  			img
+  				width: 100%
+  				height: 100%
   		.right
   			width: 47%
   			background: linear-gradient(to right, #1749fe , #0592fe)
   			color: #fff
   			div
   				height: 300px
+  				padding-top: 80px
+  				box-sizing: border-box
+  				img
+  					width: 23%
   			h2
   				font-size: 50px
   				line-height: 100px
@@ -123,6 +157,10 @@ export default {
   			color: #fff
   			div
   				height: 300px
+  				padding-top: 80px
+  				box-sizing: border-box
+  				img
+  					width: 23%
   			h2
   				font-size: 50px
   				line-height: 100px
@@ -131,6 +169,10 @@ export default {
   				line-height: 30px
   		.right
   			width: 53%
+  			overflow: hidden
+  			img
+  				width: 100%
+  				height: 100%
   .bottom-msg
   	.top
   		p
