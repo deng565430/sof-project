@@ -31,7 +31,7 @@ export default {
   #orderOne
     height: 100%
     display: flex
-    margin-bottom: 200px
+    margin-bottom: 20px
     #contain
       width: 100%
       height: 100%
