@@ -8,7 +8,6 @@
                      <zSearch @zhuangtai="zhuangtai"></zSearch><!-- :ishistory="ishistory" -->
                      <Search @search="search" @qingchu="qingchu"></Search>
                      </div> 
-                     {{s}}<br/>
                      <TableList
                       v-loading="loading2" 
                       element-loading-text="加载中，请稍后.." 
@@ -19,7 +18,6 @@
                       @services-zhixingchakan="servicesZhixingchakan" >
                       </TableList>
 
-                          {{threeIndex}}
                       <Page
                       v-bind:name="threeIndex" 
                       :currentpage="s.zhuangtai[threeIndex].currentpage"
