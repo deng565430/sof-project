@@ -4,7 +4,7 @@
     <!-- 表单内容 -->
     <el-form v-loading.body="loading" element-loading-text="加载中,请稍后..." class="xuqiuform" :label-position="labelPosition" :rules="rules" ref="form"   :model="form" label-width="110px">
         <!-- 行业选择 区域选择 -->
-        <el-row :gutter="20" style="border-bottom:1px solid #f3f3f3">
+        <el-row :gutter="20" style="background:#f2f3f4">
           <el-col :span="6">
             <el-form-item label="行业选择" prop="region">
               <el-select v-model="form.region" placeholder="请选择行业">
@@ -33,7 +33,7 @@
           </el-col>
         </el-row>
         <!-- 项目名称 -->
-        <el-row :gutter="20" style="margin-top:20px;border-bottom:1px solid #f3f3f3">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="8">
             <el-form-item label="项目名称" prop="name">
               <el-input v-model="form.name" placeholder="请输入项目名称"></el-input>
@@ -41,7 +41,7 @@
          </el-col>
         </el-row>
         <!-- 策略类型 -->
-        <el-row :gutter="20" style="margin-top:20px;border-bottom:1px solid #f3f3f3">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="24">
              <el-form-item label="需求单类型" prop="type">
               <el-radio-group v-model="form.type">
@@ -51,7 +51,7 @@
          </el-col>
         </el-row>
         <!-- 需求公司 -->
-        <el-row :gutter="20" style="margin-top:20px">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="8">
             <el-form-item label="需求公司" prop="compan">
               <el-input v-model="form.compan" placeholder=""></el-input>
@@ -59,7 +59,7 @@
          </el-col>
         </el-row>
         <!-- 所需电话量 -->
-        <el-row :gutter="20" style="margin-top:20px">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="8">
             <el-form-item label="所需电话量/天" prop="phonenum">
               <el-input v-model="form.phonenum" placeholder=""></el-input>
@@ -68,18 +68,18 @@
          </el-col>
         </el-row>
         <!-- 所需周期 -->
-        <el-row :gutter="20" style="margin-top:20px">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="16">
             <el-form-item label="所需周期"  required>
-              <Time  :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Time>
+              <Timess  :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Timess>
             </el-form-item>
           </el-col>
         </el-row>
         <!-- 项目描述 -->
-        <el-row :gutter="20" style="margin-top:20px;min-height:64px;margin-bottom:26px;">
+        <el-row :gutter="20" style="margin-top:20px;min-height:64px;margin-bottom:26px;background:#f2f3f4">
           <el-col :span="16">
             <el-form-item label="项目描述" prop="miaoshu">
-              <el-input type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
+              <el-input type="textarea" v-model="form.miaoshu" placeholder="请输入项目描述" style="min-height:140px"></el-input>
             </el-form-item>
          </el-col>
         </el-row>
@@ -128,10 +128,10 @@
 </template>
 
 <script>
-import Time from '../../../timeSelect/ordertime';
+import Timess from '../../../timeSelect/ordertime';
 export default {
   components: {
-    Time
+    Timess
   },
   data () {
     return {
@@ -222,7 +222,6 @@ export default {
     },
     // 提交需求单
     onSubmit (formName) {
-      console.log(this.form.selectedOptions2.length);
       var city;
       if (this.form.selectedOptions2.length < 2) {
         city = '';
@@ -394,18 +393,12 @@ h2{
   margin-top: 15px;
   margin-bottom: 20px;
 }
-/* .el-row{
-  height: 46px;
-  background: #f2f3f4
+.el-form-item{
+  height: 50px;
+  margin-bottom: 0;
+  padding-top: 10px;
 }
-.el-button--primary{
-  background-color: #007bf8;
-    border-color: #007bf8;
+.el-textarea__inner{
+  min-height: 140px
 }
-.el-button{
-  border-color: #007bf8;
-}
-.el-tabs__nav div:nth-child(1){
-  margin-left: 30px;
-} */
 </style>

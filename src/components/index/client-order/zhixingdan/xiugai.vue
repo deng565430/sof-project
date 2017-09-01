@@ -17,14 +17,14 @@
               <p><span>制单时间:</span><span>{{hanginfo.create_time}}</span></p>
             </div>
             <ul class="tanchu">
-              <li><div>所属行业</div><div>{{hanginfo.ind_name}}</div></li>
-              <li><div>所属区域</div><div>{{hanginfo.prov_name}}<b v-if="hanginfo.city_name">/{{hanginfo.city_name}}</b></div></li>
-              <li><div>项目名称</div><div>{{hanginfo.project_name}}</div></li>
-              <li><div>策略类型</div><div>{{hanginfo.strategy}}</div></li>
-              <li><div>需求公司</div><div>{{hanginfo.demand_side}}</div></li>
-              <li><div>所需电话量/天</div><div>{{hanginfo.phone_demand}}</div></li>
-              <li><div>所需周期</div><div>{{hanginfo.start_date}}<b style="margin:0 10px;back">-</b>{{hanginfo.end_date}}</div></li>
-              <li><div>项目描述</div><div>{{hanginfo.project_description}}</div></li>
+              <li><div>所属行业:</div><div>{{hanginfo.ind_name}}</div></li>
+              <li><div>所属区域:</div><div>{{hanginfo.prov_name}}<b v-if="hanginfo.city_name">/{{hanginfo.city_name}}</b></div></li>
+              <li><div>项目名称:</div><div>{{hanginfo.project_name}}</div></li>
+              <li><div>策略类型:</div><div>{{hanginfo.strategy}}</div></li>
+              <li><div>需求公司:</div><div>{{hanginfo.demand_side}}</div></li>
+              <li><div>所需电话量/天:</div><div>{{hanginfo.phone_demand}}</div></li>
+              <li><div>所需周期:</div><div>{{hanginfo.start_date}}<b style="margin:0 10px;back">-</b>{{hanginfo.end_date}}</div></li>
+              <li><div>项目描述:</div><div style="overflow: hidden; word-wrap: break-word;">{{hanginfo.project_description}}</div></li>
             </ul>
           </div>
         </el-collapse-item>
@@ -98,7 +98,6 @@ export default {
       this.radio = val;
     },
     tabtoggle (val) {
-      console.log(val);
       this.cdtab = val;
       this.radio2 = '';
       this.Shaixuan = false;
@@ -112,9 +111,8 @@ export default {
     }
   },
   created () {
-    this.getlabel();
+    // this.getlabel();
     this.radio = this.getxginfo.subunit;
-    console.log(this.ishistory);
   },
   methods: {
     getlabel () {
@@ -249,7 +247,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="css" scoped>
   .text {
     font-size: 14px;
   }
@@ -279,37 +277,36 @@ export default {
   }
   .xuqiutitle{
   text-align: left;
+  padding: 0 40px 0 40px;
+  border-bottom: 1px solid #dfe6ec
 }
 .xuqiutitle p{
   margin-bottom: 10px;
   margin-right: 20px;
   margin-top: 15px;
+  flex:1;
+  color: #333333;
+}
+.xuqiutitle p span:first-child{
+  margin-right: 10px
 }
 .tanchu{
   text-align: left;
-  border: 1px solid #ccc
+  color:#666666;
+  margin: 10px 0  
 }
 .tanchu li{
   /*line-height: 30px;*/
   min-height: 30px;
-  border-bottom: 1px solid #ccc;
+  line-height: 30px;
   display: flex;
-}
-.tanchu li:last-child{
-  border-bottom:0;
+  padding: 0 40px;
 }
 .tanchu li div:first-child{
-  color: #333;
-  line-height: 30px;
-  height: 100%;
-  width:100px;
-  background: #eee;
-  /*display: inline-block;*/
-  text-align: center;
+margin-right: 10px
 }
-.tanchu li div:nth-child(2){
-  padding-left: 8px;
-  word-wrap: break-word;
-  overflow: hidden;
+.el-collapse-item__header{
+  background-color: #007bf7;
+  background:  #007bf7;
 }
 </style>

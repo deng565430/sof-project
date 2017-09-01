@@ -66,13 +66,22 @@
 		    </el-table-column>
         
 	  </el-table>
-	  
+	 <!--  <el-pagination
+         @size-change="handleSizeChange"
+         @current-change="handleCurrentChange"
+         :current-page="currentpage"
+         :page-sizes="[10, 20, 50]"
+         :page-size="pagesize"
+         :total="tablenum"
+         layout="total, sizes, prev, pager, next, jumper"
+         >
+        </el-pagination>  -->
 	</div>
 </template>
 
 <script>
 export default {
-  props: ['table', 'zhixingbtns'], // , 'isshanchum', 'chakanm', 'xiugaibtns', 'zhixingbtns', 'zhiixngxiugais'
+  props: ['table', 'zhixingbtns'], // , 'tablenum', 'pagesize', 'currentpage'
   data () {
     return {
       shanchuque: 0,
@@ -83,7 +92,6 @@ export default {
       xiugaibtn: [0, 1, 2],
       zhiixngxiugai: 1,
       chakanm: this.chakanm,
-      id: this.table.id,
       tables: this.table
     };
   },
@@ -107,10 +115,16 @@ export default {
     }
   },
   created () {
-    // console.log(this.zhixingbtns);
-    // console.log(this.shachuzhiling);
   },
   methods: {
+    // 每页条数
+    handleSizeChange (val) {
+      this.$emit('handleSizeChanges', val);
+    },
+    // 第几页
+    handleCurrentChange (val) {
+      this.$emit('handleCurrentChanges', val);
+    },
     // 跳转执行
     zhiixng (index, rows) {
       this.$emit('services-zhixing', rows[index]);

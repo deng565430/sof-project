@@ -1,13 +1,13 @@
 <template>
-	<div :tab2="tabs2" style="background:#e9e9e9">
-		<el-tabs  type="card" v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick" style="margin-top:28px">
+	<div :tab2="tabs2" >
+		<el-tabs  class="xuqiudan"  v-model="activeName" v-if="tabsisshow"  @tab-click="handleClick" style="margin-top:28px">
 		  <el-tab-pane :label="i.name" :name="i.code" v-for="i in tabs">
-        <div style="display:flex">
-          <Search @zhuangtai="zhuangtai"></Search>
+        <div style="display:flex;margin-top:15px">
+          <Search @zhuangtai="zhuangtai" :ishistory="ishistory"></Search>
           <SearchTwo @search="search" @qingchu="qingchu"></SearchTwo>
         </div>
         <!-- table -->
-		  	<TableList v-loading="loading2" element-loading-text="加载中" :table="table" :ishistory="ishistory"  @services-change="servicesChange" @services-chakan="servicesChakan"></TableList> <!--:xiugaibtns='xiugaibtns'  :isshanchum="isshanchum" :chakanm="chakanm"   @services-shanchu="servicesShanchu"   :shanchusuccess="shanchusuccess" @services-qurrenshanchu="servicesQurrenshanchu"  @services-chakan="servicesChakan" -->
+		  	<TableList v-loading="loading2" element-loading-text="加载中" :table="table" :ishistory="ishistory"  @services-change="servicesChange" @services-chakan="servicesChakan"></TableList>
         
         <!-- 分页 -->
         <el-pagination
@@ -32,7 +32,6 @@ import Xiugai from './xiugai';
 import Search from './search';
 import SearchTwo from './zhuangtaisearch';
 
-// const tab = [{'name': '所有', 'code': '1'}];
 export default {
   components: {
     TableList,
@@ -61,7 +60,7 @@ export default {
       shanchuque: true,
       shanchusuccess: '',
       chakanxiang: this.tabs2,
-      ishistory: 0
+      ishistory: '0'
     };
   },
   watch: {
@@ -72,16 +71,22 @@ export default {
       this.xiugaibtns = this.tabs3;
       this.chakanxiang = this.tabs3;
       this.activeName = '1';
-      this.tabName = 1;
       this.currentPage4 = 1;
       this.pageSize = 10;
-      this.getTable(this.tabs3, 0, 10, '', '', '');// 新增xiugai的watch，监听变更并同步到c上
+      this.getTable(this.tabs3, 0, 10, this.tabName, '', '');// 新增xiugai的watch，监听变更并同步到c上
     }
   },
   created () {
-    this.tabName = 1;
-    this.tabs3 = 0;
-    this.getTable(this.tabs2, 0, 10, '', '', ''); // 获取列表
+    if (this.$route.params.num !== undefined) {
+      this.tabName = 'pol01';
+      this.tabs3 = this.$route.params.num;
+      this.ishistory = this.$route.params.num;
+      this.getTable(this.ishistory, 0, 10, this.tabName, '', '');
+    } else {
+      this.tabName = 'pol01';
+      this.tabs3 = 0;
+      this.getTable(this.tabs2, 0, 10, this.tabName, '', ''); // 获取列表
+    }
     this.getcelue();// 获取策略类型
   },
   methods: {
@@ -89,7 +94,7 @@ export default {
       if (val !== '') {
         this.tabs3 = val;
         this.ishistory = val;
-        this.getTable(val, 0, 10, '', '', ''); // 获取列表
+        this.getTable(val, 0, 10, this.tabName, '', ''); // 获取列表
       }
     },
     // 查看行
@@ -111,11 +116,7 @@ export default {
             this.$alert('未登录!');
           } else if (res.data.code === 0) {
             this.$alert(res.data.msg);
-            if (this.tabName === 1) {
-              this.getTable(0, this.currentPage4 - 1, this.pageSize, '', '', '');
-            } else {
-              this.getTable(0, this.currentPage4 - 1, this.pageSize, this.tabName, '', '');
-            };
+            this.getTable(0, this.currentPage4 - 1, this.pageSize, '', '', '');
           }
         } else {
           this.$alert('删除失败!');
@@ -153,7 +154,8 @@ export default {
     getTable (status, start, pagesize, strategy, kwflag, kw) {
       this.loading2 = true;
       var url = '/api/brief/getBriefListByStatus?status=' + status + '&start=' + start + '&length=' + pagesize + '&strategy=' + strategy + '&kw_flag=' + kwflag + '&kw=' + kw;
-      this.$api.get(url).then((res) => {
+      this.$api.get(url)
+      .then((res) => {
         this.loading2 = false;
         if (res.data.data === '用户未登录!') {
           this.$alert(res.data.data);
@@ -163,6 +165,10 @@ export default {
         }
         this.table = res.data.data;
         this.total = res.data.recordsFiltered;
+      })
+      .catch(() => {
+        this.loading2 = false;
+        this.$alert('服务出错!');
       });
     },
     // 每页条数
@@ -170,22 +176,12 @@ export default {
       // console.log(`每页 ${val} 条`);
       this.currentPage4 = 1;
       this.pageSize = val;
-      if (this.tabName === 1) {
-        this.getTable(this.tabs3, 0, val, '', '', '');
-      } else {
-        this.getTable(this.tabs3, 0, val, this.tabName, '', '');
-      };
+      this.getTable(this.tabs3, 0, val, this.tabName, '', '');
     },
     // 第几页
     handleCurrentChange (val) {
       this.currentPage4 = val;
-      if (this.tabName === 1) {
-        this.getTable(this.tabs3, val - 1, 10, '', '', '');
-      } else {
-        this.getTable(this.tabs3, val - 1, 10, this.tabName, '', '');
-      };
-      // console.log(`当前页: ${val}`);
-      // this.getTable(this.tabs3, val - 1, 10, this.tabName, '', '');
+      this.getTable(this.tabs3, val - 1, 10, this.tabName, '', '');
     },
     // 获取详情
     getXgai (Id) {
@@ -202,53 +198,18 @@ export default {
     },
     // 切换列表
     handleClick (tab, event) {
-      // console.log(tab, event);
       this.pageSize = 10;
       this.currentPage4 = 1;
       this.tabName = tab.name;
-      if (tab.name === '1') {
-        this.tabName = '';
-        this.getTable(this.tabs3, 0, 10, '', '', '');
-      } else {
-        this.getTable(this.tabs3, 0, 10, tab.name, '', '');
-      };
+      this.getTable(this.tabs3, 0, 10, tab.name, '', '');
     }
   }
 };
 </script>
 
 <style lang="css" scoped>
-	/* .el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
-      border: 0;
-      border-radius: 4px 4px 0 0;
-      background: #fff;
-      color: #3395f9;
-      border-radius: 10px 10px 0 0 ;
-      box-shadow: 0px -1px 15px #cacdcf
-    }
-    .el-tabs--card>.el-tabs__header .el-tabs__item{
-      height: 36px;
-      line-height: 36px;
-      border: 0;
-      padding: 0 30px;
-      margin-right: 10px;
-      background: url('./bgk_03.png');
-      background-size: contain;
-      color: #fff;
-      border-radius: 10px 10px 0 0 ;
-    }
-    .el-tabs__content{
-      background: #fff;
-      padding:0 30px
-    }
-    .el-tabs__header{
-      margin: 0;
-      border: 0
-    }
-    .el-tab-pane{
-      margin-top: 28px;
-    }
-    .el-tabs__nav div:nth-child(1){
-    margin-left: 30px;
-  } */
+.xuqiudan{
+  background: #fff;
+  padding:0 30px;
+}
 </style>

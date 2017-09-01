@@ -3,9 +3,10 @@
   <div class="select">
       <ul class="all-tab">
         <li v-for="(val, index) in tabTitle">
-          <div class="top-last" :class="[topFlag === val.name ? hover : hoverOut, topClickFlag === val.name ? 'active' : '']"  @mouseover="hovers(val, index)" @click="topClick(val, index)">
+          <div class="top-last" ref="toplast" :class="[topFlag === val.name ? hover : hoverOut, topClickFlag === val.name ? 'active' : '']"  @mouseover="hovers(val, index)" @click="topClick(val, index)"> 
+
             {{val.name}}
-          </div>
+          </div><!--  @mouseleave="leaves(val, index)"  -->
           <div class="top-item" v-if="loading" :class="topFlag === val.name ? topItemIsShow : topItemIsHide">
             <ul class="second-tab">
               <li  v-for="(secondVal, secondIndex) in val.child">
@@ -268,16 +269,17 @@ export default {
 .all-tab
   display: flex
   width: 860px
-  font-size: 15px
+  font-size: 13px
   box-sizing: border-box
   >li
-    height: 50px
-    line-height: 50px
+    height: 34px
+    line-height: 34px
     box-sizing: border-box
+    margin-bottom:15px
   .top-item
     box-sizing: border-box
     height: 320px
-    margin-top: 5px
+    margin-top: 15px
     overflow: auto
     width: 860px
     position: absolute
@@ -297,19 +299,26 @@ export default {
       width: 100%
       position: absolute
       left: 0
+      margin-top: 15px
+      .third-tab li
+        margin-bottom:15px
     .third-item
       width: 800px
       box-sizing: border-box
       overflow: auto
       position: absolute
       left: 0
+      margin-top:15px
+      .fourth-tab li
+        margin-bottom:15px
   .top-last, .third-list, .second-last, .fourth-list
     border: 1px solid #bfcbd9
     box-sizing: border-box
-    padding: 0 10px
+    padding: 0 25px
     border-radius: 2px
+    margin-right:15px
   .hover-out
-    color: black
+    color: #666666
   .top-item-is-hide
     display: none
   .top-item-is-show
@@ -317,7 +326,7 @@ export default {
   .active
     background: #20a0ff
     border: 1px solid #20a0ff
-    color: white
+    color: white !important
   .hover
-    color: #ff0000
+    color: #20a0ff
 </style>

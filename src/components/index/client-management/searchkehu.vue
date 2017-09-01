@@ -39,13 +39,11 @@
   <el-row :gutter="20">
     <el-col :span="16">
       <el-form-item label="选择时间"  required>
-        <Time  :dates="form.dates" v-model='form.data' ></Time>
+        <Time  :dates="form.dates" v-model='form.data'  ></Time>
       </el-form-item>
     </el-col>
   </el-row>
-
   </div>
-  
   <el-form-item label="客户源">
     <el-radio-group v-model="form.resource" @change="qiehuan(form.resource)">
       <el-radio label="按阶段分类"></el-radio>
@@ -76,7 +74,7 @@
   </el-form-item>
   <el-form-item >
   <div v-if="shaixuan"  style="margin-bottom:20px">
-    <Saixuan></Saixuan>
+    <Saixuan @biaoqian="biaoqian"></Saixuan>
    </div>
     <div style="text-align:center">
     <el-button type="primary" @click="onSubmit">搜索</el-button>
@@ -118,14 +116,20 @@ export default {
         resource: '',
         desc: '',
         kehuyuan: '',
-        options: []
+        options: [{
+          value: '',
+          label: '',
+          children: []
+        }],
+        selectedOptions2: []
       },
       phone: false,
       kehuyuan: false,
       options: [],
       projectname: [],
       loading: false,
-      shaixuan: false
+      shaixuan: false,
+      biaoqians: []
     };
   },
   created () {
@@ -133,9 +137,58 @@ export default {
     this.getprojectname();
   },
   methods: {
+    biaoqian (val) {
+      console.log(val);
+      this.biaoqians = val;
+    },
+    timechange () {
+      console.log(this.form.data);
+    },
     // 搜索查询
-    search (val, val2) {
-      // this.getTable(this.tabs3, this.currentPage4 - 1, this.pageSize, this.tabName, val, val2);
+    onSubmit (val, val2) {
+      console.log('149', this.biaoqians);
+      /* var data = {
+        'prov_code': prov,
+        'city_code': city,
+        'ind_code': indcode,
+        'codes': [],
+        'project': project,
+        'time': time,
+        'values': {
+          'phone': phone,
+          'qq': qq,
+          'wechat': wechat
+        },
+        'kw': kw,
+        'start': start,
+        'length': length
+      } */
+      var data = {
+        'prov_code': 'sh',
+        'city_code': 'sh',
+        'ind_code': 'i01',
+        'codes': this.biaoqians,
+        'project': '医美',
+        'start_time': '2017-03-24',
+        'end_time': '2017-09-24',
+        'values': {
+          'phone': '',
+          'qq': '',
+          'wechat': ''
+        },
+        'kw': '',
+        'start': '0',
+        'length': '10'
+      };
+      this.getgrade(data);
+    },
+    getgrade (data) {
+      this.$api.post('/api/clientbehavior/getgrade', data).then(function (res) {
+        console.log(res.data.data);
+      })
+      .catch(() => {
+        alert('服务出错！');
+      });
     },
     qiehuan (val) {
       if (val === '按阶段分类') {
@@ -175,9 +228,28 @@ export default {
     // 获取行业对应的区域
     getarea (val) {
       var indcode = val;
-      this.$api.get('/api/clientbehavior/getcity/' + indcode).then(function (res) {
+      var that = this;
+      that.$api.get('/api/clientbehavior/getcity/' + indcode).then(function (res) {
         if (res.data.code === 0) {
           console.log(res.data.data);
+          var data = [];
+          for (var i = 0; i < res.data.data.prov.length; i++) {
+            var obj = {};
+            obj.children = [];
+            obj.value = res.data.data.prov[i].code;
+            obj.label = res.data.data.prov[i].name;
+            for (var s = 0; s < res.data.data.city[i].length; s++) {
+              var obj2 = {};
+              obj2.value = res.data.data.city[i].code;
+              obj2.label = res.data.data.city[i].name;
+              obj.children[s] = obj2;
+            }
+            data[i] = obj;
+            if (data[i].children.length < 1) {
+              delete data[i].children;
+            }
+          }
+          that.form.options = data;
         }
       });
     },

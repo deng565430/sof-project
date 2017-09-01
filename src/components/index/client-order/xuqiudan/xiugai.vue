@@ -1,9 +1,12 @@
 <template>
-  <div @click="" id="">
+  <div style="margin-left:30px;">
+  <h2 v-if="ishistory !== '3'">修改需求单</h2>
+  <h2 v-if="ishistory === '3'">历史需求单</h2>
+  
     <!-- 表单内容 -->
    <el-form v-loading.body="loading" element-loading-text="拼命加载中" class="xuqiuform" :label-position="labelPosition" :rules="rules"  ref="form" :id='form.id' :c="xiugai"  :model="form" label-width="100px">
         <!-- 行业选择 区域选择 -->
-        <el-row :gutter="20" style="border-bottom:1px solid #f3f3f3">
+        <el-row :gutter="20" style="background:#f2f3f4">
           <el-col :span="6">
             <el-form-item label="行业选择" prop="region">
               <el-select :disabled="true" v-model="form.region" placeholder="请选择行业">
@@ -25,7 +28,7 @@
           </el-col>
         </el-row>
         <!-- 项目名称 -->
-        <el-row :gutter="20" style="margin-top:20px;border-bottom:1px solid #f3f3f3">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="8">
             <el-form-item label="项目名称" prop="name">
               <el-input :disabled="true" v-model="form.name" placeholder="请输入项目名称"></el-input>
@@ -33,7 +36,7 @@
          </el-col>
         </el-row>
         <!-- 策略类型 -->
-        <el-row :gutter="20" style="margin-top:20px;border-bottom:1px solid #f3f3f3">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="24">
              <el-form-item label="需求单类型" prop="type">
               <el-radio-group   v-model="form.type"> <!-- :disabled="true" -->
@@ -43,7 +46,7 @@
          </el-col>
         </el-row>
         <!-- 需求公司 --> <!-- :disabled="!(chakanxiangs in chakanxiang2)"  -->
-        <el-row :gutter="20" style="margin-top:20px">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="8">
             <el-form-item  label="需求公司" prop="compan">  
               <el-input :disabled="true" v-model="form.compan" placeholder=""></el-input>
@@ -51,7 +54,7 @@
          </el-col>
         </el-row>
         <!-- 所需电话量 --> <!-- :disabled="!(chakanxiangs in chakanxiang2)"  -->
-        <el-row :gutter="20">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="8">
             <el-form-item  label="所需电话量" prop="phonenum">
               <el-input v-model="form.phonenum" placeholder=""></el-input>
@@ -59,23 +62,23 @@
          </el-col>
         </el-row>
         <!-- 所需周期 -->
-        <el-row :gutter="20">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="16">
             <el-form-item label="所需周期" required>
-              <Time  :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Time>
+              <Timess  :dates="form.dates" v-model='form.data' @dataEvent="dataEvent"></Timess>
             </el-form-item >
           </el-col >
         </el-row >
         <!-- 项目描述 --> <!-- :disabled="!(chakanxiangs in chakanxiang2)" -->
-        <el-row :gutter="20">
+        <el-row :gutter="20" style="margin-top:20px;background:#f2f3f4">
           <el-col :span="16">
             <el-form-item label="项目描述" prop="miaoshu">
-              <el-input   type="textarea" v-model="form.miaoshu" placeholder=""></el-input>
+              <el-input   type="textarea" v-model="form.miaoshu" placeholder="请输入项目描述" style="min-height:140px"></el-input>
             </el-form-item>
          </el-col>
         </el-row>
         <!-- 操作 -->
-        <el-form-item>
+        <el-form-item style="margin-top:20px;">
           <el-button  type="primary" @click="onSubmit('form')" v-if="ishistory !== '3'">提交</el-button> <!-- v-if="chakanxiangs in chakanxiang2" -->
           <!-- <el-button>取消</el-button> -->
           <el-button v-if="chakanxiangs in chakanxiang2" @click="resetForm('form')">重置</el-button>
@@ -118,12 +121,12 @@
 </template>
 
 <script>
-import Time from '../../../timeSelect/ordertime';
+import Timess from '../../../timeSelect/ordertime';
 
 export default {
   props: ['xiugai', 'chakanxiang', 'ishistory'],
   components: {
-    Time
+    Timess
   },
   data () {
     return {
@@ -192,7 +195,7 @@ export default {
     },
     xiugai (val) {
       this.c = val;// 新增xiugai的watch，监听变更并同步到c上
-      // console.log(this.c);
+      console.log(this.c);
       this.form.region = this.c.industryId;
       this.form.region = this.c.industryId;
       this.form.area = this.c.area;
@@ -212,7 +215,6 @@ export default {
   },
   created () {
     this.getbriefinfo();// 获取需求单信息
-    console.log(this.ishistory);
   },
   methods: {
     // 返回
@@ -277,6 +279,7 @@ export default {
           this.form.regions = res.data.data.industry;
           this.form.areas = res.data.data.city;
           this.form.types = res.data.data.strategy;
+          console.log(this.form.types);
         }
       });
     }
@@ -284,7 +287,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="css" scoped>
 .el-col el-col-11{
   padding-left: 0px !important;
   padding-right: 0px !important;
@@ -327,5 +330,25 @@ export default {
 }
 .tanchu li span:nth-child(2){
   padding-left: 8px;
+}
+.el-form-item{
+  height: 50px;
+  margin-bottom: 0;
+  padding-top: 10px;
+}
+
+h2{
+  height: 28px;
+  line-height: 28px;
+  text-align: left;
+  font-size: 18px;
+  color: #007bf8;
+  border-left: 4px solid #007bf8;
+  padding-left: 18px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+.el-textarea__inner{
+  min-height: 140px
 }
 </style>

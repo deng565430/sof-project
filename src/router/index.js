@@ -57,8 +57,9 @@ const router = new Router({
       path: '/neworder',
       component: newxuqiu
     }, {
-      path: '/orders',
-      component: orders
+      path: '/orders/',
+      component: orders,
+      name: 'orders'
     }, {
       path: '/campaign',
       component: newzhixing

@@ -1,14 +1,6 @@
 <template>
 <div id="orderOne">
-  
-  <div id="contain" style="width:85%">
-    <!-- <Gailan v-if="Gailan"></Gailan>
-    <OrderIndex v-if="OrderIndex" @tiaozhuan="tiaozhuan"></OrderIndex>
-    <Dinging :tabs2="tabs2" v-if="show"></Dinging>
-    <Xinjian v-if="Xinjian"></Xinjian>
-    <New :tabs2="tabs2" v-if="New"></New>
-     <router-view></router-view> -->
-  </div>
+  <Gailan></Gailan>
 </div>
 </template>
 
@@ -163,6 +155,7 @@ export default {
 #orderOne{
 	height: 100%;
 	display: flex;
+  margin-left:30px;
 }
 #contain{
 	width: 85%;

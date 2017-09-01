@@ -1,19 +1,19 @@
 <template>
-<div>
+<div v-if="shaixuan">
   <!-- 返回 -->
-  <!-- <div style="text-align:left;margin-bottom:30px">
+  <div style="text-align:left;margin-bottom:30px">
     <span  class="el-icon-arrow-left" style="font-size:14px;color:#20A0FF"></span>
     <el-button type="text" @click="back">返回</el-button>
-  </div> -->
+  </div>
 
   <!-- 筛选 -->
-  <el-dialog title="已有项目" :visible.sync="dialogVisible" size="tiny" :close-on-press-escape="false" :before-close="handleClose">
+  <el-dialog title="已有项目" :visible.sync="dialogVisible" size="tiny" :close-on-press-escape="false" :before-close="handleClose" class="dialogs">
     <div v-if="showTab">
       <ShowTag :tabTitle="tabTitle" @clickActive="clickActive" :ifHideActive="true" :flag="true"></ShowTag>
     </div>
     <div style="height: 50px; overflow: auto">
       <div v-if="showSelectDataAll.name" class="active-show-tag">
-        <span>已选择：</span><span style="color: blue;"> {{showSelectDataAll.name}} </span>
+        <span>已选择：</span><span style="color:#20a0ff;"> {{showSelectDataAll.name}} </span>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
@@ -45,7 +45,7 @@
 
     <!-- 已选tag -->
     <div  class="tiaojian"  >
-        <div class="show-tag" ref="showtag"  v-for="(parentTag, parentIndex) in showSelectData" style="margin-top:10px;height:100px;width:100%" >
+        <div class="show-tag" ref="showtag"  v-for="(parentTag, parentIndex) in showSelectData" style="margin:30px;height:100px;" >
           <span class="el-icon-close" @click="deletezu(parentIndex,parentTag)"></span>
           <div>
             <el-tag
@@ -65,8 +65,8 @@
             </div>
           </div>
         </div>        <!-- 筛选条件提交 -->
-        <div style="text-align: center; padding-top: 20px">
-          <el-button  @click="addzu">添加新组</el-button> 
+        <div style="text-align: center; padding-top: 20px;margin-bottom:20px  ">
+          <el-button  @click="addzu"><span class="el-icon-plus" style="margin-right:10px"></span>添加新组</el-button> 
           <el-button type="primary"  @click="submit">多组搜素</el-button><!-- :disabled="showSelectData.length<2" -->
         </div>
     </div>
@@ -75,19 +75,17 @@
     <!-- 搜索结果表格展示 -->
         <el-table
           :data="table"
-          height="250"
+          min-height="100"
+          max-height="250"
           border
-          v-if="table.length >= 1"
-          style="width: 100%;margin-top:20px">
+          style="margin-top:20px">
           <el-table-column
             prop="name"
-            label="name"
-            width="180">
+            label="name">
           </el-table-column>
           <el-table-column
             prop="code"
-            label="code"
-            width="180">
+            label="code">
           </el-table-column>
         </el-table>
         <div v-if="table.length >= 1" style="margin-top:10px;font-size:12px">共<span style="color:#FF4949;font-size:16px;margin:0 8px;">{{table.length}}</span>条</div>
@@ -99,7 +97,7 @@
         </el-form> -->
         <!-- 执行单提交 -->
         <div style="text-align: left; padding: 20px 0">
-          <el-button type="primary" v-if="histroy2 !== 3"   @click="submit2">确认</el-button> <!-- :disabled="showSelectData[0].length<1" -->
+          <el-button type="primary" v-if="histroy2 !== 3"   @click.stop="submit2">提交分单</el-button> <!-- :disabled="showSelectData[0].length<1" -->
         </div>
   </div>
 
@@ -138,7 +136,8 @@ export default {
       parentTags: [num],
       num1: 0,
       datas: [],
-      surnum: 0
+      surnum: 0,
+      shaixuan: true
     };
   },
   created () {
@@ -149,33 +148,7 @@ export default {
   },
   methods: {
     addzu () {
-      // this.num1 ++;
-      // this.showSelectData[this.num1] = [];
-      // console.log(this.showSelectData);
-      /* if (this.num1 === 0) {
-        this.num1 ++;
-        this.showSelectData[this.num1] = [];
-        var _this = this;
-        _this.showSelectData = _this.showSelectData.filter(function (item) {
-          console.log(_this.showSelectData);
-          return item;
-        });
-      } else {
-        this.num1 = this.$refs.showtag.length;
-        this.showSelectData[this.num1] = [];
-        var that = this;
-        that.showSelectData = that.showSelectData.filter(function (item) {
-          console.log(that.showSelectData);
-          return item;
-        });
-      } */
-     /* var nums = this.showSelectData.length;
-      nums++; */
       this.showSelectData.push([]);
-      // var _this = this;
-      /* _this.showSelectData = _this.showSelectData.filter(function (item) {
-        return item;
-      }); */
     },
     // 删除组
     deletezu (parentIndex, parentTag) {
@@ -238,51 +211,8 @@ export default {
       });
     },
     // 分单提交
-    submit2 () {
-      /* if ('tac_code' in this.getfendaninfo) {
-        this.$emit('back', {value: this.showSelectData, index: this.index});
-      } else {
-        var nums = 1;
-        for (var i = 0; i < this.getnum.value.length; i++) {
-          console.log('this.getnum.code', this.getnum.code);
-          console.log(this.getnum.value[i].tac_code);
-          if (this.getnum.value[i].tac_code === this.getnum.code) {
-            nums = this.getnum.value[i].fendan.length;
-            console.log(nums);
-          }
-        }
-        console.log('this.index', this.getnum);
-        var data = {};
-        data.selects = this.showSelectData;
-        this.datas = data;
-        var obj = {};
-        obj.tac_code = this.getcode;
-        obj.file_name = nums;
-        obj.child_single_num = ''; // 修改执行单时
-        obj.tags = this.showSelectData;
-        this.$emit('fendans', obj);
-      } */
-      /* var nums = 1;
-      for (var i = 0; i < this.getnum.value.length; i++) {
-        console.log(this.getnum.value[i].code === this.getnum.code);
-        console.log(this.getnum.value[i].code);
-        if (this.getnum.value[i].code === this.getnum.code) {
-          nums = this.getnum.value[i].fendan.length;
-          this.$emit('back', {value: this.showSelectData, index: this.index});
-          return;
-        } else {
-          console.log('this.index', this.getnum);
-          var data = {};
-          data.selects = this.showSelectData;
-          this.datas = data;
-          var obj = {};
-          obj.tac_code = this.getcode;
-          obj.file_name = nums;
-          obj.child_single_num = ''; // 修改执行单时
-          obj.tags = this.showSelectData;
-          this.$emit('fendans', obj);
-        }
-      } */
+    submit2 (ev) {
+      // this.shaixuan = false;
       if ('code' in this.getfendaninfo) {
         this.$emit('back', {value: this.showSelectData, index: this.index});
       } else {
@@ -328,13 +258,6 @@ export default {
     },
     // 确定添加选择项目
     selectDataList () {
-      //  console.log(this.showSelectData[this.num1]);
-      //  this.showTab = false;
-      //  if (!this.showSelectData[this.num1]) {
-      //    this.showSelectData[this.num1] = [];
-      //  }
-      //  this.showSelectData[this.num1].push(this.showSelectDataAll);
-      //  this.dialogVisible = false;
       this.showTab = false;
       this.showSelectData[this.surnum].push(this.showSelectDataAll);
       this.dialogVisible = false;
@@ -497,7 +420,7 @@ export default {
   overflow: hidden
   box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04)
   .show-tag
-    border: 1px solid #ccc
+    border: 1px solid #0178f8
     text-align: left
     overflow: auto
     span
@@ -507,7 +430,8 @@ export default {
       display: block
       text-align:right
       cursor:pointer
-      font-size:14px
+      font-size:8px
+      color: #0178f8
     .add-data-list
       height: 100px
       border: 1px dashed #ccc
@@ -529,4 +453,6 @@ export default {
       vertical-align: center
 .jieguo
   margin-top:15px
+.dialogs .el-dialog__header
+  background:#ccc
 </style>

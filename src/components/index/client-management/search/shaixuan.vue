@@ -76,7 +76,6 @@ export default {
       var city = 'sh';
       var indcode = 'i03';
       this.$api.get('/api/clientbehavior/getBehaviorOption?prov=' + prov + '&city=' + city + '&ind_code=' + indcode).then((res) => {
-        console.log(res.data.data);
         this.tabTitle = res.data.data;
         for (let i in this.tabTitle) {
           this.$api.get(`api/campaign/getCampaignOption2?page=1&ind_code=` + indcode + `&prov=` + prov + `&city=` + city + `&code=${this.tabTitle[i].code}`)
@@ -104,6 +103,8 @@ export default {
     selectDataList () {
       this.showSelectData.push(this.showSelectDataAll);
       this.dialogVisible = false;
+      console.log(this.showSelectData);
+      this.$emit('biaoqian', this.showSelectData);
     },
     cancel () {
       this.dialogVisible = false;
@@ -119,28 +120,31 @@ export default {
      // 对子组件传递的参数做过滤并且生成需要的属性
     _selectActive (val, num, checked, lastVal, firstVal, secondVal) {
       if (checked) {
+        console.log(4444);
         switch (num) {
           case 2:
             this.fourthArrName = [];
             this.fourthArrCode = [];
-            let firstSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? lastVal.name + ' -> ' : ''} ${val.father.name}`;
-            let firstCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? lastVal.code + ' -> ' : ''} ${val.father.code}`;
+            let firstSel = `${firstVal ? firstVal.name + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.name + '-' : '') : ''}${lastVal ? lastVal.name + '-' : ''}${val.father.name}`;
+            let firstCode = `${firstVal ? firstVal.code + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.code + '-' : '') : ''}${lastVal ? lastVal.code + '-' : ''}${val.father.code}`;
             let firstData = {
               name: firstSel,
               code: firstCode
             };
             this.showSelectDataAll = firstData;
+            console.log(22);
             break;
           case 3:
             this.fourthArrName = [];
             this.fourthArrCode = [];
-            let secondSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name + ' -> ' : '') : ''} ${val.father.name}`;
-            let secondCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code + ' -> ' : '') : ''} ${val.father.code}`;
+            let secondSel = `${firstVal ? firstVal.name + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.name + '-' : '') : ''}${lastVal ? (lastVal.father ? lastVal.father.name + '-' : '') : ''}${val.father.name}`;
+            let secondCode = `${firstVal ? firstVal.code + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.code + '-' : '') : ''}${lastVal ? (lastVal.father ? lastVal.father.code + '-' : '') : ''}${val.father.code}`;
             let secondData = {
               name: secondSel,
               code: secondCode
             };
             this.showSelectDataAll = secondData;
+            console.log(33);
             break;
           case 4:
             if (!val['active']) {
@@ -153,8 +157,8 @@ export default {
               this.fourthArrCode = [];
             }
             this.lastVal = lastVal.father;
-            let forthSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name : '') : ''}`;
-            let forthCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code : '') : ''}`;
+            let forthSel = `${firstVal ? firstVal.name + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.name + '-' : '') : ''}${lastVal ? (lastVal.father ? lastVal.father.name : '') : ''}`;
+            let forthCode = `${firstVal ? firstVal.code + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.code + '-' : '') : ''}${lastVal ? (lastVal.father ? lastVal.father.code : '') : ''}`;
             if (val.active) {
               this.fourthArrName.push(val.name);
               this.fourthArrCode.push(val.code);
@@ -167,29 +171,33 @@ export default {
               }
             }
             this.showSelectDataAll = {
-              name: `${forthSel} ${this.fourthArrName.length ? ' -> ' + this.fourthArrName : ''}`,
-              code: `${forthCode} ${this.fourthArrCode.length ? ' -> ' + this.fourthArrCode : ''}`
+              name: `${forthSel}${this.fourthArrName.length ? '-' + this.fourthArrName : ''}`,
+              code: `${forthCode}${this.fourthArrCode.length ? '-' + this.fourthArrCode : ''}`
             };
+            console.log(44);
             break;
           default:
             this.fourthArrName = [];
             this.fourthArrCode = [];
-            let sel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name + ' -> ' : '') : ''} ${val.name}`;
-            let code = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code + ' -> ' : '') : ''} ${val.code}`;
+            let sel = `${firstVal ? firstVal.name + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.name + '-' : '') : ''}${lastVal ? (lastVal.father ? lastVal.father.name + '-' : '') : ''}${val.name}`;
+            let code = `${firstVal ? firstVal.code + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.code + '-' : '') : ''}${lastVal ? (lastVal.father ? lastVal.father.code + '-' : '') : ''}${val.code}`;
             let data = {
               name: sel,
               code: code
             };
             this.showSelectDataAll = data;
+            console.log(this.showSelectDataAll);
             break;
         }
       } else {
+        console.log(5555);
         this.fourthArrName = [];
         this.fourthArrCode = [];
         switch (num) {
           case 2:
-            let firstSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? lastVal.name : ''}`;
-            let firstCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? lastVal.code : ''}`;
+            console.log(223);
+            let firstSel = `${firstVal ? firstVal.name + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.name + '-' : '') : ''}${lastVal ? lastVal.name : ''}`;
+            let firstCode = `${firstVal ? firstVal.code + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.code + '-' : '') : ''}${lastVal ? lastVal.code : ''}`;
             let firstData = {
               name: firstSel,
               code: firstCode
@@ -197,8 +205,9 @@ export default {
             this.showSelectDataAll = firstData;
             break;
           case 3:
-            let secondSel = `${firstVal ? firstVal.name + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.name + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.name : '') : ''}`;
-            let secondCode = `${firstVal ? firstVal.code + ' -> ' : ''} ${secondVal ? (secondVal.father ? secondVal.father.code + ' -> ' : '') : ''} ${lastVal ? (lastVal.father ? lastVal.father.code : '') : ''}`;
+            console.log(333);
+            let secondSel = `${firstVal ? firstVal.name + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.name + '-' : '') : ''}${lastVal ? (lastVal.father ? lastVal.father.name : '') : ''}`;
+            let secondCode = `${firstVal ? firstVal.code + '-' : ''}${secondVal ? (secondVal.father ? secondVal.father.code + '-' : '') : ''}${lastVal ? (lastVal.father ? lastVal.father.code : '') : ''}`;
             let secondData = {
               name: secondSel,
               code: secondCode

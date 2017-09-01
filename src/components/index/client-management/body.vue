@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import {isLoginMixin} from 'assets/js/mixin';
 import LeftMenu from './../../leftMenu/managementMenu';
 import Tables from './../../table/managementTable';
 import Waterfall from './waterfall';
@@ -15,7 +16,7 @@ import Search from './search';
 import searchkehu from './searchkehu';
 import {scrollBarInit} from 'assets/js/dataslider';
 export default {
-
+  mixins: [isLoginMixin],
   name: 'clientManagement',
   components: {
     LeftMenu,

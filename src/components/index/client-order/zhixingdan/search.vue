@@ -18,16 +18,16 @@ export default {
     return {
       options: [{
         value: '0',
-        label: '待审核'
+        label: '新执行单'
       }, {
         value: '1',
-        label: '待执行'
+        label: '未执行'
       }, {
         value: '2',
         label: '执行中'
       }, {
         value: '3',
-        label: '已完成'
+        label: '历史执行单'
       }],
       value: ''
     };
