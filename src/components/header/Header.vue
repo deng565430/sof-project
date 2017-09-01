@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="sof-nav">
-      <div class="nav-logo">
-          
-      </div>
+      <router-link to="/index" class="nav-logo">
+          <img :src="logo" alt="">
+      </router-link>
       <div class="nav-menu">
         <div class="nav-all">
           <div v-for="item in menu" class="menu-list">
@@ -32,7 +32,9 @@
             欢迎你： <span @click="admin"> {{isLogin.name}}</span>
           </div>
         </div>
-        <button v-else type="button" @click="login">登录</button>
+        <router-link to="/login" v-else>
+          <button type="button" @click="login">登录</button>
+        </router-link>
       </div>
     </div>
   </div>
@@ -43,7 +45,8 @@ import { mapGetters, mapMutations } from 'vuex';
 export default {
   data () {
     return {
-      menu: []
+      menu: [],
+      logo: require('assets/img/sof_logo.png')
     };
   },
   watch: {
@@ -64,9 +67,7 @@ export default {
     ...mapGetters(['isLogin', 'getMenu'])
   },
   methods: {
-    login () {
-      this.dialogVisible(true);
-    },
+    login () {},
     admin () {
       alert('个人中心');
     },
@@ -90,7 +91,6 @@ export default {
       });
     },
     ...mapMutations({
-      dialogVisible: 'DIOLOG_VISIBLE',
       setJurisdiction: 'JURISDICTION'
     })
   }
@@ -113,6 +113,11 @@ export default {
       width: 20%
       height: 98px
       min-width: 200px
+      text-align: right
+      padding: 20px
+      box-sizing: border-box
+      img
+        height:100%
     .nav-menu
       width: 60%
       min-width: 600px
@@ -124,7 +129,7 @@ export default {
             width: 200px
             box-sizing: border-box
             .menu-t
-              padding-top: 20px
+              padding-top: 10px
               box-sizing: border-box
               height: 98px
               transition: all .3s
@@ -176,13 +181,13 @@ export default {
             &:hover
               cursor:pointer
       button
-        width: 136px
-        height: 48px
+        width: 120px
+        height: 40px
         border: none
         background: #108aed
         border-radius: 4px
         font-size: 15px
-        line-height: 48px
+        line-height: 40px
         color: white
         transition: all .2s
         &:hover

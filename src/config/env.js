@@ -8,7 +8,7 @@
  */
 let baseUrl; 
 let routerMode;
-const imgBaseUrl = 'https://fuss10.elemecdn.com';
+const imgBaseUrl = '';
 
 if (process.env.NODE_ENV == 'development') {
     baseUrl = '';

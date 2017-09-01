@@ -6,7 +6,7 @@
 		<div class="bottom"><p>服 务 项 目</p></div>
 	</div>
 	<div class="middle-img">
-		<router-link to="/order" class="top">
+		<router-link to="/order" class="top" :style="viewStyleHeight">
 			<div class="left">
 				<div>
 					<img :src="imgTopLeft" alt="">
@@ -21,7 +21,7 @@
 				<img :src="imgTopRight" alt="">
 			</div>
 		</router-link>
-		<router-link to="/analysis" class="middle">
+		<router-link to="/analysis" class="middle" :style="viewStyleHeight">
 			<div class="left">
 				<img :src="imgMiddleLeft" alt="">
 			</div>
@@ -35,7 +35,7 @@
 				<h2>分析报告</h2>
 			</div>
 		</router-link>
-		<router-link to="/allcustomer" class="bottom">
+		<router-link to="/allcustomer" class="bottom" :style="viewStyleHeight">
 			<div class="left">
 				<div>
 					<img :src="imgBottomLeft" alt="">
@@ -74,9 +74,14 @@ export default {
       imgBottomRight: require('assets/img/index_bottom_right.jpg'),
       imgTopLeft: require('assets/img/index_top.png'),
       imgMiddleRight: require('assets/img/index_middle.png'),
-      imgBottomLeft: require('assets/img/index__bottom.png')
+      imgBottomLeft: require('assets/img/index__bottom.png'),
+      viewStyleHeight: {
+        height: window.innerHeight + 'px'
+      }
     };
-  }
+  },
+  created () {},
+  mounted () {}
 };
 </script>
 

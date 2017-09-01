@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <sof-header/>
-    <sof-login v-if="this.$store.state.dialogVisible" />
     <div class="sof-alert">
       <sof-alert/>
     </div>
@@ -11,13 +10,11 @@
 
 <script>
 import SofHeader from './components/header/Header';
-import SofLogin from './components/login/login';
 import SofAlert from './components/alert/alert';
 
 export default {
   components: {
     SofHeader,
-    SofLogin,
     SofAlert
   },
   data () {

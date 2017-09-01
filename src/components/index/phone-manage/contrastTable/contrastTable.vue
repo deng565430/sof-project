@@ -12,7 +12,7 @@
     <el-table-column prop="path" label="音频" align="left" width="347">
       <template scope="props">
         <audio height="100" width="50" controls>
-          <source :src="props.row.path" type="audio/mpeg"/>
+          <source :src="path + props.row.path" type="audio/mpeg"/>
         </audio>
       </template>
     </el-table-column>
@@ -31,12 +31,14 @@
 </template>
 
 <script>
+import { baseUrl } from '../../../../config/env';
 export default {
   data () {
     return {
       currentPage: 1,
       pageSize: 10,
-      page: 1
+      page: 1,
+      path: baseUrl
     };
   },
   methods: {

@@ -147,7 +147,7 @@ export default {
 };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" scoped>
 .border
   border: 1px solid #e3e3e3
   padding: 4px

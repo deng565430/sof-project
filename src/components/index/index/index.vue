@@ -1,6 +1,6 @@
 <template>
 <div>
-	<switchs></switchs>
+	<switchs :flag="flag"></switchs>
 	<middle></middle>
 	<sof-footer></sof-footer>
 </div>
@@ -17,10 +17,17 @@ export default {
     SofFooter
   },
   name: 'index',
-
+  beforeRouteUpdate (to, from, next) {
+    this.flag = true;
+    next();
+  },
+  beforeRouteLeave (to, from, next) {
+    this.flag = false;
+    next();
+  },
   data () {
     return {
-
+      flag: true
     };
   }
 };

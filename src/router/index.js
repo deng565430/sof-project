@@ -47,6 +47,10 @@ const router = new Router({
     name: 'login',
     component: Login
   }, {
+    path: '/login',
+    name: 'login',
+    component: Login
+  }, {
     path: '/client',
     name: 'body',
     component: ClientOrder,

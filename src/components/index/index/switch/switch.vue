@@ -25,13 +25,14 @@ export default {
   data () {
     return {
       index: 0,
-      height: 650,
+      height: 750,
       time: 5000,
       timer: null,
+      num: 3,
       data: [{
         img: require('assets/img/index_switch01.jpg')
       }, {
-        img: require('assets/img/index_switch01.jpg')
+        img: require('assets/img/banner_45.jpg')
       }, {
         img: require('assets/img/index_switch01.jpg')
       }]
@@ -39,17 +40,34 @@ export default {
   },
   created () {},
   mounted () {
-    this.timeOut();
+    setTimeout(() => {
+      this.timeOut();
+    }, 20);
+  },
+  watch: {
+    flag (val) {
+      if (val) {
+        this.timeOut();
+      } else {
+        clearTimeout(this.timer);
+      }
+    }
   },
   methods: {
     timeOut () {
+      if (!this.$refs.switch || !this.$refs.switch.children) {
+        clearTimeout(this.timer);
+        return;
+      }
+      this.num = this.$refs.switch ? (this.$refs.switch.children ? this.$refs.switch.children.length : 3) : 3;
       this.timer = setTimeout(() => {
-        const num = this.$refs.switch.children.length;
         this.index ++;
-        if (this.index > num - 1) {
+        if (this.index > this.num - 1) {
           this.index = 0;
         }
-        this.$refs.switch.style.top = `-${this.index * this.height}px`;
+        if (this.$refs.switch) {
+          this.$refs.switch.style.top = `-${this.index * this.height}px`;
+        }
         this.timeOut();
       }, this.time);
     },
@@ -63,6 +81,12 @@ export default {
       this.index = index;
       this.$refs.switch.style.top = `-${this.index * this.height}px`;
     }
+  },
+  props: {
+    flag: {
+      type: Boolean,
+      default: true
+    }
   }
 };
 </script>
@@ -72,7 +96,7 @@ export default {
 	margin-bottom: 50px
 	min-width: 1000px
 	.switch
-		height: 650px
+		height: 750px
 		overflow: hidden
 		position: relative
 		.img
@@ -80,11 +104,14 @@ export default {
 				position: relative
 				transition: top .3s
 				li
-					height: 650px
+					height: 750px
+					img
+						width: 100%
+						height: 100%
 		.bar
 			position: absolute
 			z-index: 999
-			top: 160px
+			top: 300px
 			right: 50px
 			ul
 				li

@@ -1,24 +1,27 @@
 <template>
-<div id="login">
-
-  <el-dialog title="登录" :visible.sync="flag" size="tiny" :before-close="handleClose">
-  <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-    <el-form-item label="用户名" prop="user" >
-      <el-input v-model.number="ruleForm2.user"></el-input>
-    </el-form-item>
-    <el-form-item label="密码" prop="pass">
-      <el-input type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item>
-    </el-form-item>
- 
-    <span>
-      <el-button type="primary" @click="submitForm('ruleForm2')">确 定</el-button>
-      <el-button @click="resetForm('ruleForm2')">重置</el-button>
-      <el-button @click="unLogin">取 消</el-button>
-    </span>
-   </el-form>
-</el-dialog>
+<div id="sofLogin" ref="sofLoginBg">
+  <div class="login">
+    <div class="top">
+      <p>SOF订阅</p>
+    </div>
+    <div class="btm">
+      <div class="user">
+        <i class="el-icon-upload"></i> &nbsp;
+         <input ref="query" v-model="user" placeholder="用户名:"/>
+      </div>
+      <div class="user">
+        <i class="el-icon-upload"></i> &nbsp;
+         <input ref="query" type="password" v-model="password" placeholder="密码:"/>
+      </div>
+      <div class="checkbox">
+        <input type="checkbox" v-model="selected" id="checkbox"> &nbsp;
+        <label for="checkbox">下次免登陆</label>
+      </div>
+      <div class="btn" @click="loginIn">
+        <input type="button" name="" value="登 录">
+      </div>
+    </div>
+  </div>
 
 </div>
 </template>
@@ -30,93 +33,67 @@ export default {
   name: 'login',
 
   data () {
-    var checkUser = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('请输入用户名'));
-      }
-      callback();
-    };
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'));
-      }
-      callback();
-    };
     return {
-      flag: this.dialogVisible(),
-      ruleForm2: {
-        user: 'admin.sof', // operation.sof
-        pass: '123456'
-      },
-      rules2: {
-        user: [
-          { validator: checkUser, trigger: 'blur' }
-        ],
-        pass: [
-          { validator: validatePass, trigger: 'blur' }
-        ]
-      }
+      bgImg: require('assets/img/login_bg.jpg'),
+      user: '', // admin.sof operation.sof
+      password: '',
+      selected: ''
     };
   },
-  mounted () {},
+  created () {
+    if (this.isLogin().msg) {
+      this.$router.push('/index');
+    }
+  },
+  mounted () {
+    this.$refs.sofLoginBg.style.background = `url(${this.bgImg}) no-repeat fixed top`;
+  },
   methods: {
-    unLogin () {
-      this.dialogVisibles(false);
-    },
-    handleClose (done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          done();
-          this.dialogVisibles(false);
-        })
-        .catch(_ => {});
-    },
-    submitForm (formName) {
-      var that = this;
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          that.isLogin(true);
-          const url = '/api/user/login';
-          const postData = {
-            name: this.ruleForm2.user,
-            pwd: this.ruleForm2.pass
-          };
-          this.$api.post(url, postData).then(function (res) {
-            if (res.data.code === 3) {
-              that.$alert(res.data.msg, '提示信息');
-              that.dialogVisibles(true);
-              return false;
-            }
-            if (res.data.code === 0) {
-              const nickName = res.data.data.nickName;
-              const menu = res.data.data.menu;
-              that.isLogin(true);
-              that.userName(nickName);
-              that.dialogVisibles(false);
-              that.unMenu(menu);
-              if (window.localStorage) {
-                // window.localStorage.setItem('userName', nickName);
-                // window.localStorage.setItem('isLogin', true);
-              }
-              // window.location.reload();
-            };
-          });
-        } else {
-          this.$alert('登录错误', '提示信息');
-          return false;
+    loginIn () {
+      if (this.user === '') {
+        this.$alert('用户名不能为空', '提示信息');
+        return;
+      }
+      if (this.password === '') {
+        this.$alert('密码不能为空', '提示信息');
+        return;
+      }
+      const url = '/api/user/login';
+      const postData = {
+        name: this.user,
+        pwd: this.password
+      };
+      this.$api.post(url, postData).then(res => {
+        if (res.data.code === 3) {
+          this.$alert(res.data.msg, '提示信息');
+          return;
         }
+        if (res.data.code === 4) {
+          this.$alert(res.data.msg, '提示信息');
+          return;
+        }
+        if (res.data.code === 0) {
+          const nickName = res.data.data.nickName;
+          const menu = res.data.data.menu;
+          this.userIsLogin(true);
+          this.userName(nickName);
+          this.unMenu(menu);
+          if (this.selected) {
+            if (window.localStorage) {
+              window.localStorage.setItem('userName', nickName);
+              window.localStorage.setItem('isLogin', true);
+            }
+          }
+          this.$router.push('/index');
+        };
       });
     },
-    resetForm (formName) {
-      this.$refs[formName].resetFields();
-    },
     ...mapGetters([
-      'dialogVisible'
+      'isLogin'
     ]),
     ...mapMutations({
-      dialogVisibles: 'DIOLOG_VISIBLE',
       userName: 'USER_NAME',
-      isLogin: 'IS_LOGIN',
+      userIsLogin: 'IS_LOGIN',
       unMenu: 'MENU'
     })
   }
@@ -124,4 +101,73 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+#sofLogin
+  min-width: 1000px
+  position: fixed
+  top: 0
+  z-index: 99
+  bottom: 0
+  left: 0
+  right: 0
+  width: 100%
+  height: 100%
+  .login
+    width: 500px
+    height: 450px
+    margin: 12% auto
+    background: #27a378
+    border-radius: 5px
+    .top
+      padding-top: 40px
+      p
+        font-size: 50px
+        color: #fff
+        font-weight: 100
+        line-height: 70px
+    .btm
+      height: 300px    
+      width: 430px
+      background: #fff
+      border-radius: 5px
+      margin: 5% auto
+      box-sizing: border-box
+      padding: 30px
+      .user
+        text-align: left
+        background: #eef0f4
+        height: 40px
+        border-left: 5px solid #208bd3
+        box-sizing: border-box
+        padding-left: 15px
+        margin: 20px 0
+        color: #999
+        i
+          line-height: 40px
+          font-size: 20px 
+        input
+          height: 100%
+          background #eef0f4
+          width: 80%
+          transition: all .3s
+          box-sizing: border-box
+          border-radius: 4px
+          &::placeholder
+            font-size: 16px
+          &:hover
+            border: 1px solid #ccc
+      .checkbox
+        text-align: left
+        input
+          vertical-align:middle
+      .btn
+        height: 50px
+        margin-top: 30px
+        input
+          width: 100%
+          height: 100%
+          background: #208bd3
+          color: white
+          border-radius: 5px
+          &:hover
+            cursor:pointer
 </style>

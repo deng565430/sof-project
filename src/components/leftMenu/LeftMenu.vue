@@ -12,7 +12,7 @@
 export default {
   data () {
     return {
-      activeIndex: '/phone/phoneList',
+      activeIndex: '/phone',
       menuList: [{
         path: '/phone',
         name: '电话清单'
@@ -50,6 +50,7 @@ export default {
         &:hover
           cursor:pointer
           background: linear-gradient(to right, #0078e6 0%,#02c9dc 100%)
+          color: #fff
       .active
         color: #fff
         background: linear-gradient(to right, #0078e6 0%,#02c9dc 100%)

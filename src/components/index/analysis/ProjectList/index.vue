@@ -139,7 +139,7 @@ export default {
 #projectList
   width: 1000px
   margin: 0 auto
-  margin-bottom: 220px
+  margin-bottom: 20px
   text-align: left
   .border
     overflow: hidden

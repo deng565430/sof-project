@@ -344,7 +344,7 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
 #reportList
-  margin-bottom: 200px
+  margin-bottom: 0px
 #report-all
   width: 1002px
   margin: 30px auto
