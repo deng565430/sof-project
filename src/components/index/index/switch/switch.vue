@@ -32,7 +32,7 @@ export default {
       data: [{
         img: require('assets/img/index_switch01.jpg')
       }, {
-        img: require('assets/img/index_switch01.jpg')
+        img: require('assets/img/banner_45.jpg')
       }, {
         img: require('assets/img/index_switch01.jpg')
       }]
@@ -46,7 +46,6 @@ export default {
   },
   watch: {
     flag (val) {
-      console.log(val);
       if (val) {
         this.timeOut();
       } else {

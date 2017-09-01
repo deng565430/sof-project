@@ -114,9 +114,10 @@ export default {
       height: 98px
       min-width: 200px
       text-align: right
-      padding: 20px 
+      padding: 20px
+      box-sizing: border-box
       img
-        height:60%
+        height:100%
     .nav-menu
       width: 60%
       min-width: 600px

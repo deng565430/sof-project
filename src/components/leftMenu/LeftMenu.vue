@@ -12,7 +12,7 @@
 export default {
   data () {
     return {
-      activeIndex: '/phone/phoneList',
+      activeIndex: '/phone',
       menuList: [{
         path: '/phone',
         name: '电话清单'

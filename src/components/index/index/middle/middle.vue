@@ -80,9 +80,7 @@ export default {
       }
     };
   },
-  created () {
-    console.log(window.innerHeight);
-  },
+  created () {},
   mounted () {}
 };
 </script>

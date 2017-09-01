@@ -1,11 +1,11 @@
 import axios from 'axios';
-var root =  ''; // http://114.215.209.180:8080
+import { baseUrl } from './env.js';
 
 export default {
     get: function(url) {
         var result = axios({
             method: 'get',
-            url: root + url,
+            url: baseUrl + url,
             withCredentials: true
         });
         return result;
@@ -13,13 +13,13 @@ export default {
     post: function(url, data){
         var result = axios({
             method: 'post',
-            url: root + url,
+            url: baseUrl + url,
             data: data,
             withCredentials: true
         });
         return result;
     },
     url: function(url) {
-        return root + url
+        return baseUrl + url
     }
 }

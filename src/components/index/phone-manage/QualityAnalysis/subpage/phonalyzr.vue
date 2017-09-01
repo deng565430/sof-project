@@ -394,7 +394,7 @@ export default {
 };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" scoped>
 .isShow
   width: 200px
   height: 200px
