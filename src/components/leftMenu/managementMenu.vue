@@ -47,4 +47,7 @@ export default {
 #leftMenu a:active{
   color:#20a0ff;
 }
+#leftMenu .el-menu-item-group__title{
+  padding-top: 0px;
+}
 </style>

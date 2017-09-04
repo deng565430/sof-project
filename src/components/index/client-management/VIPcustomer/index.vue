@@ -1,14 +1,16 @@
 <template>
 <div>
-<div v-if="tableishow">
+  <div v-if="tableishow">
 	<div class="btns">
-		<el-button type="primary">新增VIP客户</el-button>
+		<el-button type="primary" @click="addVip">增加VIP客户</el-button>
 	</div>
-	
 	<div  class="tables">
-	<h2>我的VIP客户表</h2>
-	  <Table @zhanshi="zhanshi"></Table>
-	  </div>
+		<h2>我的VIP客户表</h2>
+	  	<Tables @zhanshi="zhanshi"></Tables>
+    </div>
+  </div>
+  <div v-if="addvip">
+  	<AddVip @addV="addV"></AddVip>
   </div>
   <div v-if="detail">
 	<detail></detail>
@@ -19,21 +21,34 @@
 
 <script>
 
-import Table from './../table/tableone';
+import Tables from './../table/tableone';
 import Detail from './detail';
+import AddVip from './addVip';
+
 export default {
   components: {
-    Table,
-    Detail
+    Tables,
+    Detail,
+    AddVip
   },
   data () {
     return {
       detail: false,
       tableishow: true,
-      activeName: 'first'
+      activeName: 'first',
+      addvip: false
     };
   },
   methods: {
+    addV (val) {
+      console.log(val);
+      this.addvip = false;
+      this.tableishow = true;
+    },
+    addVip () {
+      this.tableishow = false;
+      this.addvip = true;
+    },
     zhanshi () {
       this.detail = true;
       this.tableishow = false;

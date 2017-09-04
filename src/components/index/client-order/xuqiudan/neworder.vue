@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-left:30px;">
+  <div style="margin-left:30px;" class="neworderlist">
   <h2>新建需求单</h2>
     <!-- 表单内容 -->
     <el-form v-loading.body="loading" element-loading-text="加载中,请稍后..." class="xuqiuform" :label-position="labelPosition" :rules="rules" ref="form"   :model="form" label-width="110px">
@@ -336,7 +336,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.el-col el-col-11{
+.neworderlist .el-col el-col-11{
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
@@ -382,7 +382,7 @@ export default {
   word-wrap: break-word;
   overflow: hidden;
 }
-h2{
+.neworderlist h2{
   height: 28px;
   line-height: 28px;
   text-align: left;
@@ -393,12 +393,12 @@ h2{
   margin-top: 15px;
   margin-bottom: 20px;
 }
-.el-form-item{
+.neworderlist .el-form-item{
   height: 50px;
   margin-bottom: 0;
   padding-top: 10px;
 }
-.el-textarea__inner{
+.neworderlist .el-textarea__inner{
   min-height: 140px
 }
 </style>

@@ -39,7 +39,7 @@
   <el-row :gutter="20">
     <el-col :span="16">
       <el-form-item label="选择时间"  required>
-        <Time  :dates="form.dates"   @dataEvent="dataEvent"></Time>
+        <Times  :dates="form.dates"   @dataEvent="dataEvent"></Times>
       </el-form-item>
     </el-col>
   </el-row>
@@ -82,24 +82,24 @@
     </div>
   </el-form-item>
 </el-form>
-
 <div>  
 </div >
-
-
-  
-
-
+  <div>
+    <tables @adds="adds"></tables>
+  </div>
 </div>
 </template>
 
 <script>
-import Time from '../../timeSelect/ordertime';
-import Saixuan from './search/shaixuan';
+import Times from './../../../timeSelect/ordertime';
+import Saixuan from './../search/shaixuan';
+import tables from './ProTables';
+
 export default {
   components: {
-    Time,
-    Saixuan
+    Times,
+    Saixuan,
+    tables
   },
   name: 'clientManagement',
   data () {
@@ -142,6 +142,9 @@ export default {
     this.getprojectname();
   },
   methods: {
+    adds (val) {
+      this.$emit('addV', val);
+    },
     biaoqian (val) {
       console.log(val);
       this.biaoqians = val;
@@ -203,7 +206,7 @@ export default {
         console.log(res.data.data);
       })
       .catch(() => {
-        alert('服务出错！');
+        this.$alert('服务出错！');
       });
     },
     qiehuan (val) {
@@ -305,11 +308,11 @@ export default {
 
 <style lang="css" scoped>
 body{
-	position: relative;
+  position: relative;
 }
 .contents{
-	width:100%;
-	margin:0 auto;
+  width:100%;
+  margin:0 auto;
 }
 .el-form-item__content{
   text-align:center

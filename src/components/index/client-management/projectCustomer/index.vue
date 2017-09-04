@@ -2,15 +2,18 @@
 <div >
 <div v-if="tableishow">
 	<div class="btns">
-		<el-button type="primary">新增项目客户</el-button>
+		<el-button type="primary"  @click="addPj">新增项目客户</el-button>
 	</div>
 	<div  class="tables">
 	<h2>我的项目客户表</h2>
-	  <Table @zhanshi="zhanshi"></Table>
+	  <Tables @zhanshi="zhanshi"></Tables>
 	  </div>
   </div>
+  <div v-if="addPs">
+    <addP  @addV="addV"></addP>
+  </div>
   <div v-if="detail">
-	<detail></detail>
+	  <detail></detail>
   </div>
 </div>
 
@@ -18,23 +21,36 @@
 
 <script>
 
-import Table from './../table/tabletwo';
+import Tables from './../table/tabletwo';
 import Detail from './detail';
+import addP from './addproject';
+
 export default {
   components: {
-    Table,
-    Detail
+    Tables,
+    Detail,
+    addP
   },
   data () {
     return {
       detail: false,
-      tableishow: true
+      tableishow: true,
+      addPs: false
     };
   },
   methods: {
     zhanshi () {
       this.detail = true;
       this.tableishow = false;
+    },
+    addPj () {
+      this.tableishow = false;
+      this.addPs = true;
+    },
+    addV (val) {
+      console.log(val);
+      this.addPs = false;
+      this.tableishow = true;
     }
   }
 };

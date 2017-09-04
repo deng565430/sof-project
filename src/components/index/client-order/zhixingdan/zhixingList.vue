@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="zhixingtablelist">
 		<el-table
 	    :data="table"
 	    border
@@ -166,7 +166,7 @@ export default {
 </script>
 
 <style>
-	.el-table-filter__checkbox-group label.el-checkbox{
+	.zhixingtablelist .el-table-filter__checkbox-group label.el-checkbox{
     margin-left: 0px;
   }
 </style>

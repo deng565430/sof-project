@@ -24,7 +24,7 @@
 <h2>统计表</h2>
   <el-tabs v-model="activeName" >
     <el-tab-pane label="立即跟进" name="first">
-    	<Table></Table>
+    	<Tables></Tables>
     </el-tab-pane>
     <el-tab-pane label="及时关注" name="second"><Table></Table></el-tab-pane>
     <el-tab-pane label="时常关注" name="third"><Table></Table></el-tab-pane>
@@ -33,10 +33,10 @@
 </template>
 
 <script>
-import Table from './../table/tableone';
+import Tables from './../table/tableone';
 export default {
   components: {
-    Table
+    Tables
   },
   data () {
     return {

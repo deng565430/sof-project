@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="gailans">
 		 <!-- <Charts :id="id" :projectType="gailan" :chartStyle="chartStyle"></Charts>  -->
      <h2>需求单概览</h2>
      <div style="display:flex;margin-top:33px">
@@ -131,7 +131,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-h2{
+.gailans h2{
   height: 28px;
   line-height: 28px;
   text-align: left;

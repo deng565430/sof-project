@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-left:30px;">
+  <div style="margin-left:30px;" class="xiugaixuqiu">
   <h2 v-if="ishistory !== '3'">修改需求单</h2>
   <h2 v-if="ishistory === '3'">历史需求单</h2>
   
@@ -288,7 +288,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.el-col el-col-11{
+.xiugaixuqiu .el-col el-col-11{
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
@@ -331,13 +331,13 @@ export default {
 .tanchu li span:nth-child(2){
   padding-left: 8px;
 }
-.el-form-item{
+.xiugaixuqiu .el-form-item{
   height: 50px;
   margin-bottom: 0;
   padding-top: 10px;
 }
 
-h2{
+.xiugaixuqiu h2{
   height: 28px;
   line-height: 28px;
   text-align: left;
@@ -348,7 +348,7 @@ h2{
   margin-top: 15px;
   margin-bottom: 20px;
 }
-.el-textarea__inner{
+.xiugaixuqiu .el-textarea__inner{
   min-height: 140px
 }
 </style>

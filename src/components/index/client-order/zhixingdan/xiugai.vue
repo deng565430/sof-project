@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="xugai">
     <div v-if="first"  v-loading="loading2" element-loading-text="加载中，请稍后..">
       <!-- 返回 -->
       <div style="text-align:left;margin-bottom:30px">
@@ -305,7 +305,7 @@ export default {
 .tanchu li div:first-child{
 margin-right: 10px
 }
-.el-collapse-item__header{
+.xugai .el-collapse-item__header{
   background-color: #007bf7;
   background:  #007bf7;
 }

@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="pages">
 	  <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -21,6 +21,9 @@ export default {
     };
   },
   watch: {
+    'currentpage' (val) {
+      console.log('page', val);
+    }
   },
   created () {
   },
@@ -38,7 +41,7 @@ export default {
 </script>
 
 <style>
-	.el-table-filter__checkbox-group label.el-checkbox{
+	.pages .el-table-filter__checkbox-group label.el-checkbox{
     margin-left: 0px;
   }
 </style>

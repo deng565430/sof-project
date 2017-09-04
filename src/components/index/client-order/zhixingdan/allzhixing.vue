@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="allzhixings">
 		<el-tabs  v-model="activeName" v-show="tabsisshow"  @tab-click="handleClick" class="tabs" >
   		  <el-tab-pane    :label="i.name" :name="i.code" v-for="(i, idx) in tree" >
             <el-tabs  v-model="activeName2"  @tab-click="handleClick2"  class="tabs2">
@@ -10,6 +10,8 @@
                      </div> 
                      <TableList
                       v-loading="loading2" 
+
+                       :zhixingbtns="s.num" 
                       element-loading-text="加载中，请稍后.." 
                       :table="s.tables"
                       @services-zhixingxiugai="servicesZhixingxiugai"  
@@ -17,13 +19,13 @@
                       @services-zhixing="servicesZhixing" 
                       @services-zhixingchakan="servicesZhixingchakan" >
                       </TableList>
-
+                      {{s.zhuangtai}}<br/>
+                      {{threeIndex}}
                       <Page
                       v-bind:name="threeIndex" 
                       :currentpage="s.zhuangtai[threeIndex].currentpage"
                        :pagesize="s.zhuangtai[threeIndex].pagelength"
                        :tablenum="s.tablenum"  
-                       :zhixingbtns="s.num" 
                        @handleSizeChanges="handleSizeChange"
                        @handleCurrentChanges="handleCurrentChange" ></Page>
                      <!-- :zhixingbtns="zhixingbtns"  @services-zhixingxiugai="servicesZhixingxiugai"  :zhiixngxiugais="zhiixngxiugais"  @services-zhixing="servicesZhixing" @services-zhixingchakan="servicesZhixingchakan" -->
@@ -113,24 +115,20 @@ export default {
   created () {
     this.tabs2 = 0;
     this.tabs3 = 0;
-    this.zhixingbtns = this.tabs3;
+    // this.zhixingbtns = this.tabs3;
     this.tabName = 1;
     this.activeName = 'pol01';
     this.activeName2 = 'i01';
     this.value = this.options[0].value;
     this.hanyetab = 1;
     this.getcelue();// 获取策略类型
-    // this.getHangyeList();// 获取行业
-    // this.getNewList(this.tabs2, this.activeName2, '0', '10', this.activeName, '', ''); // 获取新建  所有
   },
   methods: {
     zhuangtai (val) {
-      this.zhixingbtns = val;
+      this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].num = val;
       var pages = this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].pagelength;
-      var starts = this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].currentpage;
-      console.log(this.tree[this.activeNameIndx].child);
-      // console.log(this.tree[this.activeNameIndx].child[this.activeNameIndx2]);
-      this.$api.get('/api/campaign/getNewCampaign?status=' + val + '&industryId=' + this.activeName2 + '&start=' + starts + '&length=' + pages + '&strategy=' + this.activeName + '&kw_flag=' + '' + '&kw=' + '').then((ress) => {
+      // var starts = this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].currentpage - 1;
+      this.$api.get('/api/campaign/getNewCampaign?status=' + val + '&industryId=' + this.activeName2 + '&start=' + 0 + '&length=' + pages + '&strategy=' + this.activeName + '&kw_flag=' + '' + '&kw=' + '').then((ress) => {
         if (ress.data.code === 1) {
           this.loading2 = false;
           this.$alert('未登录!');
@@ -145,6 +143,7 @@ export default {
           });
         }
       });
+      // this.threeIndex = val;
     },
     // 获取行业
     getHangyeList () {
@@ -184,7 +183,6 @@ export default {
     },
     // 删除行
     servicesShanchu (val) {
-      // console.log(val);
     },
     // 新建执行单 执行
     servicesZhixing (val) {
@@ -214,8 +212,7 @@ export default {
     }, */
     // 搜索查询
     search (val, val2) {
-      // this.getNewList(this.tabs3, this.activeName2, this.currentPage4 - 1, this.pageSize, this.activeName, val, val2);
-      this.$api.get('/api/campaign/getNewCampaign?status=' + this.tabs2 + '&industryId=' + this.activeName2 + '&start=' + 0 + '&length=' + 10 + '&strategy=' + this.activeName + '&kw_flag=' + val + '&kw=' + val2).then((ress) => {
+      this.$api.get('/api/campaign/getNewCampaign?status=' + this.threeIndex + '&industryId=' + this.activeName2 + '&start=' + 0 + '&length=' + 10 + '&strategy=' + this.activeName + '&kw_flag=' + val + '&kw=' + val2).then((ress) => {
         if (ress.data.code === 1) {
           this.loading2 = false;
           this.$alert('未登录!');
@@ -223,13 +220,15 @@ export default {
           this.loading2 = false;
           const data = ress.data.data;
           this.tree[this.activeNameIndx].child[this.activeNameIndx2].tables = data;
+          // this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].currentpage = 0;
+          // this.tree[this.activeNameIndx].child[this.activeNameIndx2].num = val;
+          this.tree[this.activeNameIndx].child[this.activeNameIndx2].tablenum = ress.data.recordsFiltered;
         }
       });
     },
     // 清除查询
     qingchu (val) {
-      // this.getNewList(this.tabs3, this.activeName2, this.currentPage4 - 1, this.pageSize, this.activeName, '', '');
-      this.$api.get('/api/campaign/getNewCampaign?status=' + this.tabs2 + '&industryId=' + this.activeName2 + '&start=' + 0 + '&length=' + 10 + '&strategy=' + this.activeName + '&kw_flag=' + '' + '&kw=' + '').then((ress) => {
+      this.$api.get('/api/campaign/getNewCampaign?status=' + this.threeIndex + '&industryId=' + this.activeName2 + '&start=' + 0 + '&length=' + 10 + '&strategy=' + this.activeName + '&kw_flag=' + '' + '&kw=' + '').then((ress) => {
         if (ress.data.code === 1) {
           this.loading2 = false;
           this.$alert('未登录!');
@@ -237,6 +236,8 @@ export default {
           this.loading2 = false;
           const data = ress.data.data;
           this.tree[this.activeNameIndx].child[this.activeNameIndx2].tables = data;
+          // this.tree[this.activeNameIndx].child[this.activeNameIndx2].num = val;
+          this.tree[this.activeNameIndx].child[this.activeNameIndx2].tablenum = ress.data.recordsFiltered;
         }
       });
     },
@@ -266,12 +267,13 @@ export default {
               obj2.name = res.data.data.industry[q].name;
               obj2.zhuangtai = [0, 1, 2, 3];
               obj2.tables = [];
+              obj2.num = 0;
               obj1.child[q] = obj2;
               for (var e in obj1.child[q].zhuangtai) {
                 var obj3 = {};
                 obj3.zT = e;
-                obj3.allpage = 1;
-                obj3.currentpage = 0;
+                // obj3.allpage = 1;
+                obj3.currentpage = 1;
                 obj3.pagelength = 10;
                 obj1.child[q].zhuangtai[e] = obj3;
               }
@@ -279,7 +281,8 @@ export default {
             trees[s] = obj1;
           }
           this.tree = trees;
-          console.log(trees);
+          /* var pages = this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].pagelength;
+          var starts = this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].currentpage; */
           this.$api.get('/api/campaign/getNewCampaign?status=' + this.tabs2 + '&industryId=' + this.activeName2 + '&start=' + 0 + '&length=' + 10 + '&strategy=' + this.activeName + '&kw_flag=' + '' + '&kw=' + '').then((ress) => {
             if (ress.data.code === 1) {
               this.loading2 = false;
@@ -290,9 +293,9 @@ export default {
               this.tree[0].child[0].tables = data;
               this.threeIndex = 0;
               // this.tree[this.activeNameIndx].child[this.activeNameIndx2].num = 0;
-              // this.tree[this.activeNameIndx].child[this.activeNameIndx2].pagesize = 10;
-              // this.tree[this.activeNameIndx].child[this.activeNameIndx2].currentpage = 0;
-              // this.tree[this.activeNameIndx].child[this.activeNameIndx2].tablenum = ress.data.recordsFiltered;
+              this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].pagelength = 10;
+              // this.tree[0].child[0].zhuangtai[0].currentpage = 0;
+              this.tree[this.activeNameIndx].child[this.activeNameIndx2].tablenum = ress.data.recordsFiltered;
             }
           });
         }
@@ -301,6 +304,7 @@ export default {
     // 获取新建列表
     getNewList (cP, pZ, kf, kw) {
       // status, industryId, start, pagesize, strategy, kwflag, kw
+      console.log(22222);
       var statuss = 0;
       var indexstatus = this.tree[this.activeNameIndx].child[this.activeNameIndx2].num;
       if (indexstatus === undefined) {
@@ -325,20 +329,19 @@ export default {
     },
     // 每页条数
     handleSizeChange (val) {
-      console.log(`每页 ${val} 条`);
-      this.tree[this.activeNameIndx].child[this.activeNameIndx2].pagesize = val;
-      console.log(this.tree[this.activeNameIndx].child);
-      console.log(this.tree[this.activeNameIndx].child[this.activeNameIndx2].pagesize);
-      // this.getNewList(this.tree[this.activeNameIndx].child[this.activeNameIndx2].currentpage, this.tree[this.activeNameIndx].child[this.activeNameIndx2].pagesize, '', '');
+      this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].pagelength = val;
+      this.getNewList(this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].currentpage - 1, val, '', '');
     },
     // 第几页
     handleCurrentChange (val) {
-      console.log(`第 ${val} 页`);
       // this.currentPage4 = val;
-      this.tree[this.activeNameIndx].child[this.activeNameIndx2].currentpage = val - 1;
-      console.log(this.tree[this.activeNameIndx].child[this.activeNameIndx2].currentpage);
-      console.log(this.tree[this.activeNameIndx].child[this.activeNameIndx2].pagesize);
-      // this.getNewList(this.tree[this.activeNameIndx].child[this.activeNameIndx2].currentpage, this.tree[this.activeNameIndx].child[this.activeNameIndx2].pagesize, '', '');
+      console.log('val', val);
+      // console.log('状态', this.threeIndex);
+      // console.log('状态s', this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].zT);
+      /* if (this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].currentpage) {
+      } */
+      this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].currentpage = val;
+      this.getNewList(val - 1, this.tree[this.activeNameIndx].child[this.activeNameIndx2].zhuangtai[this.threeIndex].pagelength, '', '');
     },
     // 获取详情
     getXgai (Id) {
@@ -357,7 +360,6 @@ export default {
     handleClick (val, event) {
       this.activeNameIndx = val.index;
       this.activeName = val.name;
-      console.log(this.tree[this.activeNameIndx].child[this.activeNameIndx2].num);
       var statuss = 0;
       var indexstatus = this.tree[this.activeNameIndx].child[this.activeNameIndx2].num;
       if (indexstatus === undefined) {
@@ -386,7 +388,6 @@ export default {
     handleClick2 (val) {
       this.activeNameIndx2 = val.index;
       this.activeName2 = val.name;
-      console.log(this.tree[this.activeNameIndx].child[this.activeNameIndx2].num);
       var statuss = 0;
       var indexstatus = this.tree[this.activeNameIndx].child[this.activeNameIndx2].num;
       if (indexstatus === undefined) {
@@ -447,7 +448,7 @@ export default {
 .xinjian{
   padding:0 30px;
 }
-.el-collapse-item__header{
+.allzhixings .el-collapse-item__header{
   background-color: #007bf7 !important
 }
 </style>
