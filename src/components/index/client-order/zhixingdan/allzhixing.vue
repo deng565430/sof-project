@@ -19,8 +19,6 @@
                       @services-zhixing="servicesZhixing" 
                       @services-zhixingchakan="servicesZhixingchakan" >
                       </TableList>
-                      {{s.zhuangtai}}<br/>
-                      {{threeIndex}}
                       <Page
                       v-bind:name="threeIndex" 
                       :currentpage="s.zhuangtai[threeIndex].currentpage"

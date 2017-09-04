@@ -99,6 +99,7 @@ export default {
           this.tableData3 = ress.data.data;
         });
       }
+      console.log(this.multipleSelection);
     }
   }
 };
