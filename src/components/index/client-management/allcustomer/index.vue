@@ -26,8 +26,8 @@
     <el-tab-pane label="立即跟进" name="first">
     	<Tables></Tables>
     </el-tab-pane>
-    <el-tab-pane label="及时关注" name="second"><Table></Table></el-tab-pane>
-    <el-tab-pane label="时常关注" name="third"><Table></Table></el-tab-pane>
+    <el-tab-pane label="及时关注" name="second"><Tables></Tables></el-tab-pane>
+    <el-tab-pane label="时常关注" name="third"><Tables></Tables></el-tab-pane>
   </el-tabs>
 </div>
 </template>

@@ -5,7 +5,7 @@
           <el-menu-item :index="i.name"><router-link :to="{ path: i.path }">{{i.name}}</router-link></el-menu-item>
         </el-menu-item-group>
     </el-menu> -->
-    <el-menu  class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark">
+    <el-menu  class="el-menu-vertical-demo"  theme="dark">
       <el-submenu index="1">
         <template slot="title">我的客户</template>
         <el-menu-item-group title="">
