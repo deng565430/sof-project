@@ -1,7 +1,10 @@
 <template>
 <div >
+<div style="text-align:left">
+	<el-button type="text" @click="fanhui"><span class="el-icon-arrow-left"></span>返回</el-button>
+</div>
 <div class="tongji">
-<h2><span>国贸天悦</span>概览</h2>
+<h2><span>{{hanginfo.name}}</span>概览</h2>
 	<ul>
 		<li>
 			<div>总计</div>
@@ -21,29 +24,50 @@
 		</li>
 	</ul>
 </div>
-<h2><span>国贸天悦</span>统计表</h2>
+<h2 ><span>{{hanginfo.name}}</span>统计表</h2>
   <el-tabs v-model="activeName"  >
     <el-tab-pane label="立即跟进" name="first">
-    	<Table></Table>
+    	<Tables :tabledata="tabledata" @shuaxinlist="shuaxinlist"></Tables>
+      <Page :pagenum="pagenum"  @handleCurrentChanges="handleCurrentChanges"></Page>
     </el-tab-pane>
-    <el-tab-pane label="及时关注" name="second"><Table></Table></el-tab-pane>
-    <el-tab-pane label="时常关注" name="third"><Table></Table></el-tab-pane>
+    <el-tab-pane label="及时关注" name="second"><Tables></Tables></el-tab-pane>
+    <el-tab-pane label="时常关注" name="third"><Tables></Tables></el-tab-pane>
   </el-tabs>
 </div>
 </template>
 
 <script>
-import Table from './../table/tableone';
+import Tables from './../table/protable';
+import Page from './../table/page';
 export default {
+  props: ['tabledata', 'pagenum', 'hanginfo'],
   components: {
-    Table
+    Tables,
+    Page
   },
   data () {
     return {
-      activeName: 'first'
+      activeName: 'first',
+      tables: [],
+      start: 0,
+      pagenum: 0,
+      currentPage: 0
     };
   },
+  created () {
+  },
   methods: {
+    handleCurrentChanges (val) {
+      this.currentPage = val + 1;
+      this.start = val;
+      this.$emit('handleCurrentChanges', val);
+    },
+    shuaxinlist () {
+      this.$emit('shuaxinlist');
+    },
+    fanhui () {
+      this.$emit('fanhui');
+    }
   }
 };
 </script>
@@ -53,6 +77,8 @@ export default {
 	border:1px solid #ccc;
 	/* box-shadow: 0px 5px 5px #888888; */
 	margin: 20px 0;
+  margin-bottom: 40px;
+  border-radius: 5px 5px 0 0;
 }
 ul{
 	display: flex; 
@@ -74,9 +100,10 @@ ul li  div{
 h2{
 	text-align: left;
 	line-height: 40px;
-	background: #00b52f;
+	background:#20a0ff;
 	color:#fff;
 	padding-left: 10px;
+  border-radius: 5px 5px 0 0;
 }
 h2 span{
 	font-size: 20px;

@@ -1,8 +1,11 @@
 <template>
-<div style="margin:20px" id="tableone">
+<div  id="tableone">
+  <div style="text-align:left;margin-bottom:20px">
+    <el-button type="text" @click="fanhui"><span class="el-icon-arrow-left"></span>返回</el-button>
+  </div>
   <div style='text-align:left;margin-bottom:20px'>
-    <el-button size="small" @click="handleEditzdyP">批量添加到自定义</el-button>
     <el-button size="small" type="danger" @click="handleEditVip">批量添加到VIP</el-button>
+    <el-button size="small" @click="handleEditzdyP">批量删除</el-button>
    </div>
   <el-table
     max-height="250"
@@ -51,68 +54,15 @@
     </el-table-column>
     <el-table-column label="操作" >
       <template scope="scope" style="display:flex">
-      <el-button
-          size="small"
-          @click="handleEdit(scope.$index, scope.row)">自定义</el-button>
           <el-button
           size="small"
           @click="handlevip(scope.$index, scope.row)">VIP</el-button>
-          <!-- <el-button
+          <el-button
           size="small"
-          @click="handlesee(scope.$index, scope.row)">查看</el-button> -->
-        <!-- <el-popover trigger="hover" placement="top">
-          <p>添加到项目</p>
-          <div slot="reference" class="name-wrapper">
-            <el-popover
-              ref="popover"
-              placement="right"
-              width="100"
-              trigger="click">
-            </el-popover>
-            <el-button
-          size="small"
-          v-popover:popover
-          @click="handleEdit(scope.$index, scope.row)">自定义</el-button>
-          </div>
-        </el-popover>
-        <el-popover trigger="hover" placement="top">
-          <p>添加到VIP</p>
-          <div slot="reference" class="name-wrapper">
-            <el-button
-          size="small"
-          @click="handlevip(scope.$index, scope.row)">VIP</el-button>
-          </div>
-        </el-popover> -->
+          @click="handleEdit(scope.$index, scope.row)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
-
-
-  <el-dialog title="已有的分组" :visible.sync="dialogFormVisible">
-     <el-table
-       :data="tabledialog"
-      :row-click="rowclick"
-      tooltip-effect="dark"
-      style="width: 100%">
-      </el-table-column>
-     <el-table-column
-      prop="name"
-      label="分组名称">
-    </el-table-column>
-     <el-table-column
-      label="操作">
-      <template scope="scope" style="display:flex">
-      <el-button
-          size="small"
-          @click="handleEditadd(scope.$index, scope.row)">添加</el-button>
-      </template>
-    </el-table-column>
-    </el-table>
-    <!-- <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click="surebtn">确 定</el-button>
-    </div> -->
-  </el-dialog>
     
 </div>
 </template>
@@ -139,7 +89,7 @@ export default {
       caozuo: false,
       dialogFormVisible: false,
       tabledialog: [],
-      zdy: '',
+      label_code: '',
       pVIP: ''
     };
   },
@@ -149,50 +99,26 @@ export default {
     rowclick (row) {
     },
     handleEdit (index, row) {
-      if (row.label_code === null) {
-        this.dialogFormVisible = true;
-        this.multipleSelection = [];
-        this.multipleSelection.push(row.id);
-        var that = this;
-        that.$api.get('/api/clientbehavior/getlabel').then(function (res) {
-          if (res.data.code === 0) {
-            that.tabledialog = res.data.data.label;
-          } else {
-            that.$alert('未登录！');
-          }
-        }).catch(() => {
-          that.$alert('服务出错！');
-        });
-      } else {
-        this.$alert('已存在自定义分组！');
-      }
+      var that = this;
+      var data = [row.id];
+      that.$api.post('/api/clientbehavior/delclientlabel/' + row.label_code, data).then(function (res) {
+        that.$emit('shuaxinlist2', that.label_code);
+      });
     },
     handleEditadd (index, row) {
-      var that = this;
       var data = this.multipleSelection;
+      var that = this;
       that.$api.post('/api/clientbehavior/addlabelclient/' + row.code, data).then(function (res) {
         that.dialogFormVisible = false;
         that.$emit('shuaxinlist');
       });
     },
     handleEditzdyP () {
-      if (this.multipleSelection.length < 1) {
-        this.$alert('请先选择客户！');
-      } else if (this.zdy !== '') {
-        this.$alert('不能重复添加自定义分组！');
-      } else {
-        this.dialogFormVisible = true;
-        var that = this;
-        that.$api.get('/api/clientbehavior/getlabel').then(function (res) {
-          if (res.data.code === 0) {
-            that.tabledialog = res.data.data.label;
-          } else {
-            that.$alert('未登录！');
-          }
-        }).catch(() => {
-          that.$alert('服务出错！');
-        });
-      }
+      var data = this.multipleSelection;
+      var that = this;
+      that.$api.post('/api/clientbehavior/delclientlabel/' + that.label_code, data).then(function (res) {
+        that.$emit('shuaxinlist2', that.label_code);
+      });
     },
     handleEditVip () {
       if (this.multipleSelection.length < 1) {
@@ -204,7 +130,7 @@ export default {
         var data = this.multipleSelection;
         that.$api.post('/api/clientbehavior/addvip', data).then(function (res) {
           if (res.data.code === 0) {
-            that.$emit('shuaxinlist');
+            that.$emit('shuaxinlist2', that.label_code);
           } else {
             that.$alert('未登录！');
           }
@@ -221,7 +147,7 @@ export default {
         var data = this.multipleSelection;
         that.$api.post('/api/clientbehavior/addvip', data).then(function (res) {
           if (res.data.code === 0) {
-            that.$emit('shuaxinlist');
+            that.$emit('shuaxinlist2', row.label_code);
           } else {
             that.$alert('未登录！');
           }
@@ -232,22 +158,16 @@ export default {
         this.$alert('已是VIP！');
       }
     },
-    handlesee (index, row) {
-    },
     handleSelectionChange (val) {
       var data = [];
-      var zdy = '';
       var pVIP = '';
       for (var i = 0; i < val.length; i++) {
         data[i] = val[i].id;
-        if (val[i].label_code !== null) {
-          zdy = val[i].label_code;
-        }
+        this.label_code = val[i].label_code;
         if (val[i].vip !== null) {
           pVIP = val[i].vip;
         }
       }
-      this.zdy = zdy;
       this.pVIP = pVIP;
       this.multipleSelection = data;
     },
@@ -255,6 +175,9 @@ export default {
       this.caozuo = true;
     },
     mueseleave (row) {
+    },
+    fanhui () {
+      this.$emit('fanhui');
     }
   }
 };

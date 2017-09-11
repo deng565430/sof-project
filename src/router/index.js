@@ -18,6 +18,7 @@ const Personas = r => require.ensure([], () => r(require('components/index/clien
 const Allcustomer = r => require.ensure([], () => r(require('components/index/client-management/allcustomer/index')), 'allcustomer');
 const Projectcustomer= r => require.ensure([], () => r(require('components/index/client-management/Projectcustomer/index')), 'Projectcustomer');
 const VIPcustomer = r => require.ensure([], () => r(require('components/index/client-management/VIPcustomer/index')), 'VIPcustomer');
+const Zdy = r => require.ensure([], () => r(require('components/index/client-management/zidingyi/index')), 'Zdy');
 
 const Ordergailan = r => require.ensure([], () => r(require('components/index/client-order/body')), 'alientOrder');
 const newxuqiu = r => require.ensure([], () => r(require('components/index/client-order/xuqiudan/neworder')), 'newxuqiu');
@@ -97,6 +98,9 @@ const router = new Router({
     }, {
       path: '/personas',
       component: Personas
+    }, {
+      path: '/custom',
+      component: Zdy
     }]
   },{
     path: '/analysisAll',

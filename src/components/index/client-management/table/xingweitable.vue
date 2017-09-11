@@ -1,17 +1,24 @@
 <template>
 <div style="margin:20px">
   <el-table
+    max-height="300"
     :data="table"
-    style=""
-     @row-click="rowclick">
+    style="">
     <el-table-column
-      prop="name"
-      label="项目名称"
-      width="180">
+      prop="value"
+      label="客户">
     </el-table-column>
     <el-table-column
-      prop="code"
-      label="客户量">
+      prop="type"
+      label="类型">
+    </el-table-column>
+    <el-table-column
+      prop="cycle"
+      label="状态">
+    </el-table-column>
+    <el-table-column
+      prop="often"
+      label="行为">
     </el-table-column>
   </el-table>
 </div>
@@ -26,9 +33,6 @@ export default {
     };
   },
   methods: {
-    rowclick (row) {
-      this.$emit('zhanshi', row);
-    }
   }
 };
 </script>

@@ -41,7 +41,6 @@ export default {
         val = '0' + val;
       }
       val = datas + val;
-      console.log(val);
       return val;
     },
     // 搜索查询

@@ -74,32 +74,26 @@ export default {
   methods: {
     getTables () {
       this.$api.get('/api/campaign/getNewCampaign?status=1&industryId=i01&start=' + 0 + '&length=' + 10 + '&strategy=pol01&kw_flag=' + '' + '&kw=' + '').then((ress) => {
-        console.log(ress);
         this.tableData3 = ress.data.data;
       });
     },
     handleSelectionChange (val) {
       this.multipleSelection[this.pageNum] = val;
-      console.log(this.multipleSelection[this.pageNum]);
     },
     add () {
       this.$emit('adds', this.multipleSelection);
     },
     currentchange (val) {
       this.pageNum = val;
-      console.log(this.multipleSelection[this.pageNum]);
       if (this.multipleSelection[this.pageNum] === undefined) {
         this.$api.get('/api/campaign/getNewCampaign?status=1&industryId=i01&start=' + this.pageNum + '&length=' + 10 + '&strategy=pol01&kw_flag=' + '' + '&kw=' + '').then((ress) => {
-          console.log(ress);
           this.tableData3 = ress.data.data;
         });
       } else {
         this.$api.get('/api/campaign/getNewCampaign?status=1&industryId=i01&start=' + this.pageNum + '&length=' + 10 + '&strategy=pol01&kw_flag=' + '' + '&kw=' + '').then((ress) => {
-          console.log(ress);
           this.tableData3 = ress.data.data;
         });
       }
-      console.log(this.multipleSelection);
     }
   }
 };

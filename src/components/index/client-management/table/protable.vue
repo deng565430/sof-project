@@ -1,36 +1,34 @@
 <template>
 <div style="margin:20px" id="tableone">
   <div style='text-align:left;margin-bottom:20px'>
-    <el-button size="small" @click="handleEditzdyP">批量添加到自定义</el-button>
-    <el-button size="small" type="danger" @click="handleEditVip">批量添加到VIP</el-button>
+    <el-button size="small" @click="handleEdit2">批量添加到自定义</el-button>
+    <el-button size="small" type="danger" @click="handleEdit3">批量添加到VIP</el-button>
    </div>
   <el-table
-    max-height="250"
     ref="multipleTable"
-    :data="table"
+    :data="tabledata"
     :row-click="rowclick"
-    border
+    max-height="250"
     tooltip-effect="dark"
     style="width: 100%"
-    @selection-change="handleSelectionChange"
-    @cell-mouse-enter="mouseenter"
-    @cell-mouse-leave="mueseleave">
+    @selection-change="handleSelectionChange">
       <el-table-column
       type="selection"
       width="40">
       </el-table-column>
-     <el-table-column
-      prop="value"
-      label="客户">
+    <el-table-column
+      prop="project"
+      label="项目名称"
+      width="180">
     </el-table-column>
     <el-table-column
       prop="type"
       label="类型">
     </el-table-column>
-    <!-- <el-table-column
-      prop="project"
-      label="项目名称">
-    </el-table-column> -->
+    <el-table-column
+      prop="value"
+      label="客户">
+    </el-table-column>
     <el-table-column
       label="标签状态">
       <template scope="scope" style="display:flex">
@@ -40,58 +38,26 @@
           <el-tag type="primary" v-if="scope.row.label_code">自定义分组</el-tag>
           </div>
         </el-popover>
-        <el-popover trigger="hover" placement="top">
-          <p>项目名称：{{scope.row.project}}</p>
-          <div slot="reference" class="name-wrapper">
-          <el-tag type="warning" v-if="scope.row.project">项目</el-tag>
-          </div>
-        </el-popover>
         <el-tag type="danger" v-if="scope.row.vip">VIP</el-tag>
       </template>
     </el-table-column>
     <el-table-column label="操作" >
       <template scope="scope" style="display:flex">
-      <el-button
+        <el-button
           size="small"
-          @click="handleEdit(scope.$index, scope.row)">自定义</el-button>
+          @click="handlevip(scope.$index, scope.row)">VIP</el-button>
           <el-button
           size="small"
-          @click="handlevip(scope.$index, scope.row)">VIP</el-button>
-          <!-- <el-button
-          size="small"
-          @click="handlesee(scope.$index, scope.row)">查看</el-button> -->
-        <!-- <el-popover trigger="hover" placement="top">
-          <p>添加到项目</p>
-          <div slot="reference" class="name-wrapper">
-            <el-popover
-              ref="popover"
-              placement="right"
-              width="100"
-              trigger="click">
-            </el-popover>
-            <el-button
-          size="small"
-          v-popover:popover
-          @click="handleEdit(scope.$index, scope.row)">自定义</el-button>
-          </div>
-        </el-popover>
-        <el-popover trigger="hover" placement="top">
-          <p>添加到VIP</p>
-          <div slot="reference" class="name-wrapper">
-            <el-button
-          size="small"
-          @click="handlevip(scope.$index, scope.row)">VIP</el-button>
-          </div>
-        </el-popover> -->
+          @click="handleEditzdy(scope.$index, scope.row)">自定义</el-button>
       </template>
     </el-table-column>
   </el-table>
-
-
+  <div>
+    <Dialogs v-if="dialogs"></Dialogs>
+  </div>
   <el-dialog title="已有的分组" :visible.sync="dialogFormVisible">
      <el-table
        :data="tabledialog"
-      :row-click="rowclick"
       tooltip-effect="dark"
       style="width: 100%">
       </el-table-column>
@@ -113,15 +79,14 @@
       <el-button type="primary" @click="surebtn">确 定</el-button>
     </div> -->
   </el-dialog>
-    
 </div>
 </template>
 
 <script>
-import Dialogs from './../dialog/zdlistdialog';
+import Dialogs from './../projectCustomer/projectdialog';
 
 export default {
-  props: ['table'],
+  props: ['tabledata'],
   components: {
     Dialogs
   },
@@ -149,6 +114,9 @@ export default {
     rowclick (row) {
     },
     handleEdit (index, row) {
+      this.dialogs = true;
+    },
+    handleEditzdy (index, row) {
       if (row.label_code === null) {
         this.dialogFormVisible = true;
         this.multipleSelection = [];
@@ -175,7 +143,7 @@ export default {
         that.$emit('shuaxinlist');
       });
     },
-    handleEditzdyP () {
+    handleEdit2 () {
       if (this.multipleSelection.length < 1) {
         this.$alert('请先选择客户！');
       } else if (this.zdy !== '') {
@@ -194,7 +162,7 @@ export default {
         });
       }
     },
-    handleEditVip () {
+    handleEdit3 () {
       if (this.multipleSelection.length < 1) {
         this.$alert('请先选择客户！');
       } else if (this.pVIP !== '') {
@@ -231,8 +199,6 @@ export default {
       } else {
         this.$alert('已是VIP！');
       }
-    },
-    handlesee (index, row) {
     },
     handleSelectionChange (val) {
       var data = [];

@@ -39,7 +39,7 @@
   <el-row :gutter="20">
     <el-col :span="16">
       <el-form-item label="选择时间"  required>
-        <Time  :dates="form.dates"   @dataEvent="dataEvent"></Time>
+        <Times  :dates="form.dates"   @dataEvent="dataEvent"></Times>
       </el-form-item>
     </el-col>
   </el-row>
@@ -82,8 +82,17 @@
     </div>
   </el-form-item>
 </el-form>
-
-<div>  
+  
+  <h2 style="margin-top:40px">结果统计</h2>
+  <el-tabs v-model="activeName" >
+    <el-tab-pane label="立即跟进" name="first">
+      <Tables :table="table"></Tables>
+      <div style="margin-bottom:20px">共 {{table.length}} 条</div>
+      <!-- <Page :pagenum="pagenum" @handleSizeChanges="handleSizeChanges" @handleCurrentChanges="handleCurrentChanges"  ></Page> -->
+    </el-tab-pane>
+    <el-tab-pane label="及时关注" name="second"><Tables></Tables></el-tab-pane>
+    <el-tab-pane label="时常关注" name="third"><Tables></Tables></el-tab-pane>
+  </el-tabs>
 </div >
 
 
@@ -94,16 +103,21 @@
 </template>
 
 <script>
-import Time from '../../timeSelect/ordertime';
+import Tables from './table/xingweitable';
+import Times from '../../timeSelect/ordertime';
 import Saixuan from './search/shaixuan';
+import Page from './table/page';
 export default {
   components: {
-    Time,
-    Saixuan
+    Times,
+    Saixuan,
+    Tables,
+    Page
   },
   name: 'clientManagement',
   data () {
     return {
+      activeName: 'first',
       form: {
         name: '',
         phones: '',
@@ -134,7 +148,10 @@ export default {
       biaoqians: [],
       one: 'A',
       two: 'B',
-      three: 'C'
+      three: 'C',
+      pagenum: 0,
+      table: [],
+      start: 0
     };
   },
   created () {
@@ -143,17 +160,13 @@ export default {
   },
   methods: {
     biaoqian (val) {
-      console.log(val);
       this.biaoqians = val;
     },
     handleChange () {
-      console.log(this.form.name);
     },
     timechange () {
-      console.log(this.form.data);
     },
     dataEvent (val) {
-      console.log(val);
       this.form.startime = val.minbatch;
       this.form.endtime = val.maxbatch;
     },
@@ -164,7 +177,6 @@ export default {
         bs[i] = this.biaoqians[i].code;
       }
       if (this.form.resource === '按阶段分类') {
-        console.log(this.form.kehuyuan);
         this.form.qq = '';
         this.form.phones = '';
         this.form.wei = '';
@@ -174,7 +186,6 @@ export default {
         this.form.qq = '';
         this.form.phones = '';
         this.form.wei = '';
-        console.log(bs);
       } else if (this.form.resource === '按具体ID') {
         bs = [];
         this.form.kehuyuan = '';
@@ -193,17 +204,17 @@ export default {
           'wechat': this.form.wei
         },
         'kw': this.form.kehuyuan,
-        'start': 0,
-        'length': 10
+        'start': this.start,
+        'length': 100
       };
       this.getgrade(data);
     },
     getgrade (data) {
+      var that = this;
       this.$api.post('/api/clientbehavior/getbytype', data).then(function (res) {
-        console.log(res.data.data);
-      })
-      .catch(() => {
-        alert('服务出错！');
+        that.table = res.data.data;
+      }).catch(() => {
+        that.$alert('服务出错！');
       });
     },
     qiehuan (val) {
@@ -222,7 +233,6 @@ export default {
       }
     },
     hangyechange () {
-      console.log(this.form.region);
       this.getarea(this.form.region);
     },
     // 获取行业
@@ -247,7 +257,6 @@ export default {
       var that = this;
       that.$api.get('/api/clientbehavior/getcity/' + indcode).then(function (res) {
         if (res.data.code === 0) {
-          console.log(res.data.data);
           var data = [];
           var obj = {};
           obj.children = [];
@@ -264,7 +273,6 @@ export default {
           //   delete data[i].children;
           // }
           that.form.options = data;
-          console.log(that.form);
         }
       });
     },
@@ -272,7 +280,6 @@ export default {
     getprojectname () {
       var _this = this;
       _this.$api.get('/api/clientbehavior/getprojectname?kw=').then(function (res) {
-        console.log(res);
         if (res.data.code === 0) {
           var datas = [];
           for (var i = 0; i < res.data.data.length; i++) {
@@ -324,9 +331,38 @@ body{
 h2{
   text-align: left;
   line-height: 35px;
-  background: #00b52f;
+  background: #20a0ff;
   color:#fff;
   padding-left: 10px;
+}
+h2 span{
+  font-size: 20px;
+  margin-right:5px;
+}
+/* ul{
+  display: flex; 
+  margin:10px;
+}
+ul li {
+  width: 25%;
+  text-align: center;
+}
+ul li  div{
+  line-height: 30px
+} */
+.el-tabs{
+  border: 1px solid #ccc
+}
+.el-tabs__header{
+  margin:0;
+}
+h2{
+  text-align: left;
+  line-height: 35px;
+  background: #20a0ff;
+  color:#fff;
+  padding-left: 10px;
+  border-radius: 5px 5px 0 0;
 }
 h2 span{
   font-size: 20px;

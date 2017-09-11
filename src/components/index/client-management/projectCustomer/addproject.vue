@@ -146,17 +146,13 @@ export default {
       this.$emit('addV', val);
     },
     biaoqian (val) {
-      console.log(val);
       this.biaoqians = val;
     },
     handleChange () {
-      console.log(this.form.name);
     },
     timechange () {
-      console.log(this.form.data);
     },
     dataEvent (val) {
-      console.log(val);
       this.form.startime = val.minbatch;
       this.form.endtime = val.maxbatch;
     },
@@ -167,7 +163,6 @@ export default {
         bs[i] = this.biaoqians[i].code;
       }
       if (this.form.resource === '按阶段分类') {
-        console.log(this.form.kehuyuan);
         this.form.qq = '';
         this.form.phones = '';
         this.form.wei = '';
@@ -177,7 +172,6 @@ export default {
         this.form.qq = '';
         this.form.phones = '';
         this.form.wei = '';
-        console.log(bs);
       } else if (this.form.resource === '按具体ID') {
         bs = [];
         this.form.kehuyuan = '';
@@ -203,9 +197,7 @@ export default {
     },
     getgrade (data) {
       this.$api.post('/api/clientbehavior/getbytype', data).then(function (res) {
-        console.log(res.data.data);
-      })
-      .catch(() => {
+      }).catch(() => {
         this.$alert('服务出错！');
       });
     },
@@ -225,7 +217,6 @@ export default {
       }
     },
     hangyechange () {
-      console.log(this.form.region);
       this.getarea(this.form.region);
     },
     // 获取行业
@@ -250,7 +241,6 @@ export default {
       var that = this;
       that.$api.get('/api/clientbehavior/getcity/' + indcode).then(function (res) {
         if (res.data.code === 0) {
-          console.log(res.data.data);
           var data = [];
           var obj = {};
           obj.children = [];
@@ -267,7 +257,6 @@ export default {
           //   delete data[i].children;
           // }
           that.form.options = data;
-          console.log(that.form);
         }
       });
     },
@@ -275,7 +264,6 @@ export default {
     getprojectname () {
       var _this = this;
       _this.$api.get('/api/clientbehavior/getprojectname?kw=').then(function (res) {
-        console.log(res);
         if (res.data.code === 0) {
           var datas = [];
           for (var i = 0; i < res.data.data.length; i++) {

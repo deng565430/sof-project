@@ -103,7 +103,6 @@ export default {
     selectDataList () {
       this.showSelectData.push(this.showSelectDataAll);
       this.dialogVisible = false;
-      console.log(this.showSelectData);
       this.$emit('biaoqian', this.showSelectData);
     },
     cancel () {
@@ -114,7 +113,6 @@ export default {
       this._selectActive(data.val, data.num, data.checked, data.lastVal, data.firstVal, data.secondVal);
     },
     removeClose (parentTag, parentIndex) {
-      console.log(parentTag, parentIndex);
       this.showSelectData.splice(parentIndex, 1);
     },
      // 对子组件传递的参数做过滤并且生成需要的属性
